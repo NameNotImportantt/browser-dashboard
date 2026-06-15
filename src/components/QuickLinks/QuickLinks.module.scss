@@ -23,12 +23,15 @@
   color: var(--text-soft);
   padding: 0.2rem 0.35rem;
   border-radius: var(--radius-sm);
-  transition: color 0.18s ease, background 0.18s ease;
+  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  transform: translateY(-1px);
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
 
 .linkItem a:hover {
   color: var(--text);
-  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  background: transparent;
+  transform: translateY(0);
 }
 
 .separator {
@@ -44,6 +47,7 @@
   font-size: 0.85rem;
   line-height: 1;
   opacity: 0;
+  box-shadow: none;
   transition: opacity 0.18s ease, color 0.18s ease;
 }
 
@@ -55,6 +59,7 @@
 .removeButton:hover {
   color: var(--danger);
   transform: none;
+  box-shadow: none;
 }
 
 .addButton {
@@ -63,11 +68,13 @@
   color: var(--text-muted);
   font-size: 0.88rem;
   padding: 0.2rem 0.45rem;
+  box-shadow: none;
 }
 
 .addButton:hover {
   color: var(--accent);
   transform: none;
+  box-shadow: none;
 }
 
 .addForm {

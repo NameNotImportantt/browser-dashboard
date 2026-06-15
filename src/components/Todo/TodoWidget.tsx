@@ -1,9 +1,10 @@
 import { useMemo, useState, type FormEvent } from "react";
+import { t } from "@/app/i18n";
 import { reorderIds } from "@/app/utils";
 import type { TodoPriority, TodoWidgetProps } from "@/components/Todo/types/TodoWidgetProps";
 import styles from "./TodoWidget.module.scss";
 
-export function TodoWidget({ todos, onAdd, onToggle, onDelete, onReorder }: TodoWidgetProps) {
+export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder }: TodoWidgetProps) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<TodoPriority>("medium");
   const [dueDate, setDueDate] = useState("");
@@ -39,9 +40,9 @@ export function TodoWidget({ todos, onAdd, onToggle, onDelete, onReorder }: Todo
         <input className={styles.inputField} value={title} onChange={event => setTitle(event.target.value)} placeholder="Новая задача" required />
         <div className={styles.inlineRow}>
           <select className={styles.inputField} value={priority} onChange={event => setPriority(event.target.value as TodoPriority)}>
-            <option value="low">Низкий приоритет</option>
-            <option value="medium">Средний приоритет</option>
-            <option value="high">Высокий приоритет</option>
+            <option value="low">{t(locale, "priorityLow")}</option>
+            <option value="medium">{t(locale, "priorityMedium")}</option>
+            <option value="high">{t(locale, "priorityHigh")}</option>
           </select>
           <input className={styles.inputField} type="date" value={dueDate} onChange={event => setDueDate(event.target.value)} />
         </div>
@@ -53,7 +54,7 @@ export function TodoWidget({ todos, onAdd, onToggle, onDelete, onReorder }: Todo
       <ul className={`${styles.widgetList} ${styles.todoList}`}>
         {todos.map(todo => (
           <li
-            className={styles.todoItem}
+            className={`${styles.todoItem} ${priorityItemClass(todo.priority)}`}
             key={todo.id}
             draggable
             onDragStart={() => setDraggedId(todo.id)}
@@ -68,7 +69,7 @@ export function TodoWidget({ todos, onAdd, onToggle, onDelete, onReorder }: Todo
             </label>
 
             <div className={styles.todoMeta}>
-              <small className={styles.todoBadge}>{priorityLabel(todo.priority)}</small>
+              <small className={`${styles.todoBadge} ${priorityBadgeClass(todo.priority)}`}>{priorityLabel(todo.priority, locale)}</small>
               {todo.dueDate ? <small className={styles.todoBadge}>{todo.dueDate}</small> : null}
               <button type="button" className={styles.dangerButton} onClick={() => void onDelete(todo.id)}>
                 Удалить
@@ -81,8 +82,20 @@ export function TodoWidget({ todos, onAdd, onToggle, onDelete, onReorder }: Todo
   );
 }
 
-function priorityLabel(priority: TodoPriority) {
-  if (priority === "high") return "Высокий";
-  if (priority === "low") return "Низкий";
-  return "Средний";
+function priorityItemClass(priority: TodoPriority) {
+  if (priority === "high") return styles.priorityHigh;
+  if (priority === "low") return styles.priorityLow;
+  return styles.priorityMedium;
+}
+
+function priorityBadgeClass(priority: TodoPriority) {
+  if (priority === "high") return styles.badgeHigh;
+  if (priority === "low") return styles.badgeLow;
+  return styles.badgeMedium;
+}
+
+function priorityLabel(priority: TodoPriority, locale: TodoWidgetProps["locale"]) {
+  if (priority === "high") return t(locale, "priorityHigh");
+  if (priority === "low") return t(locale, "priorityLow");
+  return t(locale, "priorityMedium");
 }

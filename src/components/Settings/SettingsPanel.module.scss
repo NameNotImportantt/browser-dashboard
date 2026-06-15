@@ -1,0 +1,93 @@
+.settingsPanel {
+  width: 100%;
+  padding: 0.85rem;
+}
+
+.header {
+  margin-bottom: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.inlineRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inlineRow input {
+  flex: 1;
+}
+
+.section {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.section h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.customEngineForm {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.hint code {
+  color: var(--text-soft);
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+.engineList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.engineList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.65rem;
+  font-size: 0.9rem;
+}
+
+.dangerButton {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+  padding: 0.3rem 0.55rem;
+  font-size: 0.85rem;
+}
+
+.dangerButton:hover {
+  border-color: var(--danger);
+}

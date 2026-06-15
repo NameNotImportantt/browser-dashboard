@@ -2,12 +2,28 @@ import type { WeatherLocation } from "@/db/types/weather";
 
 export type ThemeMode = "light" | "dark";
 
-export type SearchEngine = "google" | "duckduckgo";
+export type TimeFormat = "12h" | "24h";
+
+export type AppLocale = "ru" | "en";
+
+export type DateFormatPreset = "dd.MM.yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd";
+
+export interface CustomSearchEngine {
+  id: string;
+  name: string;
+  urlTemplate: string;
+}
 
 export interface AppSettings {
   key: "app";
   theme: ThemeMode;
-  searchEngine: SearchEngine;
+  activeSearchEngineId: string;
+  customSearchEngines: CustomSearchEngine[];
+  timeFormat: TimeFormat;
+  timezone: string;
+  locale: AppLocale;
+  dateFormat: DateFormatPreset;
+  tabTitle: string;
   lastWorkspaceId: string | null;
   weatherLocation: WeatherLocation | null;
   updatedAt: number;

@@ -15,14 +15,32 @@
   letter-spacing: 0.08em;
   padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
+  box-shadow: none;
 }
 
 .screenMenu button:hover {
   color: var(--text-soft);
   transform: none;
+  box-shadow: none;
 }
 
 .screenMenu .isActive {
   color: var(--text);
   background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+.settingsButton,
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  box-shadow: none;
+}
+
+.settingsButton:hover,
+.iconButton:hover {
+  box-shadow: none;
 }
