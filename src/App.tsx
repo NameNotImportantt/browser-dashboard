@@ -1,5 +1,5 @@
 import { AppShell } from "@/app/AppShell";
-import "./styles/styles.module.scss";
+import "./styles/styles.css";
 
 export function App() {
   return <AppShell />;
