@@ -1,0 +1,11 @@
+export declare const calendarWidget: string;
+export declare const dayCell: string;
+export declare const dayNumber: string;
+export declare const dueDot: string;
+export declare const emptyCell: string;
+export declare const grid: string;
+export declare const hasDue: string;
+export declare const isToday: string;
+export declare const monthLabel: string;
+export declare const weekdays: string;
+export declare const widgetHeader: string;

@@ -1,0 +1,74 @@
+.calendarWidget {
+  padding: 0.95rem;
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.monthLabel {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.weekdays span {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.emptyCell {
+  min-height: 2rem;
+}
+
+.dayCell {
+  position: relative;
+  min-height: 2rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.isToday {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+}
+
+.hasDue {
+  color: var(--text);
+}
+
+.dayNumber {
+  line-height: 1;
+}
+
+.dueDot {
+  position: absolute;
+  bottom: 0.2rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}

@@ -1,0 +1,10 @@
+export declare const content: string;
+export declare const footerRow: string;
+export declare const glowOrb: string;
+export declare const headerActions: string;
+export declare const headerRow: string;
+export declare const homeStack: string;
+export declare const screenPanel: string;
+export declare const shell: string;
+export declare const themeToggle: string;
+export declare const widgetFallback: string;

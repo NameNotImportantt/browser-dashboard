@@ -1,0 +1,132 @@
+.workspaceBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.15rem;
+}
+
+.workspaceItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.workspaceItem:hover,
+.workspaceItem.isHovered {
+  z-index: 3;
+}
+
+.workspaceControl {
+  position: relative;
+  display: inline-flex;
+}
+
+.workspaceControl::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 1rem;
+  height: 1.4rem;
+  transform: translate(1rem, -50%);
+}
+
+.workspaceButton {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.5rem;
+}
+
+.workspaceButton:hover {
+  color: var(--text-soft);
+  transform: none;
+}
+
+.workspaceButton.isActive {
+  color: var(--text);
+}
+
+.removeButton {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 2;
+  border: none;
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(1rem, -50%);
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.workspaceItem:hover + .workspaceItem > .separator,
+.workspaceItem.isHovered + .workspaceItem > .separator,
+.workspaceItem:last-of-type:hover + .separator,
+.workspaceItem:last-of-type.isHovered + .separator {
+  opacity: 0;
+}
+
+.workspaceItem:hover .removeButton,
+.workspaceItem.isHovered .removeButton,
+.removeButton.isVisible,
+.removeButton:focus-visible,
+.removeButton:hover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.removeButton:hover {
+  color: var(--danger);
+  transform: translate(1rem, -50%);
+}
+
+.separator {
+  color: var(--text-muted);
+  margin: 0 0.15rem;
+  font-size: 0.75rem;
+  transition: opacity 0.18s ease;
+}
+
+.addButton {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.5rem;
+}
+
+.addButton:hover {
+  color: var(--accent);
+  transform: none;
+}
+
+.addForm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.addForm input {
+  width: 8.5rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.addForm button {
+  padding: 0.35rem 0.55rem;
+  font-size: 0.82rem;
+}

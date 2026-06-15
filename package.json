@@ -1,0 +1,26 @@
+{
+  "name": "browser-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bunx typed-scss-modules src -w & vite",
+    "build": "tsc -b && vite build",
+    "start": "vite preview"
+  },
+  "dependencies": {
+    "dexie": "^4.2.1",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.2",
+    "sass": "^1.101.0",
+    "typed-scss-modules": "^8.1.1",
+    "typescript": "^5.9.2",
+    "vite": "^8.0.16"
+  }
+}

@@ -1,0 +1,9 @@
+.statusView {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  color: var(--text-soft);
+}

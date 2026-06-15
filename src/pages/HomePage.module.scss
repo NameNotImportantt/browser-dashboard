@@ -1,0 +1,103 @@
+.shell {
+  position: relative;
+  width: min(1240px, 92vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 auto;
+  padding: 1.25rem 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.25rem;
+}
+
+.glowOrb {
+  top: -80px;
+  left: 20%;
+  z-index: 0;
+}
+
+.headerRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.themeToggle {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 0.35rem;
+  line-height: 1;
+}
+
+.themeToggle:hover {
+  color: var(--text);
+  transform: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.homeStack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.screenPanel {
+  width: min(720px, 100%);
+  padding: 0.25rem 0;
+}
+
+.footerRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.widgetFallback {
+  padding: 1rem;
+  color: var(--text-soft);
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerActions {
+    justify-content: space-between;
+  }
+}

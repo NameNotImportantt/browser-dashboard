@@ -1,0 +1,83 @@
+.quickLinks {
+  width: min(640px, 100%);
+  display: grid;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.linksRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.15rem;
+}
+
+.linkItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.linkItem a {
+  color: var(--text-soft);
+  padding: 0.2rem 0.35rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.linkItem a:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+}
+
+.separator {
+  color: var(--text-muted);
+  margin: 0 0.1rem;
+}
+
+.removeButton {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0 0.25rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.linkItem:hover .removeButton,
+.removeButton:focus-visible {
+  opacity: 1;
+}
+
+.removeButton:hover {
+  color: var(--danger);
+  transform: none;
+}
+
+.addButton {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  padding: 0.2rem 0.45rem;
+}
+
+.addButton:hover {
+  color: var(--accent);
+  transform: none;
+}
+
+.addForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 0.45rem;
+}
+
+@media (max-width: 640px) {
+  .addForm {
+    grid-template-columns: 1fr;
+  }
+}

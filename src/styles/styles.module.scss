@@ -1,0 +1,248 @@
+:global {
+/* =========================
+   AETHER / SHADOW UI SYSTEM
+   ========================= */
+
+/* ========== ROOT TOKENS ========== */
+
+:root {
+  /* Background */
+  --bg: #070a11;
+  --bg-deep: #05070d;
+
+  /* Surfaces (UNIFIED GLASS SYSTEM) */
+  --surface: rgba(17, 23, 36, 0.72);
+  --surface-strong: rgba(15, 20, 32, 0.88);
+  --surface-glass: rgba(36, 46, 69, 0.35);
+
+  /* Borders */
+  --border: rgba(145, 162, 206, 0.16);
+  --border-strong: rgba(145, 162, 206, 0.28);
+
+  /* Accent (Aether / Shadow unified) */
+  --accent: #7c6dff;
+  --accent-soft: rgba(124, 109, 255, 0.22);
+  --accent-glow: rgba(124, 109, 255, 0.42);
+
+  /* Text */
+  --text: #e7ecff;
+  --text-soft: #aab3c7;
+  --text-muted: #6f7a90;
+
+  /* Semantic */
+  --danger: #f27786;
+  --success: #6ee7b7;
+  --warning: #fbbf24;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* Shadows (single system) */
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --shadow-glow: 0 0 0 1px var(--border), 0 8px 32px rgba(8, 13, 24, 0.55);
+
+  /* Font */
+  --font: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ========== LIGHT (AETHER SIDE) ========== */
+
+:root[data-theme="light"] {
+  --bg: #f7f3eb;
+  --bg-deep: #ffffff;
+
+  --surface: rgba(255, 255, 255, 0.75);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --surface-glass: rgba(212, 224, 255, 0.45);
+
+  --border: rgba(77, 95, 143, 0.18);
+  --border-strong: rgba(77, 95, 143, 0.28);
+
+  --text: #1d2433;
+  --text-soft: #4f5d78;
+  --text-muted: #6f7a90;
+
+  --accent: #5f55e6;
+  --accent-soft: rgba(95, 85, 230, 0.18);
+  --accent-glow: rgba(95, 85, 230, 0.25);
+}
+
+/* ========== BASE RESET ========== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  overflow: hidden;
+
+  background:
+    radial-gradient(900px 400px at 50% 0%, rgba(124, 109, 255, 0.18), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+
+  background-attachment: fixed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* ========== GLOBAL CARD SYSTEM (CRITICAL) ========== */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glow);
+  backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ========== GLASS VARIANT ========== */
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+}
+
+/* ========== GLOW SYSTEM (LIMITED USAGE ONLY) ========== */
+
+.glow {
+  position: absolute;
+  width: 420px;
+  height: 240px;
+  background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* ========== TYPOGRAPHY ========== */
+
+h1 {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+p {
+  color: var(--text-soft);
+}
+
+/* ========== BUTTONS (SINGLE SYSTEM) ========== */
+
+button {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-strong) 85%, transparent);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Primary button */
+
+button.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+  color: #f8f8ff;
+}
+
+/* ========== INPUTS ========== */
+
+input,
+select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.7rem;
+  outline: none;
+  transition: border-color 0.18s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+/* ========== LAYOUT HELPERS ========== */
+
+.container {
+  width: min(1240px, 92vw);
+  margin: 1.25rem auto;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* ========== SCROLLBAR (SUBTLE) ========== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-soft);
+}
+
+/* ========== SELECTION ========== */
+
+::selection {
+  background: var(--accent-soft);
+}
+
+/* ========== REDUCED MOTION ========== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+}
