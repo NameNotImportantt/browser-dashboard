@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { formatClockLabels } from "@/app/settingsDefaults";
+import type { AppSettings } from "@/db/types/settings";
 
-export function useClock(locale = "ru-RU") {
+type ClockSettings = Pick<AppSettings, "locale" | "timeFormat" | "dateFormat" | "timezone">;
+
+export function useClock(clockSettings: ClockSettings) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -13,19 +17,11 @@ export function useClock(locale = "ru-RU") {
     };
   }, []);
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const labels = formatClockLabels(now, clockSettings);
+    return {
       now,
-      timeLabel: new Intl.DateTimeFormat(locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(now),
-      dateLabel: new Intl.DateTimeFormat(locale, {
-        weekday: "short",
-        day: "2-digit",
-        month: "long",
-      }).format(now),
-    }),
-    [locale, now],
-  );
+      ...labels,
+    };
+  }, [clockSettings, now]);
 }

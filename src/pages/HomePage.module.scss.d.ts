@@ -6,5 +6,4 @@ export declare const headerRow: string;
 export declare const homeStack: string;
 export declare const screenPanel: string;
 export declare const shell: string;
-export declare const themeToggle: string;
 export declare const widgetFallback: string;

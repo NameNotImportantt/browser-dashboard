@@ -1,5 +1,6 @@
-import type { SearchEngine } from "@/db/types/settings";
+import type { CustomSearchEngine } from "@/db/types/settings";
 
 export interface SearchBarProps {
-  engine: SearchEngine;
+  activeSearchEngineId: string;
+  customSearchEngines: CustomSearchEngine[];
 }

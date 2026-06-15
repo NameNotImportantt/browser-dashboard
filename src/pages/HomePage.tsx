@@ -1,8 +1,11 @@
 import { lazy, memo, Suspense, useState } from "react";
+import { Moon, Sun } from "lucide-react";
 import { QuickLinks } from "@/components/QuickLinks/QuickLinks";
 import { ScreenMenu } from "@/components/ScreenMenu/ScreenMenu";
+import menuStyles from "@/components/ScreenMenu/ScreenMenu.module.scss";
 import type { ScreenId } from "@/components/ScreenMenu/types/ScreenMenuProps";
 import { SearchCore } from "@/components/SearchCore/SearchCore";
+import { SettingsPanel } from "@/components/Settings/SettingsPanel";
 import { TodayPanel } from "@/components/TodayPanel/TodayPanel";
 import { TodoWidget } from "@/components/Todo/TodoWidget";
 import { TopBar } from "@/components/TopBar/TopBar";
@@ -18,7 +21,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     timeLabel,
     dateLabel,
     theme,
-    searchEngine,
+    settings,
     weather,
     workspaces,
     activeWorkspaceId,
@@ -27,7 +30,15 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     bookmarks,
     noteText,
     onThemeToggle,
-    onSearchEngineChange,
+    onActiveSearchEngineChange,
+    onTimeFormatChange,
+    onTimezoneChange,
+    onLocaleChange,
+    onDateFormatChange,
+    onTabTitleChange,
+    onAddCustomSearchEngine,
+    onRemoveCustomSearchEngine,
+    onWeatherCityChange,
     onRefreshWeather,
     onSelectWorkspace,
     onAddWorkspace,
@@ -54,30 +65,34 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
         <TopBar time={timeLabel} date={dateLabel} weather={weather} onRefreshWeather={onRefreshWeather} />
 
         <div className={styles.headerActions}>
+          <ScreenMenu activeScreen={activeScreen} locale={settings.locale} onSelect={setActiveScreen} />
           <button
             type="button"
-            className={styles.themeToggle}
+            className={menuStyles.iconButton}
             onClick={() => void onThemeToggle(theme === "dark" ? "light" : "dark")}
             aria-label="Переключить тему"
           >
-            {theme === "dark" ? "◐" : "◑"}
+            {theme === "dark" ? <Sun size={16} strokeWidth={2.25} /> : <Moon size={16} strokeWidth={2.25} />}
           </button>
-          <ScreenMenu activeScreen={activeScreen} onSelect={setActiveScreen} />
         </div>
       </header>
 
       <div className={styles.content}>
         {activeScreen === "home" ? (
           <div className={styles.homeStack}>
-            <SearchCore engine={searchEngine} onEngineChange={onSearchEngineChange} />
+            <SearchCore
+              activeSearchEngineId={settings.activeSearchEngineId}
+              customSearchEngines={settings.customSearchEngines}
+              onEngineChange={onActiveSearchEngineChange}
+            />
             <QuickLinks bookmarks={bookmarks} onAdd={onAddBookmark} onDelete={onDeleteBookmark} />
-            <TodayPanel todos={todos} habits={habits} />
+            <TodayPanel todos={todos} habits={habits} locale={settings.locale} />
           </div>
         ) : null}
 
         {activeScreen === "todo" ? (
           <div className={styles.screenPanel}>
-            <TodoWidget todos={todos} onAdd={onAddTodo} onToggle={onToggleTodo} onDelete={onDeleteTodo} onReorder={onReorderTodo} />
+            <TodoWidget todos={todos} locale={settings.locale} onAdd={onAddTodo} onToggle={onToggleTodo} onDelete={onDeleteTodo} onReorder={onReorderTodo} />
           </div>
         ) : null}
 
@@ -94,6 +109,23 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
             <Suspense fallback={<section className={`card ${styles.widgetFallback}`}>Загрузка заметок...</section>}>
               <NotesWidget text={noteText} onSave={onSaveNote} />
             </Suspense>
+          </div>
+        ) : null}
+
+        {activeScreen === "settings" ? (
+          <div className={styles.screenPanel}>
+            <SettingsPanel
+              settings={settings}
+              onTimeFormatChange={onTimeFormatChange}
+              onTimezoneChange={onTimezoneChange}
+              onLocaleChange={onLocaleChange}
+              onDateFormatChange={onDateFormatChange}
+              onTabTitleChange={onTabTitleChange}
+              onActiveSearchEngineChange={onActiveSearchEngineChange}
+              onAddCustomSearchEngine={onAddCustomSearchEngine}
+              onRemoveCustomSearchEngine={onRemoveCustomSearchEngine}
+              onWeatherCityChange={onWeatherCityChange}
+            />
           </div>
         ) : null}
       </div>

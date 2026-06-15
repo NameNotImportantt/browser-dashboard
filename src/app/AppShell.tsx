@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { DEFAULT_TAB_TITLE } from "@/app/settingsDefaults";
 import { HomePage } from "@/pages/HomePage";
 import { useClock } from "@/hooks/useClock";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -6,14 +7,19 @@ import { WEATHER_CACHE_TTL_MS } from "@/app/utils";
 import styles from "./AppShell.module.scss";
 
 export function AppShell() {
-  const { dateLabel, timeLabel } = useClock();
   const dashboard = useDashboardData();
+  const { settings } = dashboard;
+  const { dateLabel, timeLabel } = useClock({
+    locale: settings.locale,
+    timeFormat: settings.timeFormat,
+    dateFormat: settings.dateFormat,
+    timezone: settings.timezone,
+  });
 
   const {
     loading,
     error,
     weatherCache,
-    settings,
     workspaces,
     activeWorkspaceId,
     todos,
@@ -26,6 +32,14 @@ export function AppShell() {
   useEffect(() => {
     document.documentElement.dataset.theme = settings.theme;
   }, [settings.theme]);
+
+  useEffect(() => {
+    document.documentElement.lang = settings.locale;
+  }, [settings.locale]);
+
+  useEffect(() => {
+    document.title = settings.tabTitle.trim() || DEFAULT_TAB_TITLE;
+  }, [settings.tabTitle]);
 
   useEffect(() => {
     if (loading) return;
@@ -54,7 +68,7 @@ export function AppShell() {
       timeLabel={timeLabel}
       dateLabel={dateLabel}
       theme={settings.theme}
-      searchEngine={settings.searchEngine}
+      settings={settings}
       weather={weatherCache}
       workspaces={workspaces}
       activeWorkspaceId={activeWorkspaceId}
@@ -63,7 +77,15 @@ export function AppShell() {
       bookmarks={bookmarks}
       noteText={noteText}
       onThemeToggle={actions.setTheme}
-      onSearchEngineChange={actions.setSearchEngine}
+      onActiveSearchEngineChange={actions.setActiveSearchEngineId}
+      onTimeFormatChange={actions.setTimeFormat}
+      onTimezoneChange={actions.setTimezone}
+      onLocaleChange={actions.setLocale}
+      onDateFormatChange={actions.setDateFormat}
+      onTabTitleChange={actions.setTabTitle}
+      onAddCustomSearchEngine={actions.addCustomSearchEngine}
+      onRemoveCustomSearchEngine={actions.removeCustomSearchEngine}
+      onWeatherCityChange={actions.setWeatherCity}
       onRefreshWeather={() => actions.refreshWeather(true)}
       onSelectWorkspace={actions.selectWorkspace}
       onAddWorkspace={actions.addWorkspace}

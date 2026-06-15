@@ -74,8 +74,8 @@ export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, o
       ) : (
         <>
           {workspaces.length > 0 ? <span className={styles.separator} aria-hidden>|</span> : null}
-          <button type="button" className={styles.addButton} onClick={() => setIsAdding(true)}>
-            + NEW
+          <button type="button" className={styles.addButton} onClick={() => setIsAdding(true)} aria-label="Добавить воркспейс">
+            +
           </button>
         </>
       )}

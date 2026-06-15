@@ -1,24 +1,16 @@
 import { useState, type FormEvent } from "react";
-import type { SearchEngine } from "@/db/types/settings";
+import { buildSearchUrl } from "@/app/searchUtils";
 import type { SearchBarProps } from "@/components/Search/types/SearchBarProps";
 import styles from "./SearchBar.module.scss";
 
-function buildSearchUrl(engine: SearchEngine, query: string) {
-  const encoded = encodeURIComponent(query.trim());
-  if (engine === "google") {
-    return `https://www.google.com/search?q=${encoded}`;
-  }
-  return `https://duckduckgo.com/?q=${encoded}`;
-}
-
-export function SearchBar({ engine }: SearchBarProps) {
+export function SearchBar({ activeSearchEngineId, customSearchEngines }: SearchBarProps) {
   const [query, setQuery] = useState("");
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!query.trim()) return;
 
-    const url = buildSearchUrl(engine, query);
+    const url = buildSearchUrl(activeSearchEngineId, query, customSearchEngines);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
