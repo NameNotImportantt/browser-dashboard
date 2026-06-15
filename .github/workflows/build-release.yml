@@ -23,7 +23,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Typecheck
-        run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 6.0
+        run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 5.0
 
       - name: Build
         run: bun run build
