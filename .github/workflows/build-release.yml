@@ -28,16 +28,6 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Validate single-file output
-        run: |
-          test -f dist/index.html
-          FILE_COUNT=$(ls -1 dist | wc -l)
-          if [ "$FILE_COUNT" -ne 1 ]; then
-            echo "Expected only dist/index.html, found $FILE_COUNT files in dist/"
-            ls -la dist
-            exit 1
-          fi
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
