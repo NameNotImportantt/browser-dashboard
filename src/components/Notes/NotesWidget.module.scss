@@ -1,0 +1,40 @@
+.notesWidget {
+  padding: 0.95rem;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 220px;
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.status {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.noteField {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.75rem;
+  line-height: 1.45;
+}
+
+.noteField:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.noteField::placeholder {
+  color: var(--text-muted);
+}

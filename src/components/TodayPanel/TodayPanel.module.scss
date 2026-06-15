@@ -1,0 +1,69 @@
+.todayPanel {
+  width: min(640px, 100%);
+  padding: 1rem 1.15rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.section {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+  align-content: start;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.taskList,
+.habitList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  align-content: start;
+}
+
+.taskItem {
+  position: relative;
+  padding-left: 1rem;
+  color: var(--text-soft);
+}
+
+.taskItem::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.habitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  color: var(--text-soft);
+}
+
+.emptyItem {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 640px) {
+  .columns {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,54 @@
+.bookmarksWidget {
+  padding: 0.95rem;
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.stackForm {
+  display: grid;
+  gap: 0.52rem;
+}
+
+.inputField {
+  width: 100%;
+}
+
+.widgetList {
+  list-style: none;
+  margin: 0.82rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bookmarkItem {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  padding: 0.56rem 0.68rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.bookmarkLink:hover {
+  color: var(--accent);
+}
+
+.dangerButton {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+  padding: 0.3rem 0.55rem;
+  font-size: 0.9rem;
+}
+
+.dangerButton:hover {
+  border-color: var(--danger);
+}
