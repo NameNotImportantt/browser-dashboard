@@ -159,10 +159,9 @@ export function SettingsPanel({
       </header>
 
       <div className={styles.rows}>
-        <div className={styles.row}>
-          <section className={`${styles.section} ${styles.sectionFirst}`}>
-            <h3>{t(locale, "settingsGeneral")}</h3>
-            <div className={styles.grid}>
+        <section className={`${styles.section} ${styles.sectionFirst}`}>
+          <h3>{t(locale, "settingsGeneral")}</h3>
+          <div className={styles.grid}>
               <label className={styles.field}>
                 <span>{t(locale, "locale")}</span>
                 <select value={settings.locale} onChange={event => void onLocaleChange(event.target.value as typeof settings.locale)}>
@@ -199,8 +198,8 @@ export function SettingsPanel({
             </div>
           </section>
 
-          <section className={styles.section}>
-            <h3>{t(locale, "settingsDateTime")}</h3>
+        <section className={styles.section}>
+          <h3>{t(locale, "settingsDateTime")}</h3>
             <div className={styles.grid}>
               <label className={styles.field}>
                 <span>{t(locale, "timeFormat")}</span>
@@ -232,8 +231,8 @@ export function SettingsPanel({
             </div>
           </section>
 
-          <section className={styles.section}>
-            <h3>{t(locale, "searchEngines")}</h3>
+        <section className={styles.section}>
+          <h3>{t(locale, "searchEngines")}</h3>
             <label className={styles.field}>
               <span>{t(locale, "currentSearchEngines")}</span>
               <select value={settings.activeSearchEngineId} onChange={event => void onActiveSearchEngineChange(event.target.value)}>
@@ -275,13 +274,11 @@ export function SettingsPanel({
               </ul>
             ) : null}
           </section>
-        </div>
 
         <div className={styles.rowDivider} role="separator" aria-hidden />
 
-        <div className={styles.row}>
-          <section className={`${styles.section} ${styles.sectionFirst}`}>
-            <h3>{t(locale, "settingsAppearance")}</h3>
+        <section className={`${styles.section} ${styles.sectionFirst}`}>
+          <h3>{t(locale, "settingsAppearance")}</h3>
             <div className={styles.grid}>
               <div className={styles.field}>
                 <span>{t(locale, "backgroundImage")}</span>
@@ -328,7 +325,6 @@ export function SettingsPanel({
               </div>
             </div>
           </section>
-        </div>
       </div>
     </section>
   );
