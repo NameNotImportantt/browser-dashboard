@@ -1,22 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { db } from "@/db/database";
+import { DEFAULT_SETTINGS, geocodeCity, mergeSettings } from "@/app/settingsDefaults";
+import { isValidSearchUrlTemplate } from "@/app/searchUtils";
 import { createId, normalizeUrl, todayKey, WEATHER_CACHE_TTL_MS } from "@/app/utils";
+import { db } from "@/db/database";
 import type { Bookmark, CreateBookmarkPayload } from "@/db/types/bookmark";
 import type { Habit } from "@/db/types/habit";
 import type { Note } from "@/db/types/note";
-import type { AppSettings, SearchEngine, ThemeMode } from "@/db/types/settings";
+import type { AppLocale, AppSettings, CustomSearchEngine, DateFormatPreset, ThemeMode, TimeFormat } from "@/db/types/settings";
 import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
-import type { WeatherCache, WeatherLocation } from "@/db/types/weather";
+import type { WeatherCache } from "@/db/types/weather";
 import type { Workspace } from "@/db/types/workspace";
-
-const DEFAULT_SETTINGS: AppSettings = {
-  key: "app",
-  theme: "dark",
-  searchEngine: "duckduckgo",
-  lastWorkspaceId: null,
-  weatherLocation: null,
-  updatedAt: Date.now(),
-};
 
 interface Snapshot {
   workspaces: Workspace[];
@@ -41,7 +34,7 @@ async function ensureSeedData() {
     const now = Date.now();
     await db.workspaces.add({
       id,
-      name: "Личное",
+      name: "main",
       position: 0,
       createdAt: now,
     });
@@ -75,34 +68,9 @@ async function loadSnapshot(): Promise<Snapshot> {
     habits: sortByPosition(habits),
     bookmarks: sortByPosition(bookmarks),
     notes,
-    settings: settings ?? DEFAULT_SETTINGS,
+    settings: mergeSettings(settings),
     weatherCache: weatherCache ?? null,
   };
-}
-
-async function detectLocation(): Promise<WeatherLocation | null> {
-  if (!navigator.geolocation) {
-    return null;
-  }
-
-  try {
-    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        timeout: 6000,
-        maximumAge: 30 * 60 * 1000,
-      });
-    });
-
-    const lat = Number(position.coords.latitude.toFixed(4));
-    const lon = Number(position.coords.longitude.toFixed(4));
-    return {
-      lat,
-      lon,
-      label: "Текущая геопозиция",
-    };
-  } catch {
-    return null;
-  }
 }
 
 export function useDashboardData() {
@@ -126,6 +94,19 @@ export function useDashboardData() {
     setSnapshot(nextSnapshot);
     setActiveWorkspaceId(nextActiveWorkspaceId);
   }, [activeWorkspaceId]);
+
+  const patchSettings = useCallback(
+    async (patch: Partial<AppSettings>) => {
+      const currentSettings = mergeSettings(await db.settings.get("app"));
+      await db.settings.put({
+        ...currentSettings,
+        ...patch,
+        updatedAt: Date.now(),
+      });
+      await refresh();
+    },
+    [refresh],
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -181,7 +162,7 @@ export function useDashboardData() {
 
   const workspaceHabits = useMemo(() => {
     if (!activeWorkspaceId) return [];
-    return habits.filter(item => item.workspaceId === activeWorkspaceId);
+    return sortByPosition(habits.filter(item => item.workspaceId === activeWorkspaceId));
   }, [activeWorkspaceId, habits]);
 
   const workspaceBookmarks = useMemo(() => {
@@ -200,15 +181,9 @@ export function useDashboardData() {
 
   const selectWorkspace = useCallback(
     async (workspaceId: string) => {
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
-      await db.settings.put({
-        ...currentSettings,
-        lastWorkspaceId: workspaceId,
-        updatedAt: Date.now(),
-      });
-      await refresh();
+      await patchSettings({ lastWorkspaceId: workspaceId });
     },
-    [refresh],
+    [patchSettings],
   );
 
   const addWorkspace = useCallback(
@@ -227,16 +202,9 @@ export function useDashboardData() {
         createdAt: now,
       });
 
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
-      await db.settings.put({
-        ...currentSettings,
-        lastWorkspaceId: id,
-        updatedAt: now,
-      });
-
-      await refresh();
+      await patchSettings({ lastWorkspaceId: id });
     },
-    [refresh, workspaces.length],
+    [patchSettings, workspaces.length],
   );
 
   const deleteWorkspace = useCallback(
@@ -245,7 +213,7 @@ export function useDashboardData() {
       if (!workspaces.some(item => item.id === workspaceId)) return;
 
       const remaining = workspaces.filter(item => item.id !== workspaceId);
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
+      const currentSettings = mergeSettings(await db.settings.get("app"));
       const isDeletingActive = currentSettings.lastWorkspaceId === workspaceId;
 
       await db.transaction("rw", [db.workspaces, db.todos, db.habits, db.bookmarks, db.notes, db.settings], async () => {
@@ -271,30 +239,54 @@ export function useDashboardData() {
     [refresh, workspaces],
   );
 
-  const setTheme = useCallback(
-    async (theme: ThemeMode) => {
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
-      await db.settings.put({
-        ...currentSettings,
-        theme,
-        updatedAt: Date.now(),
-      });
-      await refresh();
-    },
-    [refresh],
+  const setTheme = useCallback(async (theme: ThemeMode) => patchSettings({ theme }), [patchSettings]);
+
+  const setActiveSearchEngineId = useCallback(
+    async (activeSearchEngineId: string) => patchSettings({ activeSearchEngineId }),
+    [patchSettings],
   );
 
-  const setSearchEngine = useCallback(
-    async (searchEngine: SearchEngine) => {
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
-      await db.settings.put({
-        ...currentSettings,
-        searchEngine,
-        updatedAt: Date.now(),
+  const setTimeFormat = useCallback(async (timeFormat: TimeFormat) => patchSettings({ timeFormat }), [patchSettings]);
+
+  const setTimezone = useCallback(async (timezone: string) => patchSettings({ timezone }), [patchSettings]);
+
+  const setLocale = useCallback(async (locale: AppLocale) => patchSettings({ locale }), [patchSettings]);
+
+  const setDateFormat = useCallback(async (dateFormat: DateFormatPreset) => patchSettings({ dateFormat }), [patchSettings]);
+
+  const setTabTitle = useCallback(async (tabTitle: string) => patchSettings({ tabTitle: tabTitle.trim() || DEFAULT_SETTINGS.tabTitle }), [patchSettings]);
+
+  const addCustomSearchEngine = useCallback(
+    async (payload: { name: string; urlTemplate: string }) => {
+      const name = payload.name.trim();
+      const urlTemplate = payload.urlTemplate.trim();
+      if (!name || !isValidSearchUrlTemplate(urlTemplate)) return;
+
+      const currentSettings = mergeSettings(await db.settings.get("app"));
+      const engine: CustomSearchEngine = {
+        id: createId(),
+        name,
+        urlTemplate,
+      };
+
+      await patchSettings({
+        customSearchEngines: [...currentSettings.customSearchEngines, engine],
+        activeSearchEngineId: engine.id,
       });
-      await refresh();
     },
-    [refresh],
+    [patchSettings],
+  );
+
+  const removeCustomSearchEngine = useCallback(
+    async (engineId: string) => {
+      const currentSettings = mergeSettings(await db.settings.get("app"));
+      const customSearchEngines = currentSettings.customSearchEngines.filter(engine => engine.id !== engineId);
+      const activeSearchEngineId =
+        currentSettings.activeSearchEngineId === engineId ? "duckduckgo" : currentSettings.activeSearchEngineId;
+
+      await patchSettings({ customSearchEngines, activeSearchEngineId });
+    },
+    [patchSettings],
   );
 
   const addTodo = useCallback(
@@ -459,7 +451,7 @@ export function useDashboardData() {
 
   const refreshWeather = useCallback(
     async (force = false) => {
-      const currentSettings = (await db.settings.get("app")) ?? DEFAULT_SETTINGS;
+      const currentSettings = mergeSettings(await db.settings.get("app"));
       const cache = await db.weatherCache.get("current");
       const cacheIsFresh = cache ? Date.now() - cache.fetchedAt < WEATHER_CACHE_TTL_MS : false;
 
@@ -468,7 +460,7 @@ export function useDashboardData() {
         return;
       }
 
-      const location = currentSettings.weatherLocation ?? (await detectLocation());
+      const location = currentSettings.weatherLocation;
       if (!location) {
         await db.weatherCache.delete("current");
         await refresh();
@@ -508,15 +500,18 @@ export function useDashboardData() {
         fetchedAt: now,
       });
 
-      await db.settings.put({
-        ...currentSettings,
-        weatherLocation: location,
-        updatedAt: now,
-      });
-
       await refresh();
     },
     [refresh],
+  );
+
+  const setWeatherCity = useCallback(
+    async (city: string) => {
+      const location = await geocodeCity(city);
+      await patchSettings({ weatherLocation: location });
+      await refreshWeather(true);
+    },
+    [patchSettings, refreshWeather],
   );
 
   const actions = useMemo(
@@ -526,7 +521,15 @@ export function useDashboardData() {
       addWorkspace,
       deleteWorkspace,
       setTheme,
-      setSearchEngine,
+      setActiveSearchEngineId,
+      setTimeFormat,
+      setTimezone,
+      setLocale,
+      setDateFormat,
+      setTabTitle,
+      addCustomSearchEngine,
+      removeCustomSearchEngine,
+      setWeatherCity,
       addTodo,
       toggleTodo,
       deleteTodo,
@@ -545,7 +548,15 @@ export function useDashboardData() {
       addWorkspace,
       deleteWorkspace,
       setTheme,
-      setSearchEngine,
+      setActiveSearchEngineId,
+      setTimeFormat,
+      setTimezone,
+      setLocale,
+      setDateFormat,
+      setTabTitle,
+      addCustomSearchEngine,
+      removeCustomSearchEngine,
+      setWeatherCity,
       addTodo,
       toggleTodo,
       deleteTodo,

@@ -1,7 +1,7 @@
 import type { CreateBookmarkPayload } from "@/db/types/bookmark";
 import type { Bookmark } from "@/db/types/bookmark";
 import type { Habit } from "@/db/types/habit";
-import type { SearchEngine, ThemeMode } from "@/db/types/settings";
+import type { AppSettings, ThemeMode } from "@/db/types/settings";
 import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
 import type { WeatherCache } from "@/db/types/weather";
 import type { Workspace } from "@/db/types/workspace";
@@ -10,7 +10,7 @@ export interface HomePageProps {
   timeLabel: string;
   dateLabel: string;
   theme: ThemeMode;
-  searchEngine: SearchEngine;
+  settings: AppSettings;
   weather: WeatherCache | null;
   workspaces: Workspace[];
   activeWorkspaceId: string | null;
@@ -19,7 +19,15 @@ export interface HomePageProps {
   bookmarks: Bookmark[];
   noteText: string;
   onThemeToggle: (theme: ThemeMode) => Promise<void>;
-  onSearchEngineChange: (engine: SearchEngine) => Promise<void>;
+  onActiveSearchEngineChange: (engineId: string) => Promise<void>;
+  onTimeFormatChange: (value: AppSettings["timeFormat"]) => Promise<void>;
+  onTimezoneChange: (value: string) => Promise<void>;
+  onLocaleChange: (value: AppSettings["locale"]) => Promise<void>;
+  onDateFormatChange: (value: AppSettings["dateFormat"]) => Promise<void>;
+  onTabTitleChange: (value: string) => Promise<void>;
+  onAddCustomSearchEngine: (payload: { name: string; urlTemplate: string }) => Promise<void>;
+  onRemoveCustomSearchEngine: (engineId: string) => Promise<void>;
+  onWeatherCityChange: (city: string) => Promise<void>;
   onRefreshWeather: () => Promise<void>;
   onSelectWorkspace: (id: string) => Promise<void>;
   onAddWorkspace: (name: string) => Promise<void>;

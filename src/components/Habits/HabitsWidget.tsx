@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { todayKey } from "@/app/utils";
+import { getHabitStreak, todayKey } from "@/app/utils";
 import type { HabitsWidgetProps } from "@/components/Habits/types/HabitsWidgetProps";
 import styles from "./HabitsWidget.module.scss";
 
@@ -12,7 +12,7 @@ export function HabitsWidget({ habits, onAdd, onToggleToday, onDelete }: HabitsW
       habits.map(habit => ({
         ...habit,
         completedToday: habit.completionDates.includes(today),
-        streak: getCurrentStreak(habit.completionDates),
+        streak: getHabitStreak(habit.completionDates, today),
       })),
     [habits, today],
   );
@@ -56,24 +56,4 @@ export function HabitsWidget({ habits, onAdd, onToggleToday, onDelete }: HabitsW
       </ul>
     </section>
   );
-}
-
-function getCurrentStreak(completionDates: string[]) {
-  if (completionDates.length === 0) return 0;
-
-  const completionSet = new Set(completionDates);
-  let streak = 0;
-  const cursor = new Date();
-  cursor.setHours(0, 0, 0, 0);
-
-  while (true) {
-    const key = cursor.toISOString().slice(0, 10);
-    if (!completionSet.has(key)) {
-      break;
-    }
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  return streak;
 }

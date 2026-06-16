@@ -28,6 +28,35 @@ export class DashboardDatabase extends Dexie {
       settings: "key,updatedAt",
       weatherCache: "id,fetchedAt",
     });
+
+    this.version(2)
+      .stores({
+        workspaces: "id,position,createdAt",
+        todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
+        notes: "id,workspaceId,updatedAt",
+        habits: "id,workspaceId,position,createdAt",
+        bookmarks: "id,workspaceId,position,createdAt",
+        settings: "key,updatedAt",
+        weatherCache: "id,fetchedAt",
+      })
+      .upgrade(async transaction => {
+        await transaction
+          .table("settings")
+          .toCollection()
+          .modify((settings: Record<string, unknown>) => {
+            const legacySearchEngine = settings.searchEngine as string | undefined;
+
+            settings.activeSearchEngineId = settings.activeSearchEngineId ?? legacySearchEngine ?? "duckduckgo";
+            settings.customSearchEngines = settings.customSearchEngines ?? [];
+            settings.timeFormat = settings.timeFormat ?? "24h";
+            settings.timezone = settings.timezone ?? "auto";
+            settings.locale = settings.locale ?? "ru";
+            settings.dateFormat = settings.dateFormat ?? "dd.MM.yyyy";
+            settings.tabTitle = settings.tabTitle ?? "Personal Dashboard";
+
+            delete settings.searchEngine;
+          });
+      });
   }
 }
 

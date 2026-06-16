@@ -1,6 +1,7 @@
-import type { SearchEngine } from "@/db/types/settings";
+import type { CustomSearchEngine } from "@/db/types/settings";
 
 export interface SearchCoreProps {
-  engine: SearchEngine;
-  onEngineChange: (engine: SearchEngine) => Promise<void>;
+  activeSearchEngineId: string;
+  customSearchEngines: CustomSearchEngine[];
+  onEngineChange: (engineId: string) => Promise<void>;
 }

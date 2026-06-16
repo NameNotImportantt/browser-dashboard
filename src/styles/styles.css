@@ -39,10 +39,15 @@
   --radius-lg: 18px;
   --radius-xl: 24px;
 
-  /* Shadows (single system) */
-  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.22);
-  --shadow-glow: 0 0 0 1px var(--border), 0 8px 32px rgba(8, 13, 24, 0.55);
+  /* Shadows (purple accent glow) */
+  --shadow-sm: 0 2px 10px rgba(124, 109, 255, 0.16);
+  --shadow-md:
+    0 0 0 1px rgba(124, 109, 255, 0.16),
+    0 6px 28px rgba(124, 109, 255, 0.24),
+    0 2px 10px rgba(124, 109, 255, 0.14);
+  --shadow-glow:
+    0 0 0 1px rgba(124, 109, 255, 0.1),
+    0 4px 18px rgba(124, 109, 255, 0.16);
 
   /* Font */
   --font: "Inter", system-ui, -apple-system, sans-serif;
@@ -68,6 +73,15 @@
   --accent: #5f55e6;
   --accent-soft: rgba(95, 85, 230, 0.18);
   --accent-glow: rgba(95, 85, 230, 0.25);
+
+  --shadow-sm: 0 2px 10px rgba(95, 85, 230, 0.14);
+  --shadow-md:
+    0 0 0 1px rgba(95, 85, 230, 0.14),
+    0 6px 24px rgba(95, 85, 230, 0.18),
+    0 2px 8px rgba(95, 85, 230, 0.1);
+  --shadow-glow:
+    0 0 0 1px rgba(95, 85, 230, 0.08),
+    0 4px 14px rgba(95, 85, 230, 0.12);
 }
 
 /* ========== BASE RESET ========== */
@@ -91,7 +105,7 @@ body {
   overflow: hidden;
 
   background:
-    radial-gradient(900px 400px at 50% 0%, rgba(124, 109, 255, 0.18), transparent 60%),
+    radial-gradient(1200px 420px at 50% -5%, rgba(124, 109, 255, 0.16), transparent 65%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
 
   background-attachment: fixed;
@@ -112,17 +126,19 @@ select {
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glow);
   backdrop-filter: blur(12px);
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transform: translateY(-2px);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
+  border-color: var(--border);
+  transform: translateY(0);
   box-shadow: var(--shadow-md);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
 }
 
 /* ========== GLASS VARIANT ========== */
@@ -137,10 +153,10 @@ select {
 
 .glow {
   position: absolute;
-  width: 420px;
-  height: 240px;
-  background: radial-gradient(circle, var(--accent-glow), transparent 70%);
-  filter: blur(20px);
+  width: min(720px, 90vw);
+  height: 280px;
+  background: radial-gradient(ellipse at center, var(--accent-glow), transparent 72%);
+  filter: blur(24px);
   pointer-events: none;
 }
 
@@ -170,12 +186,16 @@ button {
   border-radius: var(--radius-md);
   padding: 0.5rem 0.75rem;
   cursor: pointer;
-  transition: 0.18s ease;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 
 button:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  border-color: var(--border);
+  transform: translateY(0);
+  background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+  box-shadow: var(--shadow-md);
 }
 
 /* Primary button */
@@ -184,6 +204,13 @@ button.primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-soft));
   border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
   color: #f8f8ff;
+  transform: translateY(-1px);
+}
+
+button.primary:hover {
+  transform: translateY(0);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 82%, var(--surface)), color-mix(in srgb, var(--accent-soft) 75%, transparent));
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
 }
 
 /* ========== INPUTS ========== */
@@ -196,12 +223,16 @@ select {
   border-radius: var(--radius-md);
   padding: 0.55rem 0.7rem;
   outline: none;
-  transition: border-color 0.18s ease;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 input:focus,
 select:focus {
   border-color: var(--accent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+    0 4px 16px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* ========== LAYOUT HELPERS ========== */
