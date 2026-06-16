@@ -1,0 +1,61 @@
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+.box {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  color: #f8f8ff;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.checkIcon {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.input:focus-visible + .box {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+    0 4px 16px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.input:checked + .box {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent-soft) 80%, var(--accent)));
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+.input:checked + .box .checkIcon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.label {
+  min-width: 0;
+}

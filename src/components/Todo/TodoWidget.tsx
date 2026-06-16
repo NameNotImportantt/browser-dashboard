@@ -1,5 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { reorderIds, t } from "@/app";
+import { Checkbox } from "@/components/Checkbox";
+import { Select } from "@/components/Select";
 import type { TodoPriority, TodoWidgetProps } from "./types/TodoWidgetProps";
 import styles from "./TodoWidget.module.scss";
 
@@ -10,6 +12,14 @@ export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder
   const [draggedId, setDraggedId] = useState<string | null>(null);
 
   const todoIds = useMemo(() => todos.map(item => item.id), [todos]);
+  const priorityOptions = useMemo(
+    () => [
+      { value: "low", label: t(locale, "priorityLow") },
+      { value: "medium", label: t(locale, "priorityMedium") },
+      { value: "high", label: t(locale, "priorityHigh") },
+    ],
+    [locale],
+  );
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,11 +48,13 @@ export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder
       <form className={styles.stackForm} onSubmit={submit}>
         <input className={styles.inputField} value={title} onChange={event => setTitle(event.target.value)} placeholder="Новая задача" required />
         <div className={styles.inlineRow}>
-          <select className={styles.inputField} value={priority} onChange={event => setPriority(event.target.value as TodoPriority)}>
-            <option value="low">{t(locale, "priorityLow")}</option>
-            <option value="medium">{t(locale, "priorityMedium")}</option>
-            <option value="high">{t(locale, "priorityHigh")}</option>
-          </select>
+          <Select
+            className={styles.inputField}
+            value={priority}
+            options={priorityOptions}
+            onChange={value => setPriority(value as TodoPriority)}
+            ariaLabel="Приоритет"
+          />
           <input className={styles.inputField} type="date" value={dueDate} onChange={event => setDueDate(event.target.value)} />
         </div>
         <button className="primary" type="submit">
@@ -62,10 +74,12 @@ export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder
               void dropOn(todo.id);
             }}
           >
-            <label className={styles.todoLabel}>
-              <input type="checkbox" checked={todo.completed} onChange={() => void onToggle(todo.id)} />
-              <span className={todo.completed ? styles.isCompleted : ""}>{todo.title}</span>
-            </label>
+            <Checkbox
+              className={styles.todoLabel}
+              checked={todo.completed}
+              onChange={() => void onToggle(todo.id)}
+              label={<span className={todo.completed ? styles.isCompleted : ""}>{todo.title}</span>}
+            />
 
             <div className={styles.todoMeta}>
               <small className={`${styles.todoBadge} ${priorityBadgeClass(todo.priority)}`}>{priorityLabel(todo.priority, locale)}</small>

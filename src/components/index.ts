@@ -1,3 +1,9 @@
+export { Checkbox } from "./Checkbox";
+export type { CheckboxProps } from "./Checkbox";
+
+export { Select } from "./Select";
+export type { SelectOption, SelectProps } from "./Select";
+
 export { QuickLinks } from "./QuickLinks";
 export type { QuickLinksProps } from "./QuickLinks";
 

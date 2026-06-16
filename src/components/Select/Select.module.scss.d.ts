@@ -1,0 +1,9 @@
+export declare const chevron: string;
+export declare const chevronOpen: string;
+export declare const listbox: string;
+export declare const option: string;
+export declare const optionActive: string;
+export declare const optionSelected: string;
+export declare const select: string;
+export declare const trigger: string;
+export declare const triggerLabel: string;
