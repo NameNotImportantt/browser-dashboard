@@ -111,6 +111,12 @@ body {
   background-attachment: fixed;
 }
 
+html[data-custom-bg="true"] body {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 35%, transparent) 0%, color-mix(in srgb, var(--bg-deep) 72%, transparent) 100%),
+    var(--app-bg-image) center / cover no-repeat fixed;
+}
+
 a {
   color: inherit;
   text-decoration: none;

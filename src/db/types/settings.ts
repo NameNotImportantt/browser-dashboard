@@ -14,6 +14,14 @@ export interface CustomSearchEngine {
   urlTemplate: string;
 }
 
+export type TextColorKey = "text" | "textSoft" | "textMuted";
+
+export interface CustomTextColors {
+  text: string | null;
+  textSoft: string | null;
+  textMuted: string | null;
+}
+
 export interface AppSettings {
   key: "app";
   theme: ThemeMode;
@@ -26,5 +34,7 @@ export interface AppSettings {
   tabTitle: string;
   lastWorkspaceId: string | null;
   weatherLocation: WeatherLocation | null;
+  customBackgroundImage: string | null;
+  customTextColors: CustomTextColors | null;
   updatedAt: number;
 }
