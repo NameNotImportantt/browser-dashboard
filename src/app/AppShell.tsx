@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { applyCustomTextColors } from "@/app/themeTextColors";
 import { DEFAULT_TAB_TITLE } from "@/app/settingsDefaults";
 import { HomePage } from "@/pages/HomePage";
 import { useClock } from "@/hooks/useClock";
@@ -25,6 +26,7 @@ export function AppShell() {
     todos,
     habits,
     bookmarks,
+    bookmarkCategories,
     noteText,
     actions,
   } = dashboard;
@@ -32,6 +34,23 @@ export function AppShell() {
   useEffect(() => {
     document.documentElement.dataset.theme = settings.theme;
   }, [settings.theme]);
+
+  useEffect(() => {
+    applyCustomTextColors(settings.theme, settings.customTextColors);
+  }, [settings.theme, settings.customTextColors]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (settings.customBackgroundImage) {
+      root.dataset.customBg = "true";
+      root.style.setProperty("--app-bg-image", `url("${settings.customBackgroundImage}")`);
+      return;
+    }
+
+    delete root.dataset.customBg;
+    root.style.removeProperty("--app-bg-image");
+  }, [settings.customBackgroundImage]);
 
   useEffect(() => {
     document.documentElement.lang = settings.locale;
@@ -75,6 +94,7 @@ export function AppShell() {
       todos={todos}
       habits={habits}
       bookmarks={bookmarks}
+      bookmarkCategories={bookmarkCategories}
       noteText={noteText}
       onThemeToggle={actions.setTheme}
       onActiveSearchEngineChange={actions.setActiveSearchEngineId}
@@ -83,6 +103,10 @@ export function AppShell() {
       onLocaleChange={actions.setLocale}
       onDateFormatChange={actions.setDateFormat}
       onTabTitleChange={actions.setTabTitle}
+      onBackgroundImageChange={actions.setBackgroundImageFromFile}
+      onBackgroundImageRemove={actions.clearBackgroundImage}
+      onTextColorChange={actions.setTextColor}
+      onTextColorsReset={actions.resetTextColors}
       onAddCustomSearchEngine={actions.addCustomSearchEngine}
       onRemoveCustomSearchEngine={actions.removeCustomSearchEngine}
       onWeatherCityChange={actions.setWeatherCity}
@@ -99,6 +123,8 @@ export function AppShell() {
       onDeleteHabit={actions.deleteHabit}
       onAddBookmark={actions.addBookmark}
       onDeleteBookmark={actions.deleteBookmark}
+      onAddBookmarkCategory={actions.addBookmarkCategory}
+      onDeleteBookmarkCategory={actions.deleteBookmarkCategory}
       onSaveNote={actions.saveNote}
     />
   );

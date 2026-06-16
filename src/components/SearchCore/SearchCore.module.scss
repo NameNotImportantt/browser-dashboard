@@ -1,5 +1,6 @@
 .searchCore {
-  width: min(640px, 100%);
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .searchForm {
@@ -17,13 +18,20 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0 0.85rem;
-  box-shadow: var(--shadow-glow);
+  isolation: isolate;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 6px 24px color-mix(in srgb, var(--accent-glow) 80%, transparent),
+    0 10px 36px rgba(7, 10, 17, 0.32);
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .searchField:focus-within {
-  border-color: var(--border);
-  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 8px 30px color-mix(in srgb, var(--accent-glow) 95%, transparent),
+    0 14px 42px rgba(7, 10, 17, 0.38);
 }
 
 .searchIcon {
@@ -55,6 +63,7 @@
 .engineSelect {
   min-width: 9.5rem;
   background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
+  border-radius: var(--radius-md);
 }
 
 @media (max-width: 640px) {

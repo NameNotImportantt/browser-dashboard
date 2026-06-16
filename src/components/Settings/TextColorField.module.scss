@@ -1,0 +1,40 @@
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.hexInput {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+.swatchRow {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+  box-shadow: var(--shadow-sm);
+  transform: none;
+}
+
+.swatch:hover {
+  transform: scale(1.06);
+  border-color: var(--border-strong);
+}
+
+.swatch:first-child {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    var(--shadow-sm);
+}

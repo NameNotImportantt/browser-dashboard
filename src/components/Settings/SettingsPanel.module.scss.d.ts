@@ -1,3 +1,5 @@
+export declare const backgroundPreview: string;
+export declare const columns: string;
 export declare const customEngineForm: string;
 export declare const dangerButton: string;
 export declare const engineList: string;
@@ -5,7 +7,12 @@ export declare const error: string;
 export declare const field: string;
 export declare const grid: string;
 export declare const header: string;
+export declare const hiddenInput: string;
 export declare const hint: string;
 export declare const inlineRow: string;
+export declare const row: string;
+export declare const rowDivider: string;
+export declare const rows: string;
 export declare const section: string;
+export declare const sectionFirst: string;
 export declare const settingsPanel: string;
