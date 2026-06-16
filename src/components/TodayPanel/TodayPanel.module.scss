@@ -37,16 +37,27 @@
 }
 
 .taskItem {
-  position: relative;
-  padding-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   color: var(--text-soft);
 }
 
-.taskItem::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--accent);
+.priorityIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.priorityHigh {
+  color: var(--danger);
+}
+
+.priorityMedium {
+  color: var(--warning);
+}
+
+.priorityLow {
+  color: var(--success);
 }
 
 .habitItem {

@@ -3,7 +3,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.15rem;
+  gap: 0.1rem;
+  min-height: 1.5rem;
 }
 
 .workspaceItem {
@@ -36,15 +37,18 @@
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  padding: 0.35rem 0.5rem;
+  padding: 0.1rem 0.35rem;
+  line-height: 1.2;
+  box-shadow: none;
 }
 
 .workspaceButton:hover {
   color: var(--text-soft);
   transform: none;
+  box-shadow: none;
 }
 
 .workspaceButton.isActive {
@@ -100,18 +104,27 @@
 }
 
 .addButton {
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  padding: 0.35rem 0.5rem;
+  line-height: 1;
+  padding: 0;
+  box-shadow: var(--shadow-glow);
 }
 
 .addButton:hover {
   color: var(--accent);
+  border-color: var(--accent);
   transform: none;
+  box-shadow: var(--shadow-md);
 }
 
 .addForm {
@@ -127,6 +140,13 @@
 }
 
 .addForm button {
-  padding: 0.35rem 0.55rem;
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1;
 }
