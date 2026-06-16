@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { NotesWidgetProps } from "@/components/Notes/types/NotesWidgetProps";
+import type { NotesWidgetProps } from "./types/NotesWidgetProps";
 import styles from "./NotesWidget.module.scss";
 
 export function NotesWidget({ text, onSave }: NotesWidgetProps) {

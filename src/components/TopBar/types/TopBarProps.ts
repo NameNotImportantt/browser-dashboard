@@ -1,4 +1,4 @@
-import type { WeatherCache } from "@/db/types/weather";
+import type { WeatherCache } from "@/db/types";
 
 export interface TopBarProps {
   time: string;

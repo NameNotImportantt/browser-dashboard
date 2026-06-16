@@ -1,11 +1,17 @@
-import type { CreateBookmarkPayload } from "@/db/types/bookmark";
-import type { Bookmark } from "@/db/types/bookmark";
-import type { BookmarkCategory, CreateBookmarkCategoryPayload } from "@/db/types/bookmarkCategory";
-import type { Habit } from "@/db/types/habit";
-import type { AppSettings, TextColorKey, ThemeMode } from "@/db/types/settings";
-import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
-import type { WeatherCache } from "@/db/types/weather";
-import type { Workspace } from "@/db/types/workspace";
+import type {
+  AppSettings,
+  Bookmark,
+  BookmarkCategory,
+  CreateBookmarkCategoryPayload,
+  CreateBookmarkPayload,
+  CreateTodoPayload,
+  Habit,
+  TextColorKey,
+  ThemeMode,
+  TodoItem,
+  WeatherCache,
+  Workspace,
+} from "@/db/types";
 
 export interface HomePageProps {
   timeLabel: string;
@@ -22,11 +28,11 @@ export interface HomePageProps {
   noteText: string;
   onThemeToggle: (theme: ThemeMode) => Promise<void>;
   onActiveSearchEngineChange: (engineId: string) => Promise<void>;
-  onTimeFormatChange: (value: AppSettings["timeFormat"]) => Promise<void>;
-  onTimezoneChange: (value: string) => Promise<void>;
-  onLocaleChange: (value: AppSettings["locale"]) => Promise<void>;
-  onDateFormatChange: (value: AppSettings["dateFormat"]) => Promise<void>;
-  onTabTitleChange: (value: string) => Promise<void>;
+  onTimeFormatChange: (format: AppSettings["timeFormat"]) => Promise<void>;
+  onTimezoneChange: (timezone: string) => Promise<void>;
+  onLocaleChange: (locale: AppSettings["locale"]) => Promise<void>;
+  onDateFormatChange: (format: AppSettings["dateFormat"]) => Promise<void>;
+  onTabTitleChange: (title: string) => Promise<void>;
   onBackgroundImageChange: (file: File) => Promise<void>;
   onBackgroundImageRemove: () => Promise<void>;
   onTextColorChange: (key: TextColorKey, value: string | null) => Promise<void>;
@@ -35,9 +41,9 @@ export interface HomePageProps {
   onRemoveCustomSearchEngine: (engineId: string) => Promise<void>;
   onWeatherCityChange: (city: string) => Promise<void>;
   onRefreshWeather: () => Promise<void>;
-  onSelectWorkspace: (id: string) => Promise<void>;
+  onSelectWorkspace: (workspaceId: string) => Promise<void>;
   onAddWorkspace: (name: string) => Promise<void>;
-  onDeleteWorkspace: (id: string) => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
   onAddTodo: (payload: CreateTodoPayload) => Promise<void>;
   onToggleTodo: (todoId: string) => Promise<void>;
   onDeleteTodo: (todoId: string) => Promise<void>;

@@ -1,16 +1,8 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { BackgroundImageError } from "@/app/backgroundImage";
-import { t } from "@/app/i18n";
-import { getSearchEngineOptions, SEARCH_URL_HINT } from "@/app/searchUtils";
-import {
-  normalizeHexColor,
-  resolveTextColor,
-  TEXT_COLOR_SWATCHES,
-  THEME_TEXT_COLORS,
-} from "@/app/themeTextColors";
-import { TextColorField } from "@/components/Settings/TextColorField";
-import type { SettingsPanelProps } from "@/components/Settings/types/SettingsPanelProps";
-import type { TextColorKey } from "@/db/types/settings";
+import { BackgroundImageError, getSearchEngineOptions, SEARCH_URL_HINT, t, TEXT_COLOR_SWATCHES, THEME_TEXT_COLORS, normalizeHexColor, resolveTextColor } from "@/app";
+import { TextColorField } from "./TextColorField";
+import type { SettingsPanelProps } from "./types/SettingsPanelProps";
+import type { TextColorKey } from "@/db/types";
 import styles from "./SettingsPanel.module.scss";
 
 const TIMEZONE_OPTIONS = [

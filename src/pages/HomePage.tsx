@@ -1,20 +1,22 @@
 import { lazy, memo, Suspense, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import { QuickLinks } from "@/components/QuickLinks/QuickLinks";
-import { ScreenMenu } from "@/components/ScreenMenu/ScreenMenu";
-import menuStyles from "@/components/ScreenMenu/ScreenMenu.module.scss";
-import type { ScreenId } from "@/components/ScreenMenu/types/ScreenMenuProps";
-import { SearchCore } from "@/components/SearchCore/SearchCore";
-import { SettingsPanel } from "@/components/Settings/SettingsPanel";
-import { TodayPanel } from "@/components/TodayPanel/TodayPanel";
-import { TodoWidget } from "@/components/Todo/TodoWidget";
-import { TopBar } from "@/components/TopBar/TopBar";
-import { WorkspaceBar } from "@/components/WorkspaceBar/WorkspaceBar";
-import type { HomePageProps } from "@/pages/types/HomePageProps";
+import {
+  QuickLinks,
+  ScreenMenu,
+  screenMenuStyles,
+  SearchCore,
+  SettingsPanel,
+  TodayPanel,
+  TodoWidget,
+  TopBar,
+  WorkspaceBar,
+  type ScreenId,
+} from "@/components";
+import type { HomePageProps } from "@/pages";
 import styles from "./HomePage.module.scss";
 
-const HabitsWidget = lazy(() => import("@/components/Habits/HabitsWidget").then(module => ({ default: module.HabitsWidget })));
-const NotesWidget = lazy(() => import("@/components/Notes/NotesWidget").then(module => ({ default: module.NotesWidget })));
+const HabitsWidget = lazy(() => import("@/components").then(module => ({ default: module.HabitsWidget })));
+const NotesWidget = lazy(() => import("@/components").then(module => ({ default: module.NotesWidget })));
 
 export const HomePage = memo(function HomePage(props: HomePageProps) {
   const {
@@ -75,7 +77,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
           <ScreenMenu activeScreen={activeScreen} locale={settings.locale} onSelect={setActiveScreen} />
           <button
             type="button"
-            className={menuStyles.iconButton}
+            className={screenMenuStyles.iconButton}
             onClick={() => void onThemeToggle(theme === "dark" ? "light" : "dark")}
             aria-label="Переключить тему"
           >

@@ -1,6 +1,4 @@
-import type { AppLocale } from "@/db/types/settings";
-import type { Habit } from "@/db/types/habit";
-import type { TodoItem } from "@/db/types/todo";
+import type { AppLocale, Habit, TodoItem } from "@/db/types";
 
 export interface TodayPanelProps {
   todos: TodoItem[];

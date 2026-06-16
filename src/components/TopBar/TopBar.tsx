@@ -1,5 +1,5 @@
-import { weatherCodeToEmoji } from "@/app/utils";
-import type { TopBarProps } from "@/components/TopBar/types/TopBarProps";
+import { weatherCodeToEmoji } from "@/app";
+import type { TopBarProps } from "./types/TopBarProps";
 import styles from "./TopBar.module.scss";
 
 export function TopBar({ time, date, weather, onRefreshWeather }: TopBarProps) {

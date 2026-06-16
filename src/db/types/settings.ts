@@ -1,4 +1,4 @@
-import type { WeatherLocation } from "@/db/types/weather";
+import type { WeatherLocation } from "./weather";
 
 export type ThemeMode = "light" | "dark";
 

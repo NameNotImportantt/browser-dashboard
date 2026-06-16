@@ -1,4 +1,4 @@
-import type { AppLocale, AppSettings, DateFormatPreset, TimeFormat } from "@/db/types/settings";
+import type { AppLocale, AppSettings, DateFormatPreset, TimeFormat } from "@/db/types";
 
 export const DEFAULT_TAB_TITLE = "Personal Dashboard";
 

@@ -1,4 +1,4 @@
-import type { AppLocale } from "@/db/types/settings";
+import type { AppLocale } from "@/db/types";
 
 export type ScreenId = "home" | "todo" | "habits" | "notes" | "settings";
 

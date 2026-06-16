@@ -1,0 +1,30 @@
+export { BackgroundImageError, prepareBackgroundImageDataUrl } from "./backgroundImage";
+export { t } from "./i18n";
+export { buildSearchUrl, getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT } from "./searchUtils";
+export {
+  DEFAULT_SETTINGS,
+  DEFAULT_TAB_TITLE,
+  formatClockLabels,
+  geocodeCity,
+  mergeSettings,
+  resolveTimezone,
+} from "./settingsDefaults";
+export {
+  applyCustomTextColors,
+  normalizeHexColor,
+  resolveTextColor,
+  TEXT_COLOR_SWATCHES,
+  THEME_TEXT_COLORS,
+} from "./themeTextColors";
+export {
+  createId,
+  dateToKey,
+  getHabitStreak,
+  normalizeUrl,
+  reorderIds,
+  todayKey,
+  weatherCodeToEmoji,
+  WEATHER_CACHE_TTL_MS,
+} from "./utils";
+export { runSmokeChecks } from "./smokeChecks";
+export { AppShell } from "./AppShell";
