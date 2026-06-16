@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { BackgroundImageError, getSearchEngineOptions, SEARCH_URL_HINT, t, TEXT_COLOR_SWATCHES, THEME_TEXT_COLORS, normalizeHexColor, resolveTextColor } from "@/app";
+import { Select } from "@/components/Select";
 import { TextColorField } from "./TextColorField";
 import type { SettingsPanelProps } from "./types/SettingsPanelProps";
 import type { TextColorKey } from "@/db/types";
@@ -76,6 +77,45 @@ export function SettingsPanel({
 
   const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
   const colorSwatches = TEXT_COLOR_SWATCHES[theme];
+
+  const localeOptions = useMemo(
+    () => [
+      { value: "ru", label: "Русский" },
+      { value: "en", label: "English" },
+    ],
+    [],
+  );
+
+  const timeFormatOptions = useMemo(
+    () => [
+      { value: "24h", label: t(locale, "format24h") },
+      { value: "12h", label: t(locale, "format12h") },
+    ],
+    [locale],
+  );
+
+  const timezoneOptions = useMemo(
+    () =>
+      TIMEZONE_OPTIONS.map(zone => ({
+        value: zone,
+        label: zone === "auto" ? t(locale, "autoTimezone") : zone,
+      })),
+    [locale],
+  );
+
+  const dateFormatOptions = useMemo(
+    () => [
+      { value: "dd.MM.yyyy", label: "dd.MM.yyyy" },
+      { value: "MM/dd/yyyy", label: "MM/dd/yyyy" },
+      { value: "yyyy-MM-dd", label: "yyyy-MM-dd" },
+    ],
+    [],
+  );
+
+  const searchEngineSelectOptions = useMemo(
+    () => searchOptions.map(option => ({ value: option.id, label: option.name })),
+    [searchOptions],
+  );
 
   const saveTabTitle = async () => {
     await onTabTitleChange(tabTitle);
@@ -162,13 +202,15 @@ export function SettingsPanel({
         <section className={`${styles.section} ${styles.sectionFirst}`}>
           <h3>{t(locale, "settingsGeneral")}</h3>
           <div className={styles.grid}>
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span>{t(locale, "locale")}</span>
-                <select value={settings.locale} onChange={event => void onLocaleChange(event.target.value as typeof settings.locale)}>
-                  <option value="ru">Русский</option>
-                  <option value="en">English</option>
-                </select>
-              </label>
+                <Select
+                  value={settings.locale}
+                  options={localeOptions}
+                  onChange={value => void onLocaleChange(value as typeof settings.locale)}
+                  ariaLabel={t(locale, "locale")}
+                />
+              </div>
 
               <label className={styles.field}>
                 <span>{t(locale, "tabTitle")}</span>
@@ -201,48 +243,49 @@ export function SettingsPanel({
         <section className={styles.section}>
           <h3>{t(locale, "settingsDateTime")}</h3>
             <div className={styles.grid}>
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span>{t(locale, "timeFormat")}</span>
-                <select value={settings.timeFormat} onChange={event => void onTimeFormatChange(event.target.value as typeof settings.timeFormat)}>
-                  <option value="24h">{t(locale, "format24h")}</option>
-                  <option value="12h">{t(locale, "format12h")}</option>
-                </select>
-              </label>
+                <Select
+                  value={settings.timeFormat}
+                  options={timeFormatOptions}
+                  onChange={value => void onTimeFormatChange(value as typeof settings.timeFormat)}
+                  ariaLabel={t(locale, "timeFormat")}
+                />
+              </div>
 
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span>{t(locale, "timezone")}</span>
-                <select value={settings.timezone} onChange={event => void onTimezoneChange(event.target.value)}>
-                  {TIMEZONE_OPTIONS.map(zone => (
-                    <option key={zone} value={zone}>
-                      {zone === "auto" ? t(locale, "autoTimezone") : zone}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <Select
+                  value={settings.timezone}
+                  options={timezoneOptions}
+                  onChange={value => void onTimezoneChange(value)}
+                  ariaLabel={t(locale, "timezone")}
+                />
+              </div>
 
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span>{t(locale, "dateFormat")}</span>
-                <select value={settings.dateFormat} onChange={event => void onDateFormatChange(event.target.value as typeof settings.dateFormat)}>
-                  <option value="dd.MM.yyyy">dd.MM.yyyy</option>
-                  <option value="MM/dd/yyyy">MM/dd/yyyy</option>
-                  <option value="yyyy-MM-dd">yyyy-MM-dd</option>
-                </select>
-              </label>
+                <Select
+                  value={settings.dateFormat}
+                  options={dateFormatOptions}
+                  onChange={value => void onDateFormatChange(value as typeof settings.dateFormat)}
+                  ariaLabel={t(locale, "dateFormat")}
+                />
+              </div>
             </div>
           </section>
 
         <section className={styles.section}>
           <h3>{t(locale, "searchEngines")}</h3>
-            <label className={styles.field}>
+            <div className={styles.field}>
               <span>{t(locale, "currentSearchEngines")}</span>
-              <select value={settings.activeSearchEngineId} onChange={event => void onActiveSearchEngineChange(event.target.value)}>
-                {searchOptions.map(option => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <Select
+                value={settings.activeSearchEngineId}
+                options={searchEngineSelectOptions}
+                onChange={value => void onActiveSearchEngineChange(value)}
+                ariaLabel={t(locale, "currentSearchEngines")}
+              />
+            </div>
 
             <div className={styles.customEngineForm}>
               <input value={engineName} onChange={event => setEngineName(event.target.value)} placeholder="Name" />

@@ -62,8 +62,34 @@
 
 .engineSelect {
   min-width: 9.5rem;
+  align-self: stretch;
+  display: flex;
+}
+
+.engineTrigger {
+  flex: 1;
+  min-height: 100%;
+  padding: 0.85rem 0.75rem;
+  font-size: 1.05rem;
   background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
-  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 6px 24px color-mix(in srgb, var(--accent-glow) 80%, transparent),
+    0 10px 36px rgba(7, 10, 17, 0.32);
+}
+
+.engineTrigger:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 6px 24px color-mix(in srgb, var(--accent-glow) 80%, transparent),
+    0 10px 36px rgba(7, 10, 17, 0.32);
+}
+
+.engineTrigger:focus-visible {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 8px 30px color-mix(in srgb, var(--accent-glow) 95%, transparent),
+    0 14px 42px rgba(7, 10, 17, 0.38);
 }
 
 @media (max-width: 640px) {

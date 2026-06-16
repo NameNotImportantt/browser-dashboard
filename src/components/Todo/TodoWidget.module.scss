@@ -19,6 +19,11 @@
   gap: 0.5rem;
 }
 
+.inlineRow .inputField {
+  flex: 1;
+  min-width: 0;
+}
+
 .inputField {
   width: 100%;
 }
@@ -105,11 +110,6 @@
 .isCompleted {
   color: var(--text-muted);
   text-decoration: line-through;
-}
-
-.todoLabel input[type="checkbox"] {
-  flex-shrink: 0;
-  margin: 0;
 }
 
 .dangerButton {

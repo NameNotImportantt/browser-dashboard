@@ -1,12 +1,22 @@
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 import type { SelectProps } from "./types/SelectProps";
 import styles from "./Select.module.scss";
 
-export function Select({ value, options, onChange, ariaLabel, className }: SelectProps) {
+type ListboxPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
+export function Select({ value, options, onChange, ariaLabel, className, triggerClassName }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [listboxPosition, setListboxPosition] = useState<ListboxPosition | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listboxRef = useRef<HTMLUListElement>(null);
   const listboxId = useId();
 
   const selected = options.find(option => option.value === value);
@@ -15,6 +25,19 @@ export function Select({ value, options, onChange, ariaLabel, className }: Selec
   const close = useCallback(() => {
     setIsOpen(false);
     setActiveIndex(-1);
+    setListboxPosition(null);
+  }, []);
+
+  const updateListboxPosition = useCallback(() => {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    setListboxPosition({
+      top: rect.bottom + 6,
+      left: rect.left,
+      width: rect.width,
+    });
   }, []);
 
   const selectAt = useCallback(
@@ -27,13 +50,27 @@ export function Select({ value, options, onChange, ariaLabel, className }: Selec
     [options, onChange, close],
   );
 
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+
+    updateListboxPosition();
+    window.addEventListener("resize", updateListboxPosition);
+    window.addEventListener("scroll", updateListboxPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateListboxPosition);
+      window.removeEventListener("scroll", updateListboxPosition, true);
+    };
+  }, [isOpen, updateListboxPosition]);
+
   useEffect(() => {
     if (!isOpen) return;
 
     const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        close();
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (listboxRef.current?.contains(target)) return;
+      close();
     };
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -82,12 +119,58 @@ export function Select({ value, options, onChange, ariaLabel, className }: Selec
   };
 
   const rootClassName = [styles.select, className].filter(Boolean).join(" ");
+  const triggerClassNames = [styles.trigger, triggerClassName].filter(Boolean).join(" ");
+
+  const listboxStyle: CSSProperties | undefined = listboxPosition
+    ? {
+        top: listboxPosition.top,
+        left: listboxPosition.left,
+        width: listboxPosition.width,
+      }
+    : undefined;
+
+  const listbox =
+    isOpen && listboxPosition ? (
+      <ul
+        ref={listboxRef}
+        id={listboxId}
+        className={styles.listbox}
+        role="listbox"
+        aria-label={ariaLabel}
+        style={listboxStyle}
+      >
+        {options.map((option, index) => {
+          const optionClassName = [
+            styles.option,
+            option.value === value ? styles.optionSelected : "",
+            index === activeIndex ? styles.optionActive : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
+          return (
+            <li
+              key={option.value}
+              id={`${listboxId}-option-${index}`}
+              role="option"
+              aria-selected={option.value === value}
+              className={optionClassName}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => selectAt(index)}
+            >
+              {option.label}
+            </li>
+          );
+        })}
+      </ul>
+    ) : null;
 
   return (
     <div ref={containerRef} className={rootClassName}>
       <button
+        ref={triggerRef}
         type="button"
-        className={styles.trigger}
+        className={triggerClassNames}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -104,33 +187,7 @@ export function Select({ value, options, onChange, ariaLabel, className }: Selec
         />
       </button>
 
-      {isOpen ? (
-        <ul id={listboxId} className={styles.listbox} role="listbox" aria-label={ariaLabel}>
-          {options.map((option, index) => {
-            const optionClassName = [
-              styles.option,
-              option.value === value ? styles.optionSelected : "",
-              index === activeIndex ? styles.optionActive : "",
-            ]
-              .filter(Boolean)
-              .join(" ");
-
-            return (
-              <li
-                key={option.value}
-                id={`${listboxId}-option-${index}`}
-                role="option"
-                aria-selected={option.value === value}
-                className={optionClassName}
-                onMouseEnter={() => setActiveIndex(index)}
-                onClick={() => selectAt(index)}
-              >
-                {option.label}
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+      {listbox ? createPortal(listbox, document.body) : null}
     </div>
   );
 }

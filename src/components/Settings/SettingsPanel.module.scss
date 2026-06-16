@@ -69,6 +69,7 @@
   display: grid;
   gap: 0.75rem;
   min-width: 0;
+  overflow: visible;
   padding-left: 1.25rem;
   border-left: 1px solid var(--border);
 }

@@ -1,12 +1,17 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
 import { buildSearchUrl, getSearchEngineOptions } from "@/app";
+import { Select } from "@/components/Select";
 import type { SearchCoreProps } from "./types/SearchCoreProps";
 import styles from "./SearchCore.module.scss";
 
 export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngineChange }: SearchCoreProps) {
   const [query, setQuery] = useState("");
   const engineOptions = getSearchEngineOptions(customSearchEngines);
+  const engineSelectOptions = useMemo(
+    () => engineOptions.map(option => ({ value: option.id, label: option.name })),
+    [engineOptions],
+  );
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,18 +35,14 @@ export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngine
           />
         </label>
 
-        <select
+        <Select
           className={styles.engineSelect}
+          triggerClassName={styles.engineTrigger}
           value={activeSearchEngineId}
-          onChange={event => void onEngineChange(event.target.value)}
-          aria-label="Поисковая система"
-        >
-          {engineOptions.map(option => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
+          options={engineSelectOptions}
+          onChange={value => void onEngineChange(value)}
+          ariaLabel="Поисковая система"
+        />
       </form>
     </section>
   );

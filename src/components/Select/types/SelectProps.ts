@@ -9,4 +9,5 @@ export interface SelectProps {
   onChange: (value: string) => void;
   ariaLabel: string;
   className?: string;
+  triggerClassName?: string;
 }
