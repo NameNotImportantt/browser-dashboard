@@ -1,4 +1,4 @@
-import type { CustomTextColors, TextColorKey, ThemeMode } from "@/db/types/settings";
+import type { CustomTextColors, TextColorKey, ThemeMode } from "@/db/types";
 
 export const THEME_TEXT_COLORS: Record<ThemeMode, Record<TextColorKey, string>> = {
   dark: {

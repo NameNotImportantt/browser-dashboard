@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
-import { buildSearchUrl, getSearchEngineOptions } from "@/app/searchUtils";
-import type { SearchCoreProps } from "@/components/SearchCore/types/SearchCoreProps";
+import { buildSearchUrl, getSearchEngineOptions } from "@/app";
+import type { SearchCoreProps } from "./types/SearchCoreProps";
 import styles from "./SearchCore.module.scss";
 
 export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngineChange }: SearchCoreProps) {

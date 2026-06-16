@@ -1,4 +1,4 @@
-import { db } from "@/db/database";
+import { db } from "@/db";
 
 export async function runSmokeChecks() {
   if (import.meta.env?.MODE === "production") {

@@ -1,6 +1,6 @@
 import { Home, Settings, type LucideIcon } from "lucide-react";
-import { t } from "@/app/i18n";
-import type { ScreenId, ScreenMenuProps } from "@/components/ScreenMenu/types/ScreenMenuProps";
+import { t } from "@/app";
+import type { ScreenId, ScreenMenuProps } from "./types/ScreenMenuProps";
 import styles from "./ScreenMenu.module.scss";
 
 const SCREENS: {

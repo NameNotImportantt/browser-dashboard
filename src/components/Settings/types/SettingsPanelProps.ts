@@ -1,4 +1,4 @@
-import type { AppSettings, TextColorKey } from "@/db/types/settings";
+import type { AppSettings, TextColorKey } from "@/db/types";
 
 export interface SettingsPanelProps {
   settings: AppSettings;

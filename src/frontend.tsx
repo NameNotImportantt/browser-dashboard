@@ -8,7 +8,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import { runSmokeChecks } from "@/app/smokeChecks";
+import { runSmokeChecks } from "@/app";
 
 const elem = document.getElementById("root")!;
 const app = (

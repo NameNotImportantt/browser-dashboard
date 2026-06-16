@@ -1,17 +1,36 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { prepareBackgroundImageDataUrl } from "@/app/backgroundImage";
-import { DEFAULT_SETTINGS, geocodeCity, mergeSettings } from "@/app/settingsDefaults";
-import { isValidSearchUrlTemplate } from "@/app/searchUtils";
-import { createId, normalizeUrl, todayKey, WEATHER_CACHE_TTL_MS } from "@/app/utils";
-import { db } from "@/db/database";
-import type { Bookmark, CreateBookmarkPayload } from "@/db/types/bookmark";
-import type { BookmarkCategory, CreateBookmarkCategoryPayload } from "@/db/types/bookmarkCategory";
-import type { Habit } from "@/db/types/habit";
-import type { Note } from "@/db/types/note";
-import type { AppLocale, AppSettings, CustomSearchEngine, CustomTextColors, DateFormatPreset, TextColorKey, ThemeMode, TimeFormat } from "@/db/types/settings";
-import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
-import type { WeatherCache } from "@/db/types/weather";
-import type { Workspace } from "@/db/types/workspace";
+import {
+  createId,
+  DEFAULT_SETTINGS,
+  geocodeCity,
+  isValidSearchUrlTemplate,
+  mergeSettings,
+  normalizeUrl,
+  prepareBackgroundImageDataUrl,
+  todayKey,
+  WEATHER_CACHE_TTL_MS,
+} from "@/app";
+import { db } from "@/db";
+import type {
+  AppLocale,
+  AppSettings,
+  Bookmark,
+  BookmarkCategory,
+  CreateBookmarkCategoryPayload,
+  CreateBookmarkPayload,
+  CreateTodoPayload,
+  CustomSearchEngine,
+  CustomTextColors,
+  DateFormatPreset,
+  Habit,
+  Note,
+  TextColorKey,
+  ThemeMode,
+  TimeFormat,
+  TodoItem,
+  WeatherCache,
+  Workspace,
+} from "@/db/types";
 
 interface Snapshot {
   workspaces: Workspace[];
@@ -86,19 +105,19 @@ export function useDashboardData() {
 
   const refresh = useCallback(async () => {
     const nextSnapshot = await loadSnapshot();
-    const hasActiveWorkspace = nextSnapshot.workspaces.some(item => item.id === activeWorkspaceId);
     const preferredId = nextSnapshot.settings.lastWorkspaceId;
-    const hasPreferred = nextSnapshot.workspaces.some(item => item.id === preferredId);
 
-    const nextActiveWorkspaceId = hasPreferred
-      ? preferredId
-      : hasActiveWorkspace
-        ? activeWorkspaceId
-        : (nextSnapshot.workspaces[0]?.id ?? null);
+    setActiveWorkspaceId(prev => {
+      const hasPreferred = preferredId && nextSnapshot.workspaces.some(item => item.id === preferredId);
+      const hasActiveWorkspace = prev && nextSnapshot.workspaces.some(item => item.id === prev);
+
+      if (hasPreferred) return preferredId;
+      if (hasActiveWorkspace) return prev;
+      return nextSnapshot.workspaces[0]?.id ?? null;
+    });
 
     setSnapshot(nextSnapshot);
-    setActiveWorkspaceId(nextActiveWorkspaceId);
-  }, [activeWorkspaceId]);
+  }, []);
 
   const patchSettings = useCallback(
     async (patch: Partial<AppSettings>) => {
@@ -150,10 +169,6 @@ export function useDashboardData() {
   const bookmarkCategories = snapshot?.bookmarkCategories ?? [];
   const notes = snapshot?.notes ?? [];
   const weatherCache = snapshot?.weatherCache ?? null;
-
-  const activeWorkspace = useMemo(() => {
-    return workspaces.find(item => item.id === activeWorkspaceId) ?? null;
-  }, [activeWorkspaceId, workspaces]);
 
   const workspaceTodos = useMemo(() => {
     if (!activeWorkspaceId) return [];
@@ -587,7 +602,14 @@ export function useDashboardData() {
 
   const setWeatherCity = useCallback(
     async (city: string) => {
-      const location = await geocodeCity(city);
+      const trimmed = city.trim();
+      if (!trimmed) {
+        await patchSettings({ weatherLocation: null });
+        await refreshWeather(true);
+        return;
+      }
+
+      const location = await geocodeCity(trimmed);
       await patchSettings({ weatherLocation: location });
       await refreshWeather(true);
     },
@@ -675,8 +697,6 @@ export function useDashboardData() {
     settings,
     weatherCache,
     activeWorkspaceId,
-    activeWorkspace,
-    pendingTodos: workspaceTodos.filter(item => !item.completed),
     actions,
   };
 }

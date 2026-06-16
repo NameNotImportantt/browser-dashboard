@@ -1,5 +1,4 @@
-import type { AppLocale } from "@/db/types/settings";
-import type { CreateTodoPayload, TodoItem, TodoPriority } from "@/db/types/todo";
+import type { AppLocale, CreateTodoPayload, TodoItem, TodoPriority } from "@/db/types";
 
 export interface TodoWidgetProps {
   todos: TodoItem[];

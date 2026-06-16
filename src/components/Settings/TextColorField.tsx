@@ -1,4 +1,4 @@
-import type { TextColorFieldProps } from "@/components/Settings/types/TextColorFieldProps";
+import type { TextColorFieldProps } from "./types/TextColorFieldProps";
 import styles from "./TextColorField.module.scss";
 
 export function TextColorField({ label, value, swatches, onChange }: TextColorFieldProps) {

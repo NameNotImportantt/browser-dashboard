@@ -1,12 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { Bookmark } from "@/db/types/bookmark";
-import type { BookmarkCategory } from "@/db/types/bookmarkCategory";
-import type { Habit } from "@/db/types/habit";
-import type { Note } from "@/db/types/note";
-import type { AppSettings } from "@/db/types/settings";
-import type { TodoItem } from "@/db/types/todo";
-import type { WeatherCache } from "@/db/types/weather";
-import type { Workspace } from "@/db/types/workspace";
+import type { AppSettings, Bookmark, BookmarkCategory, Habit, Note, TodoItem, WeatherCache, Workspace } from "./types";
 
 export class DashboardDatabase extends Dexie {
   workspaces!: Table<Workspace, string>;

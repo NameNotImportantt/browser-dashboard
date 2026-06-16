@@ -63,33 +63,6 @@ export function reorderIds(ids: string[], fromId: string, toId: string) {
   return draft;
 }
 
-export function getGreetingByHour(hour: number) {
-  if (hour < 6) {
-    return "Доброй ночи";
-  }
-
-  if (hour < 12) {
-    return "Доброе утро";
-  }
-
-  if (hour < 18) {
-    return "Добрый день";
-  }
-
-  return "Добрый вечер";
-}
-
-export function weatherCodeToLabel(code: number) {
-  if (code === 0) return "Ясно";
-  if (code <= 3) return "Переменная облачность";
-  if (code <= 48) return "Туман";
-  if (code <= 67) return "Дождь";
-  if (code <= 77) return "Снег";
-  if (code <= 82) return "Ливень";
-  if (code <= 99) return "Гроза";
-  return "Неизвестно";
-}
-
 export function weatherCodeToEmoji(code: number) {
   if (code === 0) return "☀";
   if (code <= 3) return "⛅";

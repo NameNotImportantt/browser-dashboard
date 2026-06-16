@@ -1,4 +1,4 @@
-import type { Workspace } from "@/db/types/workspace";
+import type { Workspace } from "@/db/types";
 
 export interface WorkspaceBarProps {
   workspaces: Workspace[];
