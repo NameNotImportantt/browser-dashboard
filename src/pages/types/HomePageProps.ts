@@ -1,7 +1,8 @@
 import type { CreateBookmarkPayload } from "@/db/types/bookmark";
 import type { Bookmark } from "@/db/types/bookmark";
+import type { BookmarkCategory, CreateBookmarkCategoryPayload } from "@/db/types/bookmarkCategory";
 import type { Habit } from "@/db/types/habit";
-import type { AppSettings, ThemeMode } from "@/db/types/settings";
+import type { AppSettings, TextColorKey, ThemeMode } from "@/db/types/settings";
 import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
 import type { WeatherCache } from "@/db/types/weather";
 import type { Workspace } from "@/db/types/workspace";
@@ -17,6 +18,7 @@ export interface HomePageProps {
   todos: TodoItem[];
   habits: Habit[];
   bookmarks: Bookmark[];
+  bookmarkCategories: BookmarkCategory[];
   noteText: string;
   onThemeToggle: (theme: ThemeMode) => Promise<void>;
   onActiveSearchEngineChange: (engineId: string) => Promise<void>;
@@ -25,6 +27,10 @@ export interface HomePageProps {
   onLocaleChange: (value: AppSettings["locale"]) => Promise<void>;
   onDateFormatChange: (value: AppSettings["dateFormat"]) => Promise<void>;
   onTabTitleChange: (value: string) => Promise<void>;
+  onBackgroundImageChange: (file: File) => Promise<void>;
+  onBackgroundImageRemove: () => Promise<void>;
+  onTextColorChange: (key: TextColorKey, value: string | null) => Promise<void>;
+  onTextColorsReset: () => Promise<void>;
   onAddCustomSearchEngine: (payload: { name: string; urlTemplate: string }) => Promise<void>;
   onRemoveCustomSearchEngine: (engineId: string) => Promise<void>;
   onWeatherCityChange: (city: string) => Promise<void>;
@@ -41,5 +47,7 @@ export interface HomePageProps {
   onDeleteHabit: (habitId: string) => Promise<void>;
   onAddBookmark: (payload: CreateBookmarkPayload) => Promise<void>;
   onDeleteBookmark: (bookmarkId: string) => Promise<void>;
+  onAddBookmarkCategory: (payload: CreateBookmarkCategoryPayload) => Promise<void>;
+  onDeleteBookmarkCategory: (categoryId: string) => Promise<void>;
   onSaveNote: (text: string) => Promise<void>;
 }

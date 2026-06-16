@@ -44,7 +44,7 @@
   padding: 0.56rem 0.68rem;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.6rem;
   border-left-width: 3px;
 }
@@ -64,8 +64,9 @@
 .todoLabel {
   display: flex;
   gap: 0.45rem;
-  align-items: flex-start;
+  align-items: center;
   flex: 1;
+  min-width: 0;
 }
 
 .todoMeta {
@@ -104,6 +105,11 @@
 .isCompleted {
   color: var(--text-muted);
   text-decoration: line-through;
+}
+
+.todoLabel input[type="checkbox"] {
+  flex-shrink: 0;
+  margin: 0;
 }
 
 .dangerButton {

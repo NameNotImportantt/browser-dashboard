@@ -1,10 +1,54 @@
 .settingsPanel {
   width: 100%;
-  padding: 0.85rem;
+  padding: 1.15rem;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: none;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+}
+
+.settingsPanel:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.rows {
+  display: grid;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.3rem 15px 0.45rem 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.rowDivider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
 }
 
 .header {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
+  flex-shrink: 0;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .grid {
@@ -32,14 +76,25 @@
 }
 
 .section {
-  margin-top: 0.85rem;
   display: grid;
   gap: 0.6rem;
+  min-width: 0;
+  padding-left: 1rem;
+  border-left: 1px solid var(--border);
+}
+
+.sectionFirst {
+  padding-left: 0;
+  border-left: none;
 }
 
 .section h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .customEngineForm {
@@ -90,4 +145,47 @@
 
 .dangerButton:hover {
   border-color: var(--danger);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.backgroundPreview {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  aspect-ratio: 16 / 9;
+  max-height: 140px;
+  box-shadow: var(--shadow-sm);
+}
+
+.backgroundPreview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 960px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .section {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .sectionFirst {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .rowDivider {
+    margin: 0.15rem 0;
+  }
 }

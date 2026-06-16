@@ -14,6 +14,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   tabTitle: DEFAULT_TAB_TITLE,
   lastWorkspaceId: null,
   weatherLocation: null,
+  customBackgroundImage: null,
+  customTextColors: null,
   updatedAt: Date.now(),
 };
 
@@ -34,6 +36,8 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
     locale: raw.locale ?? DEFAULT_SETTINGS.locale,
     dateFormat: raw.dateFormat ?? DEFAULT_SETTINGS.dateFormat,
     tabTitle: raw.tabTitle?.trim() || DEFAULT_TAB_TITLE,
+    customBackgroundImage: raw.customBackgroundImage ?? DEFAULT_SETTINGS.customBackgroundImage,
+    customTextColors: raw.customTextColors ?? DEFAULT_SETTINGS.customTextColors,
   };
 }
 

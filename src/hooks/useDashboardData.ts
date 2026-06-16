@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { prepareBackgroundImageDataUrl } from "@/app/backgroundImage";
 import { DEFAULT_SETTINGS, geocodeCity, mergeSettings } from "@/app/settingsDefaults";
 import { isValidSearchUrlTemplate } from "@/app/searchUtils";
 import { createId, normalizeUrl, todayKey, WEATHER_CACHE_TTL_MS } from "@/app/utils";
 import { db } from "@/db/database";
 import type { Bookmark, CreateBookmarkPayload } from "@/db/types/bookmark";
+import type { BookmarkCategory, CreateBookmarkCategoryPayload } from "@/db/types/bookmarkCategory";
 import type { Habit } from "@/db/types/habit";
 import type { Note } from "@/db/types/note";
-import type { AppLocale, AppSettings, CustomSearchEngine, DateFormatPreset, ThemeMode, TimeFormat } from "@/db/types/settings";
+import type { AppLocale, AppSettings, CustomSearchEngine, CustomTextColors, DateFormatPreset, TextColorKey, ThemeMode, TimeFormat } from "@/db/types/settings";
 import type { CreateTodoPayload, TodoItem } from "@/db/types/todo";
 import type { WeatherCache } from "@/db/types/weather";
 import type { Workspace } from "@/db/types/workspace";
@@ -16,6 +18,7 @@ interface Snapshot {
   todos: TodoItem[];
   habits: Habit[];
   bookmarks: Bookmark[];
+  bookmarkCategories: BookmarkCategory[];
   notes: Note[];
   settings: AppSettings;
   weatherCache: WeatherCache | null;
@@ -52,11 +55,12 @@ async function ensureSeedData() {
 }
 
 async function loadSnapshot(): Promise<Snapshot> {
-  const [workspaces, todos, habits, bookmarks, notes, settings, weatherCache] = await Promise.all([
+  const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache] = await Promise.all([
     db.workspaces.toArray(),
     db.todos.toArray(),
     db.habits.toArray(),
     db.bookmarks.toArray(),
+    db.bookmarkCategories.toArray(),
     db.notes.toArray(),
     db.settings.get("app"),
     db.weatherCache.get("current"),
@@ -67,6 +71,7 @@ async function loadSnapshot(): Promise<Snapshot> {
     todos: sortByPosition(todos),
     habits: sortByPosition(habits),
     bookmarks: sortByPosition(bookmarks),
+    bookmarkCategories: sortByPosition(bookmarkCategories),
     notes,
     settings: mergeSettings(settings),
     weatherCache: weatherCache ?? null,
@@ -142,6 +147,7 @@ export function useDashboardData() {
   const todos = snapshot?.todos ?? [];
   const habits = snapshot?.habits ?? [];
   const bookmarks = snapshot?.bookmarks ?? [];
+  const bookmarkCategories = snapshot?.bookmarkCategories ?? [];
   const notes = snapshot?.notes ?? [];
   const weatherCache = snapshot?.weatherCache ?? null;
 
@@ -167,8 +173,13 @@ export function useDashboardData() {
 
   const workspaceBookmarks = useMemo(() => {
     if (!activeWorkspaceId) return [];
-    return bookmarks.filter(item => item.workspaceId === activeWorkspaceId);
+    return sortByPosition(bookmarks.filter(item => item.workspaceId === activeWorkspaceId));
   }, [activeWorkspaceId, bookmarks]);
+
+  const workspaceBookmarkCategories = useMemo(() => {
+    if (!activeWorkspaceId) return [];
+    return sortByPosition(bookmarkCategories.filter(item => item.workspaceId === activeWorkspaceId));
+  }, [activeWorkspaceId, bookmarkCategories]);
 
   const workspaceNoteText = useMemo(() => {
     if (!activeWorkspaceId) return "";
@@ -216,11 +227,15 @@ export function useDashboardData() {
       const currentSettings = mergeSettings(await db.settings.get("app"));
       const isDeletingActive = currentSettings.lastWorkspaceId === workspaceId;
 
-      await db.transaction("rw", [db.workspaces, db.todos, db.habits, db.bookmarks, db.notes, db.settings], async () => {
+      await db.transaction(
+        "rw",
+        [db.workspaces, db.todos, db.habits, db.bookmarks, db.bookmarkCategories, db.notes, db.settings],
+        async () => {
         await Promise.all([
           db.todos.where("workspaceId").equals(workspaceId).delete(),
           db.habits.where("workspaceId").equals(workspaceId).delete(),
           db.bookmarks.where("workspaceId").equals(workspaceId).delete(),
+          db.bookmarkCategories.where("workspaceId").equals(workspaceId).delete(),
           db.notes.where("workspaceId").equals(workspaceId).delete(),
           db.workspaces.delete(workspaceId),
         ]);
@@ -255,6 +270,37 @@ export function useDashboardData() {
   const setDateFormat = useCallback(async (dateFormat: DateFormatPreset) => patchSettings({ dateFormat }), [patchSettings]);
 
   const setTabTitle = useCallback(async (tabTitle: string) => patchSettings({ tabTitle: tabTitle.trim() || DEFAULT_SETTINGS.tabTitle }), [patchSettings]);
+
+  const setBackgroundImageFromFile = useCallback(
+    async (file: File) => {
+      const customBackgroundImage = await prepareBackgroundImageDataUrl(file);
+      await patchSettings({ customBackgroundImage });
+    },
+    [patchSettings],
+  );
+
+  const clearBackgroundImage = useCallback(async () => patchSettings({ customBackgroundImage: null }), [patchSettings]);
+
+  const setTextColor = useCallback(
+    async (key: TextColorKey, value: string | null) => {
+      const currentSettings = mergeSettings(await db.settings.get("app"));
+      const base: CustomTextColors = currentSettings.customTextColors ?? {
+        text: null,
+        textSoft: null,
+        textMuted: null,
+      };
+
+      const nextColors: CustomTextColors = { ...base, [key]: value };
+      const hasAnyCustom = nextColors.text || nextColors.textSoft || nextColors.textMuted;
+
+      await patchSettings({
+        customTextColors: hasAnyCustom ? nextColors : null,
+      });
+    },
+    [patchSettings],
+  );
+
+  const resetTextColors = useCallback(async () => patchSettings({ customTextColors: null }), [patchSettings]);
 
   const addCustomSearchEngine = useCallback(
     async (payload: { name: string; urlTemplate: string }) => {
@@ -402,22 +448,56 @@ export function useDashboardData() {
       const url = payload.url.trim();
       if (!title || !url) return;
 
+      const categoryId = payload.categoryId ?? null;
+      const categoryBookmarks = workspaceBookmarks.filter(item => item.categoryId === categoryId);
+
       await db.bookmarks.add({
         id: createId(),
         workspaceId: activeWorkspaceId,
+        categoryId,
         title,
         url: normalizeUrl(url),
-        position: workspaceBookmarks.length,
+        position: categoryBookmarks.length,
         createdAt: Date.now(),
       });
       await refresh();
     },
-    [activeWorkspaceId, refresh, workspaceBookmarks.length],
+    [activeWorkspaceId, refresh, workspaceBookmarks],
   );
 
   const deleteBookmark = useCallback(
     async (bookmarkId: string) => {
       await db.bookmarks.delete(bookmarkId);
+      await refresh();
+    },
+    [refresh],
+  );
+
+  const addBookmarkCategory = useCallback(
+    async (payload: CreateBookmarkCategoryPayload) => {
+      if (!activeWorkspaceId) return;
+
+      const name = payload.name.trim();
+      if (!name) return;
+
+      await db.bookmarkCategories.add({
+        id: createId(),
+        workspaceId: activeWorkspaceId,
+        name,
+        position: workspaceBookmarkCategories.length,
+        createdAt: Date.now(),
+      });
+      await refresh();
+    },
+    [activeWorkspaceId, refresh, workspaceBookmarkCategories.length],
+  );
+
+  const deleteBookmarkCategory = useCallback(
+    async (categoryId: string) => {
+      await db.transaction("rw", [db.bookmarks, db.bookmarkCategories], async () => {
+        await db.bookmarks.where("categoryId").equals(categoryId).modify({ categoryId: null });
+        await db.bookmarkCategories.delete(categoryId);
+      });
       await refresh();
     },
     [refresh],
@@ -527,6 +607,10 @@ export function useDashboardData() {
       setLocale,
       setDateFormat,
       setTabTitle,
+      setBackgroundImageFromFile,
+      clearBackgroundImage,
+      setTextColor,
+      resetTextColors,
       addCustomSearchEngine,
       removeCustomSearchEngine,
       setWeatherCity,
@@ -539,6 +623,8 @@ export function useDashboardData() {
       deleteHabit,
       addBookmark,
       deleteBookmark,
+      addBookmarkCategory,
+      deleteBookmarkCategory,
       saveNote,
       refreshWeather,
     }),
@@ -554,6 +640,10 @@ export function useDashboardData() {
       setLocale,
       setDateFormat,
       setTabTitle,
+      setBackgroundImageFromFile,
+      clearBackgroundImage,
+      setTextColor,
+      resetTextColors,
       addCustomSearchEngine,
       removeCustomSearchEngine,
       setWeatherCity,
@@ -566,6 +656,8 @@ export function useDashboardData() {
       deleteHabit,
       addBookmark,
       deleteBookmark,
+      addBookmarkCategory,
+      deleteBookmarkCategory,
       saveNote,
       refreshWeather,
     ],
@@ -578,6 +670,7 @@ export function useDashboardData() {
     todos: workspaceTodos,
     habits: workspaceHabits,
     bookmarks: workspaceBookmarks,
+    bookmarkCategories: workspaceBookmarkCategories,
     noteText: workspaceNoteText,
     settings,
     weatherCache,

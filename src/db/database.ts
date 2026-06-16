@@ -1,5 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { Bookmark } from "@/db/types/bookmark";
+import type { BookmarkCategory } from "@/db/types/bookmarkCategory";
 import type { Habit } from "@/db/types/habit";
 import type { Note } from "@/db/types/note";
 import type { AppSettings } from "@/db/types/settings";
@@ -13,6 +14,7 @@ export class DashboardDatabase extends Dexie {
   notes!: Table<Note, string>;
   habits!: Table<Habit, string>;
   bookmarks!: Table<Bookmark, string>;
+  bookmarkCategories!: Table<BookmarkCategory, string>;
   settings!: Table<AppSettings, string>;
   weatherCache!: Table<WeatherCache, string>;
 
@@ -55,6 +57,26 @@ export class DashboardDatabase extends Dexie {
             settings.tabTitle = settings.tabTitle ?? "Personal Dashboard";
 
             delete settings.searchEngine;
+          });
+      });
+
+    this.version(3)
+      .stores({
+        workspaces: "id,position,createdAt",
+        todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
+        notes: "id,workspaceId,updatedAt",
+        habits: "id,workspaceId,position,createdAt",
+        bookmarks: "id,workspaceId,categoryId,position,createdAt",
+        bookmarkCategories: "id,workspaceId,position,createdAt",
+        settings: "key,updatedAt",
+        weatherCache: "id,fetchedAt",
+      })
+      .upgrade(async transaction => {
+        await transaction
+          .table("bookmarks")
+          .toCollection()
+          .modify((bookmark: Record<string, unknown>) => {
+            bookmark.categoryId = bookmark.categoryId ?? null;
           });
       });
   }

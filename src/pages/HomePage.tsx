@@ -28,6 +28,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     todos,
     habits,
     bookmarks,
+    bookmarkCategories,
     noteText,
     onThemeToggle,
     onActiveSearchEngineChange,
@@ -36,6 +37,10 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     onLocaleChange,
     onDateFormatChange,
     onTabTitleChange,
+    onBackgroundImageChange,
+    onBackgroundImageRemove,
+    onTextColorChange,
+    onTextColorsReset,
     onAddCustomSearchEngine,
     onRemoveCustomSearchEngine,
     onWeatherCityChange,
@@ -52,6 +57,8 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     onDeleteHabit,
     onAddBookmark,
     onDeleteBookmark,
+    onAddBookmarkCategory,
+    onDeleteBookmarkCategory,
     onSaveNote,
   } = props;
 
@@ -77,16 +84,34 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
         </div>
       </header>
 
-      <div className={styles.content}>
+      <div
+        className={`${styles.content} ${activeScreen === "home" ? styles.contentHome : ""} ${activeScreen === "settings" ? styles.contentSettings : ""}`}
+      >
         {activeScreen === "home" ? (
-          <div className={styles.homeStack}>
-            <SearchCore
-              activeSearchEngineId={settings.activeSearchEngineId}
-              customSearchEngines={settings.customSearchEngines}
-              onEngineChange={onActiveSearchEngineChange}
-            />
-            <QuickLinks bookmarks={bookmarks} onAdd={onAddBookmark} onDelete={onDeleteBookmark} />
-            <TodayPanel todos={todos} habits={habits} locale={settings.locale} />
+          <div className={styles.homeLayout}>
+            <div className={styles.homeMain}>
+              <div className={styles.homeMainCenter}>
+                <div className={styles.homeMainStack}>
+                  <SearchCore
+                    activeSearchEngineId={settings.activeSearchEngineId}
+                    customSearchEngines={settings.customSearchEngines}
+                    onEngineChange={onActiveSearchEngineChange}
+                  />
+                  <QuickLinks
+                    bookmarks={bookmarks}
+                    categories={bookmarkCategories}
+                    locale={settings.locale}
+                    onAdd={onAddBookmark}
+                    onDelete={onDeleteBookmark}
+                    onAddCategory={onAddBookmarkCategory}
+                    onDeleteCategory={onDeleteBookmarkCategory}
+                  />
+                </div>
+              </div>
+            </div>
+            <aside className={styles.homeSidebar}>
+              <TodayPanel todos={todos} habits={habits} locale={settings.locale} />
+            </aside>
           </div>
         ) : null}
 
@@ -113,7 +138,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
         ) : null}
 
         {activeScreen === "settings" ? (
-          <div className={styles.screenPanel}>
+          <div className={`${styles.screenPanel} ${styles.screenPanelWide} ${styles.screenPanelSettings}`}>
             <SettingsPanel
               settings={settings}
               onTimeFormatChange={onTimeFormatChange}
@@ -121,6 +146,10 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
               onLocaleChange={onLocaleChange}
               onDateFormatChange={onDateFormatChange}
               onTabTitleChange={onTabTitleChange}
+              onBackgroundImageChange={onBackgroundImageChange}
+              onBackgroundImageRemove={onBackgroundImageRemove}
+              onTextColorChange={onTextColorChange}
+              onTextColorsReset={onTextColorsReset}
               onActiveSearchEngineChange={onActiveSearchEngineChange}
               onAddCustomSearchEngine={onAddCustomSearchEngine}
               onRemoveCustomSearchEngine={onRemoveCustomSearchEngine}
