@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { formatClockLabels } from "@/app/settingsDefaults";
-import type { AppSettings } from "@/db/types/settings";
+import { formatClockLabels } from "@/app";
+import type { AppSettings } from "@/db/types";
 
 type ClockSettings = Pick<AppSettings, "locale" | "timeFormat" | "dateFormat" | "timezone">;
 

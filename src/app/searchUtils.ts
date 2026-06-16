@@ -1,4 +1,4 @@
-import type { CustomSearchEngine } from "@/db/types/settings";
+import type { CustomSearchEngine } from "@/db/types";
 
 export const BUILTIN_SEARCH_ENGINES = [
   { id: "google", name: "Google", urlTemplate: "https://www.google.com/search?q={q}" },

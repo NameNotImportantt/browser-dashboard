@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { AlertCircle, ArrowDown, Minus } from "lucide-react";
-import { t } from "@/app/i18n";
-import { getHabitStreak, todayKey } from "@/app/utils";
-import type { TodoPriority } from "@/db/types/todo";
-import type { TodayPanelProps } from "@/components/TodayPanel/types/TodayPanelProps";
+import { getHabitStreak, t, todayKey } from "@/app";
+import type { TodoPriority } from "@/db/types";
+import type { TodayPanelProps } from "./types/TodayPanelProps";
 import styles from "./TodayPanel.module.scss";
 
 export function TodayPanel({ todos, habits, locale }: TodayPanelProps) {

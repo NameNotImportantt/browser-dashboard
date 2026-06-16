@@ -1,4 +1,4 @@
-import type { CustomSearchEngine } from "@/db/types/settings";
+import type { CustomSearchEngine } from "@/db/types";
 
 export interface SearchCoreProps {
   activeSearchEngineId: string;

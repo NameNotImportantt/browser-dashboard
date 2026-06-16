@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { t } from "@/app/i18n";
-import type { QuickLinksProps } from "@/components/QuickLinks/types/QuickLinksProps";
+import { t } from "@/app";
+import type { QuickLinksProps } from "./types/QuickLinksProps";
 import styles from "./QuickLinks.module.scss";
 
 type CategoryFilter = "all" | string;

@@ -1,4 +1,4 @@
-import type { Habit } from "@/db/types/habit";
+import type { Habit } from "@/db/types";
 
 export interface HabitsWidgetProps {
   habits: Habit[];

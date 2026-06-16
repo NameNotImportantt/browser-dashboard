@@ -1,4 +1,4 @@
-import type { AppLocale } from "@/db/types/settings";
+import type { AppLocale } from "@/db/types";
 
 const messages = {
   ru: {

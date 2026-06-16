@@ -1,7 +1,4 @@
-import type { CreateBookmarkPayload } from "@/db/types/bookmark";
-import type { Bookmark } from "@/db/types/bookmark";
-import type { BookmarkCategory, CreateBookmarkCategoryPayload } from "@/db/types/bookmarkCategory";
-import type { AppLocale } from "@/db/types/settings";
+import type { AppLocale, Bookmark, BookmarkCategory, CreateBookmarkCategoryPayload, CreateBookmarkPayload } from "@/db/types";
 
 export interface QuickLinksProps {
   bookmarks: Bookmark[];

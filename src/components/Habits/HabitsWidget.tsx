@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { getHabitStreak, todayKey } from "@/app/utils";
-import type { HabitsWidgetProps } from "@/components/Habits/types/HabitsWidgetProps";
+import { getHabitStreak, todayKey } from "@/app";
+import type { HabitsWidgetProps } from "./types/HabitsWidgetProps";
 import styles from "./HabitsWidget.module.scss";
 
 export function HabitsWidget({ habits, onAdd, onToggleToday, onDelete }: HabitsWidgetProps) {

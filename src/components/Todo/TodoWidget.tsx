@@ -1,7 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { t } from "@/app/i18n";
-import { reorderIds } from "@/app/utils";
-import type { TodoPriority, TodoWidgetProps } from "@/components/Todo/types/TodoWidgetProps";
+import { reorderIds, t } from "@/app";
+import type { TodoPriority, TodoWidgetProps } from "./types/TodoWidgetProps";
 import styles from "./TodoWidget.module.scss";
 
 export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder }: TodoWidgetProps) {

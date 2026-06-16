@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import type { WorkspaceBarProps } from "@/components/WorkspaceBar/types/WorkspaceBarProps";
+import type { WorkspaceBarProps } from "./types/WorkspaceBarProps";
 import styles from "./WorkspaceBar.module.scss";
 
 export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, onDelete }: WorkspaceBarProps) {

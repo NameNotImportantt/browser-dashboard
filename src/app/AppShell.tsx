@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import { applyCustomTextColors } from "@/app/themeTextColors";
-import { DEFAULT_TAB_TITLE } from "@/app/settingsDefaults";
-import { HomePage } from "@/pages/HomePage";
-import { useClock } from "@/hooks/useClock";
-import { useDashboardData } from "@/hooks/useDashboardData";
-import { WEATHER_CACHE_TTL_MS } from "@/app/utils";
+import { applyCustomTextColors } from "./themeTextColors";
+import { DEFAULT_TAB_TITLE } from "./settingsDefaults";
+import { WEATHER_CACHE_TTL_MS } from "./utils";
+import { HomePage } from "@/pages";
+import { useClock, useDashboardData } from "@/hooks";
 import styles from "./AppShell.module.scss";
 
 export function AppShell() {
