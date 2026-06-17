@@ -289,7 +289,11 @@ export function SettingsPanel({
             </div>
 
             <div className={styles.customEngineForm}>
-              <input value={engineName} onChange={event => setEngineName(event.target.value)} placeholder="Name" />
+              <input
+                value={engineName}
+                onChange={event => setEngineName(event.target.value)}
+                placeholder={t(locale, "searchEngineNamePlaceholder")}
+              />
               <input
                 value={engineUrl}
                 onChange={event => setEngineUrl(event.target.value)}
@@ -380,6 +384,7 @@ export function SettingsPanel({
                   key={field.key}
                   label={t(locale, field.labelKey)}
                   value={textColorDrafts[field.key]}
+                  placeholder={THEME_TEXT_COLORS[theme][field.key]}
                   swatches={colorSwatches[field.key]}
                   onChange={(value, commit) => handleTextColorInput(field.key, value, commit)}
                 />

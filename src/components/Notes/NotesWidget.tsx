@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { t } from "@/app";
 import type { NotesWidgetProps } from "./types/NotesWidgetProps";
 import styles from "./NotesWidget.module.scss";
 
-export function NotesWidget({ text, onSave }: NotesWidgetProps) {
+export function NotesWidget({ text, locale, onSave }: NotesWidgetProps) {
   const [draft, setDraft] = useState(text);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -23,8 +24,8 @@ export function NotesWidget({ text, onSave }: NotesWidgetProps) {
   return (
     <section className={`card ${styles.notesWidget}`}>
       <header className={styles.widgetHeader}>
-        <h2>Заметки</h2>
-        {isSaving ? <span className={styles.status}>Сохранение...</span> : null}
+        <h2>{t(locale, "navNotes")}</h2>
+        {isSaving ? <span className={styles.status}>{t(locale, "notesSaving")}</span> : null}
       </header>
 
       <textarea
@@ -32,8 +33,8 @@ export function NotesWidget({ text, onSave }: NotesWidgetProps) {
         value={draft}
         onChange={event => setDraft(event.target.value)}
         onBlur={() => void save()}
-        placeholder="Быстрые мысли и напоминания..."
-        aria-label="Заметка"
+        placeholder={t(locale, "notesPlaceholder")}
+        aria-label={t(locale, "notesAriaLabel")}
       />
     </section>
   );

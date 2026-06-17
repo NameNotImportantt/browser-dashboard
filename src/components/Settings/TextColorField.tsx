@@ -1,7 +1,7 @@
 import type { TextColorFieldProps } from "./types/TextColorFieldProps";
 import styles from "./TextColorField.module.scss";
 
-export function TextColorField({ label, value, swatches, onChange }: TextColorFieldProps) {
+export function TextColorField({ label, value, placeholder, swatches, onChange }: TextColorFieldProps) {
   return (
     <label className={styles.field}>
       <span>{label}</span>
@@ -12,7 +12,7 @@ export function TextColorField({ label, value, swatches, onChange }: TextColorFi
         onBlur={event => onChange(event.target.value, true)}
         spellCheck={false}
         maxLength={7}
-        placeholder="#e7ecff"
+        placeholder={placeholder}
       />
       <div className={styles.swatchRow} role="list" aria-label={label}>
         {swatches.map((color, index) => (

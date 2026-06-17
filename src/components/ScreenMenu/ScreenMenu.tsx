@@ -18,7 +18,7 @@ export function ScreenMenu({ activeScreen, locale, onSelect }: ScreenMenuProps) 
   const isSettingsActive = activeScreen === "settings";
 
   return (
-    <nav className={styles.screenMenu} aria-label="Навигация по экранам">
+    <nav className={styles.screenMenu} aria-label={t(locale, "screenNavAriaLabel")}>
       {SCREENS.map(screen => {
         const isActive = screen.id === activeScreen;
 
