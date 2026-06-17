@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
-import { BackgroundImageError, getSearchEngineOptions, SEARCH_URL_HINT, t, TEXT_COLOR_SWATCHES, THEME_TEXT_COLORS, normalizeHexColor, resolveTextColor } from "@/app";
+import { BackgroundImageError, getSearchEngineOptions, getTextColorSwatches, SEARCH_URL_HINT, t, THEME_TEXT_COLORS, normalizeHexColor, resolveTextColor } from "@/app";
 import { Select } from "@/components/Select";
 import { TextColorField } from "./TextColorField";
 import type { SettingsPanelProps } from "./types/SettingsPanelProps";
@@ -77,7 +77,6 @@ export function SettingsPanel({
   }, [theme, settings.customTextColors]);
 
   const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
-  const colorSwatches = TEXT_COLOR_SWATCHES[theme];
 
   const localeOptions = useMemo(
     () => [
@@ -385,7 +384,7 @@ export function SettingsPanel({
                   label={t(locale, field.labelKey)}
                   value={textColorDrafts[field.key]}
                   placeholder={THEME_TEXT_COLORS[theme][field.key]}
-                  swatches={colorSwatches[field.key]}
+                  swatches={getTextColorSwatches(theme, field.key)}
                   onChange={(value, commit) => handleTextColorInput(field.key, value, commit)}
                 />
               ))}

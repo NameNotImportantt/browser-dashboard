@@ -8,14 +8,23 @@
   font-size: 0.9rem;
 }
 
+.controlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
 .hexInput {
+  flex: 1;
+  min-width: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: 0.02em;
 }
 
 .swatchRow {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.55rem;
+  flex-shrink: 0;
 }
 
 .swatch {
@@ -33,7 +42,7 @@
   border-color: var(--border-strong);
 }
 
-.swatch:first-child {
+.swatchSelected {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
     var(--shadow-sm);

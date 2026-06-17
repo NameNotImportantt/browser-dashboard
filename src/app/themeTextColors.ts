@@ -19,18 +19,24 @@ export const TEXT_COLOR_CSS_VARS: Record<TextColorKey, string> = {
   textMuted: "--text-muted",
 };
 
-export const TEXT_COLOR_SWATCHES: Record<ThemeMode, Record<TextColorKey, string[]>> = {
-  dark: {
-    text: ["#e7ecff", "#ffffff", "#d8deff", "#c4b5fd", "#b8c8e8"],
-    textSoft: ["#aab3c7", "#98a5be", "#8b98b2", "#b0bdd4", "#7f8ea8"],
-    textMuted: ["#6f7a90", "#5a6578", "#8491a6", "#586274", "#9aa5b8"],
-  },
-  light: {
-    text: ["#1d2433", "#0f141f", "#2a3347", "#3d4660", "#1a1f2e"],
-    textSoft: ["#4f5d78", "#3d4a63", "#62708a", "#566580", "#6b7a94"],
-    textMuted: ["#6f7a90", "#5c6778", "#8290a6", "#6a7589", "#8a96ab"],
-  },
+const READABLE_ON_LIGHT: Record<TextColorKey, readonly [string, string]> = {
+  text: ["#080c14", "#1a3560"],
+  textSoft: ["#252f42", "#4a5f7a"],
+  textMuted: ["#384756", "#5f7389"],
 };
+
+const READABLE_ON_DARK: Record<TextColorKey, readonly [string, string]> = {
+  text: ["#f0f3ff", "#ddb8ff"],
+  textSoft: ["#b8c5da", "#89a8cc"],
+  textMuted: ["#b5c0d0", "#7a92ab"],
+};
+
+export function getTextColorSwatches(theme: ThemeMode, key: TextColorKey): string[] {
+  const [lightA, lightB] = READABLE_ON_LIGHT[key];
+  const [darkA, darkB] = READABLE_ON_DARK[key];
+
+  return [THEME_TEXT_COLORS[theme][key], lightA, lightB, darkA, darkB];
+}
 
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
