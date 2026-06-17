@@ -9,13 +9,14 @@
   transform: none;
   display: flex;
   flex-direction: column;
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border-strong));
   border-radius: var(--radius-lg);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 16px 48px color-mix(in srgb, var(--accent-glow) 95%, transparent),
-    0 28px 72px color-mix(in srgb, var(--accent-glow) 70%, transparent),
-    0 12px 40px rgba(7, 10, 17, 0.48);
+    0 10px 36px color-mix(in srgb, var(--accent-glow) 88%, transparent),
+    0 22px 56px color-mix(in srgb, var(--accent-glow) 55%, transparent),
+    0 8px 28px rgba(7, 10, 17, 0.28);
 }
 
 .todayPanel:hover {
@@ -23,9 +24,9 @@
   border-color: color-mix(in srgb, var(--accent) 34%, var(--border-strong));
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent),
-    0 20px 56px color-mix(in srgb, var(--accent-glow) 100%, transparent),
-    0 32px 80px color-mix(in srgb, var(--accent-glow) 78%, transparent),
-    0 14px 44px rgba(7, 10, 17, 0.52);
+    0 12px 40px color-mix(in srgb, var(--accent-glow) 95%, transparent),
+    0 26px 64px color-mix(in srgb, var(--accent-glow) 62%, transparent),
+    0 10px 32px rgba(7, 10, 17, 0.32);
 }
 
 .columns {

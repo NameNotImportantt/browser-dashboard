@@ -41,6 +41,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     onTabTitleChange,
     onBackgroundImageChange,
     onBackgroundImageRemove,
+    onBackgroundScrimOpacityChange,
     onTextColorChange,
     onTextColorsReset,
     onAddCustomSearchEngine,
@@ -150,6 +151,7 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
               onTabTitleChange={onTabTitleChange}
               onBackgroundImageChange={onBackgroundImageChange}
               onBackgroundImageRemove={onBackgroundImageRemove}
+              onBackgroundScrimOpacityChange={onBackgroundScrimOpacityChange}
               onTextColorChange={onTextColorChange}
               onTextColorsReset={onTextColorsReset}
               onActiveSearchEngineChange={onActiveSearchEngineChange}

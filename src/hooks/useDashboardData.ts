@@ -296,6 +296,14 @@ export function useDashboardData() {
 
   const clearBackgroundImage = useCallback(async () => patchSettings({ customBackgroundImage: null }), [patchSettings]);
 
+  const setBackgroundScrimOpacity = useCallback(
+    async (backgroundScrimOpacity: number) =>
+      patchSettings({
+        backgroundScrimOpacity: Math.min(100, Math.max(0, Math.round(backgroundScrimOpacity))),
+      }),
+    [patchSettings],
+  );
+
   const setTextColor = useCallback(
     async (key: TextColorKey, value: string | null) => {
       const currentSettings = mergeSettings(await db.settings.get("app"));
@@ -631,6 +639,7 @@ export function useDashboardData() {
       setTabTitle,
       setBackgroundImageFromFile,
       clearBackgroundImage,
+      setBackgroundScrimOpacity,
       setTextColor,
       resetTextColors,
       addCustomSearchEngine,
@@ -664,6 +673,7 @@ export function useDashboardData() {
       setTabTitle,
       setBackgroundImageFromFile,
       clearBackgroundImage,
+      setBackgroundScrimOpacity,
       setTextColor,
       resetTextColors,
       addCustomSearchEngine,

@@ -44,12 +44,14 @@ export function AppShell() {
     if (settings.customBackgroundImage) {
       root.dataset.customBg = "true";
       root.style.setProperty("--app-bg-image", `url("${settings.customBackgroundImage}")`);
+      root.style.setProperty("--bg-scrim-opacity", String(settings.backgroundScrimOpacity / 100));
       return;
     }
 
     delete root.dataset.customBg;
     root.style.removeProperty("--app-bg-image");
-  }, [settings.customBackgroundImage]);
+    root.style.removeProperty("--bg-scrim-opacity");
+  }, [settings.customBackgroundImage, settings.backgroundScrimOpacity]);
 
   useEffect(() => {
     document.documentElement.lang = settings.locale;
@@ -104,6 +106,7 @@ export function AppShell() {
       onTabTitleChange={actions.setTabTitle}
       onBackgroundImageChange={actions.setBackgroundImageFromFile}
       onBackgroundImageRemove={actions.clearBackgroundImage}
+      onBackgroundScrimOpacityChange={actions.setBackgroundScrimOpacity}
       onTextColorChange={actions.setTextColor}
       onTextColorsReset={actions.resetTextColors}
       onAddCustomSearchEngine={actions.addCustomSearchEngine}

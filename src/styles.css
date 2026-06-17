@@ -51,6 +51,9 @@
 
   /* Font */
   --font: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Custom background overlay strength (0–1, set from settings) */
+  --bg-scrim-opacity: 0.65;
 }
 
 /* ========== LIGHT (AETHER SIDE) ========== */
@@ -113,7 +116,28 @@ body {
 
 html[data-custom-bg="true"] body {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 35%, transparent) 0%, color-mix(in srgb, var(--bg-deep) 72%, transparent) 100%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) calc(var(--bg-scrim-opacity) * 55%), transparent) 0%,
+      color-mix(in srgb, var(--bg-deep) calc(var(--bg-scrim-opacity) * 110%), transparent) 100%
+    ),
+    var(--app-bg-image) center / cover no-repeat fixed;
+}
+
+html[data-custom-bg="true"][data-theme="light"] {
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --surface-glass: rgba(255, 255, 255, 0.78);
+  --border-strong: rgba(77, 95, 143, 0.36);
+}
+
+html[data-custom-bg="true"][data-theme="light"] body {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) calc(18% + var(--bg-scrim-opacity) * 62%), transparent) 0%,
+      color-mix(in srgb, var(--bg-deep) calc(28% + var(--bg-scrim-opacity) * 72%), transparent) 100%
+    ),
     var(--app-bg-image) center / cover no-repeat fixed;
 }
 

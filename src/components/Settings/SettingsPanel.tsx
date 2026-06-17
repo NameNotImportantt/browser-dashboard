@@ -48,6 +48,7 @@ export function SettingsPanel({
   onTabTitleChange,
   onBackgroundImageChange,
   onBackgroundImageRemove,
+  onBackgroundScrimOpacityChange,
   onTextColorChange,
   onTextColorsReset,
   onActiveSearchEngineChange,
@@ -346,6 +347,29 @@ export function SettingsPanel({
                 {settings.customBackgroundImage ? (
                   <div className={styles.backgroundPreview} role="img" aria-label={t(locale, "backgroundImage")}>
                     <img src={settings.customBackgroundImage} alt="" />
+                  </div>
+                ) : null}
+                {settings.customBackgroundImage ? (
+                  <div className={styles.field}>
+                    <label className={styles.scrimField} htmlFor="background-scrim">
+                      <span>
+                        {t(locale, "backgroundScrim")}: {settings.backgroundScrimOpacity}%
+                      </span>
+                      <input
+                        id="background-scrim"
+                        className={styles.scrimRange}
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={settings.backgroundScrimOpacity}
+                        onChange={event => void onBackgroundScrimOpacityChange(Number(event.target.value))}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={settings.backgroundScrimOpacity}
+                      />
+                    </label>
+                    <small className={styles.hint}>{t(locale, "backgroundScrimHint")}</small>
                   </div>
                 ) : null}
                 {backgroundError ? <small className={styles.error}>{backgroundError}</small> : null}

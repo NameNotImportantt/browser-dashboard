@@ -2,6 +2,12 @@ import type { AppLocale, AppSettings, DateFormatPreset, TimeFormat } from "@/db/
 
 export const DEFAULT_TAB_TITLE = "Personal Dashboard";
 
+export const DEFAULT_BACKGROUND_SCRIM_OPACITY = 65;
+
+function clampBackgroundScrimOpacity(value: number) {
+  return Math.min(100, Math.max(0, Math.round(value)));
+}
+
 export const DEFAULT_SETTINGS: AppSettings = {
   key: "app",
   theme: "dark",
@@ -15,6 +21,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   lastWorkspaceId: null,
   weatherLocation: null,
   customBackgroundImage: null,
+  backgroundScrimOpacity: DEFAULT_BACKGROUND_SCRIM_OPACITY,
   customTextColors: null,
   updatedAt: Date.now(),
 };
@@ -37,6 +44,9 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
     dateFormat: raw.dateFormat ?? DEFAULT_SETTINGS.dateFormat,
     tabTitle: raw.tabTitle?.trim() || DEFAULT_TAB_TITLE,
     customBackgroundImage: raw.customBackgroundImage ?? DEFAULT_SETTINGS.customBackgroundImage,
+    backgroundScrimOpacity: clampBackgroundScrimOpacity(
+      raw.backgroundScrimOpacity ?? DEFAULT_SETTINGS.backgroundScrimOpacity,
+    ),
     customTextColors: raw.customTextColors ?? DEFAULT_SETTINGS.customTextColors,
   };
 }
