@@ -1,13 +1,14 @@
 export { BackgroundImageError, prepareBackgroundImageDataUrl } from "./backgroundImage";
 export { t } from "./i18n";
 export { buildSearchUrl, getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT } from "./searchUtils";
+export { fetchGoogleSuggestionsJsonp, getLocalSearchSuggestions, loadSearchSuggestions, SEARCH_HISTORY_LIMIT } from "./searchSuggestions";
+export type { SearchSuggestion, SearchSuggestionSource } from "./searchSuggestions";
 export {
   DEFAULT_SETTINGS,
   DEFAULT_TAB_TITLE,
   formatClockLabels,
   geocodeCity,
   mergeSettings,
-  resolveTimezone,
 } from "./settingsDefaults";
 export {
   applyCustomTextColors,
@@ -18,7 +19,6 @@ export {
 } from "./themeTextColors";
 export {
   createId,
-  dateToKey,
   getHabitStreak,
   normalizeUrl,
   reorderIds,

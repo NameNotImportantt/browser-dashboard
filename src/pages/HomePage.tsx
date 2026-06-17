@@ -32,9 +32,11 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
     habits,
     bookmarks,
     bookmarkCategories,
+    searchHistory,
     noteText,
     onThemeToggle,
     onActiveSearchEngineChange,
+    onAddSearchHistory,
     onTimeFormatChange,
     onTimezoneChange,
     onLocaleChange,
@@ -100,7 +102,9 @@ export const HomePage = memo(function HomePage(props: HomePageProps) {
                     locale={settings.locale}
                     activeSearchEngineId={settings.activeSearchEngineId}
                     customSearchEngines={settings.customSearchEngines}
+                    searchHistory={searchHistory}
                     onEngineChange={onActiveSearchEngineChange}
+                    onAddSearchHistory={onAddSearchHistory}
                   />
                   <QuickLinks
                     bookmarks={bookmarks}

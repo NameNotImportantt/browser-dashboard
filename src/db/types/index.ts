@@ -1,3 +1,4 @@
+export type { SearchHistoryEntry } from "./searchHistory";
 export type { Bookmark, CreateBookmarkPayload } from "./bookmark";
 export type { BookmarkCategory, CreateBookmarkCategoryPayload } from "./bookmarkCategory";
 export type { Habit } from "./habit";

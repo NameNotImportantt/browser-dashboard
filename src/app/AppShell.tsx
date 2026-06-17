@@ -27,6 +27,7 @@ export function AppShell() {
     bookmarks,
     bookmarkCategories,
     noteText,
+    searchHistory,
     actions,
   } = dashboard;
 
@@ -97,8 +98,10 @@ export function AppShell() {
       bookmarks={bookmarks}
       bookmarkCategories={bookmarkCategories}
       noteText={noteText}
+      searchHistory={searchHistory}
       onThemeToggle={actions.setTheme}
       onActiveSearchEngineChange={actions.setActiveSearchEngineId}
+      onAddSearchHistory={actions.addSearchHistoryEntry}
       onTimeFormatChange={actions.setTimeFormat}
       onTimezoneChange={actions.setTimezone}
       onLocaleChange={actions.setLocale}

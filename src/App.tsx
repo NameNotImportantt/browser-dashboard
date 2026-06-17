@@ -4,5 +4,3 @@ import "./styles.css";
 export function App() {
   return <AppShell />;
 }
-
-export default App;
