@@ -35,6 +35,7 @@ export interface HomePageProps {
   onTabTitleChange: (title: string) => Promise<void>;
   onBackgroundImageChange: (file: File) => Promise<void>;
   onBackgroundImageRemove: () => Promise<void>;
+  onBackgroundScrimOpacityChange: (opacity: number) => Promise<void>;
   onTextColorChange: (key: TextColorKey, value: string | null) => Promise<void>;
   onTextColorsReset: () => Promise<void>;
   onAddCustomSearchEngine: (payload: { name: string; urlTemplate: string }) => Promise<void>;

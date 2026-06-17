@@ -9,6 +9,7 @@ export interface SettingsPanelProps {
   onTabTitleChange: (value: string) => Promise<void>;
   onBackgroundImageChange: (file: File) => Promise<void>;
   onBackgroundImageRemove: () => Promise<void>;
+  onBackgroundScrimOpacityChange: (opacity: number) => Promise<void>;
   onTextColorChange: (key: TextColorKey, value: string | null) => Promise<void>;
   onTextColorsReset: () => Promise<void>;
   onActiveSearchEngineChange: (engineId: string) => Promise<void>;

@@ -35,6 +35,7 @@ export interface AppSettings {
   lastWorkspaceId: string | null;
   weatherLocation: WeatherLocation | null;
   customBackgroundImage: string | null;
+  backgroundScrimOpacity: number;
   customTextColors: CustomTextColors | null;
   updatedAt: number;
 }

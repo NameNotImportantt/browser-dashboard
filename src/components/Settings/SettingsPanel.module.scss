@@ -158,6 +158,33 @@
   object-fit: cover;
 }
 
+.scrimField {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.scrimField span {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.scrimRange {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+.scrimRange:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: var(--radius-sm);
+}
+
 @media (max-width: 960px) {
   .rows {
     grid-template-columns: 1fr;
