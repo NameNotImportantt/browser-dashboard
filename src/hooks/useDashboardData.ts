@@ -7,6 +7,7 @@ import {
   mergeSettings,
   normalizeUrl,
   prepareBackgroundImageDataUrl,
+  SEARCH_HISTORY_LIMIT,
   todayKey,
   WEATHER_CACHE_TTL_MS,
 } from "@/app";
@@ -24,6 +25,7 @@ import type {
   DateFormatPreset,
   Habit,
   Note,
+  SearchHistoryEntry,
   TextColorKey,
   ThemeMode,
   TimeFormat,
@@ -41,6 +43,7 @@ interface Snapshot {
   notes: Note[];
   settings: AppSettings;
   weatherCache: WeatherCache | null;
+  searchHistory: SearchHistoryEntry[];
 }
 
 function sortByPosition<T extends { position: number }>(items: T[]) {
@@ -74,7 +77,8 @@ async function ensureSeedData() {
 }
 
 async function loadSnapshot(): Promise<Snapshot> {
-  const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache] = await Promise.all([
+  const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
+    await Promise.all([
     db.workspaces.toArray(),
     db.todos.toArray(),
     db.habits.toArray(),
@@ -83,6 +87,7 @@ async function loadSnapshot(): Promise<Snapshot> {
     db.notes.toArray(),
     db.settings.get("app"),
     db.weatherCache.get("current"),
+    db.searchHistory.orderBy("usedAt").reverse().toArray(),
   ]);
 
   return {
@@ -94,6 +99,7 @@ async function loadSnapshot(): Promise<Snapshot> {
     notes,
     settings: mergeSettings(settings),
     weatherCache: weatherCache ?? null,
+    searchHistory,
   };
 }
 
@@ -169,6 +175,7 @@ export function useDashboardData() {
   const bookmarkCategories = snapshot?.bookmarkCategories ?? [];
   const notes = snapshot?.notes ?? [];
   const weatherCache = snapshot?.weatherCache ?? null;
+  const searchHistory = snapshot?.searchHistory ?? [];
 
   const workspaceTodos = useMemo(() => {
     if (!activeWorkspaceId) return [];
@@ -624,6 +631,38 @@ export function useDashboardData() {
     [patchSettings, refreshWeather],
   );
 
+  const addSearchHistoryEntry = useCallback(
+    async (query: string) => {
+      const normalized = query.trim();
+      if (!normalized) {
+        return;
+      }
+
+      const now = Date.now();
+      const entries = await db.searchHistory.toArray();
+      const existing = entries.find(entry => entry.query.toLowerCase() === normalized.toLowerCase());
+
+      if (existing) {
+        await db.searchHistory.update(existing.id, { usedAt: now });
+      } else {
+        await db.searchHistory.add({
+          id: createId(),
+          query: normalized,
+          usedAt: now,
+        });
+      }
+
+      const count = await db.searchHistory.count();
+      if (count > SEARCH_HISTORY_LIMIT) {
+        const overflow = await db.searchHistory.orderBy("usedAt").limit(count - SEARCH_HISTORY_LIMIT).toArray();
+        await db.searchHistory.bulkDelete(overflow.map(entry => entry.id));
+      }
+
+      await refresh();
+    },
+    [refresh],
+  );
+
   const actions = useMemo(
     () => ({
       refresh,
@@ -658,6 +697,7 @@ export function useDashboardData() {
       deleteBookmarkCategory,
       saveNote,
       refreshWeather,
+      addSearchHistoryEntry,
     }),
     [
       refresh,
@@ -692,6 +732,7 @@ export function useDashboardData() {
       deleteBookmarkCategory,
       saveNote,
       refreshWeather,
+      addSearchHistoryEntry,
     ],
   );
 
@@ -707,6 +748,7 @@ export function useDashboardData() {
     settings,
     weatherCache,
     activeWorkspaceId,
+    searchHistory,
     actions,
   };
 }

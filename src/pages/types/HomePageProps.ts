@@ -12,6 +12,7 @@ import type {
   WeatherCache,
   Workspace,
 } from "@/db/types";
+import type { SearchHistoryEntry } from "@/db/types/searchHistory";
 
 export interface HomePageProps {
   timeLabel: string;
@@ -25,9 +26,11 @@ export interface HomePageProps {
   habits: Habit[];
   bookmarks: Bookmark[];
   bookmarkCategories: BookmarkCategory[];
+  searchHistory: SearchHistoryEntry[];
   noteText: string;
   onThemeToggle: (theme: ThemeMode) => Promise<void>;
   onActiveSearchEngineChange: (engineId: string) => Promise<void>;
+  onAddSearchHistory: (query: string) => Promise<void>;
   onTimeFormatChange: (format: AppSettings["timeFormat"]) => Promise<void>;
   onTimezoneChange: (timezone: string) => Promise<void>;
   onLocaleChange: (locale: AppSettings["locale"]) => Promise<void>;

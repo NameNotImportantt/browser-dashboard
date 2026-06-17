@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { AppSettings, Bookmark, BookmarkCategory, Habit, Note, TodoItem, WeatherCache, Workspace } from "./types";
+import type { AppSettings, Bookmark, BookmarkCategory, Habit, Note, SearchHistoryEntry, TodoItem, WeatherCache, Workspace } from "./types";
 
 export class DashboardDatabase extends Dexie {
   workspaces!: Table<Workspace, string>;
@@ -10,6 +10,7 @@ export class DashboardDatabase extends Dexie {
   bookmarkCategories!: Table<BookmarkCategory, string>;
   settings!: Table<AppSettings, string>;
   weatherCache!: Table<WeatherCache, string>;
+  searchHistory!: Table<SearchHistoryEntry, string>;
 
   constructor() {
     super("browser-home-page-db");
@@ -92,6 +93,18 @@ export class DashboardDatabase extends Dexie {
             settings.backgroundScrimOpacity = settings.backgroundScrimOpacity ?? 65;
           });
       });
+
+    this.version(5).stores({
+      workspaces: "id,position,createdAt",
+      todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
+      notes: "id,workspaceId,updatedAt",
+      habits: "id,workspaceId,position,createdAt",
+      bookmarks: "id,workspaceId,categoryId,position,createdAt",
+      bookmarkCategories: "id,workspaceId,position,createdAt",
+      settings: "key,updatedAt",
+      weatherCache: "id,fetchedAt",
+      searchHistory: "id,usedAt",
+    });
   }
 }
 
