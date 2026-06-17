@@ -11,9 +11,9 @@ export {
 } from "./settingsDefaults";
 export {
   applyCustomTextColors,
+  getTextColorSwatches,
   normalizeHexColor,
   resolveTextColor,
-  TEXT_COLOR_SWATCHES,
   THEME_TEXT_COLORS,
 } from "./themeTextColors";
 export {

@@ -1,13 +1,18 @@
-import { weatherCodeToEmoji } from "@/app";
+import { t, weatherCodeToEmoji } from "@/app";
 import type { TopBarProps } from "./types/TopBarProps";
 import styles from "./TopBar.module.scss";
 
-export function TopBar({ time, date, weather, onRefreshWeather }: TopBarProps) {
+export function TopBar({ locale, time, date, weather, onRefreshWeather }: TopBarProps) {
   return (
-    <header className={styles.topBar} aria-label="Системная информация">
+    <header className={styles.topBar} aria-label={t(locale, "topBarAriaLabel")}>
       <strong className={styles.time}>{time}</strong>
       <span className={styles.date}>{date}</span>
-      <button type="button" className={styles.weather} onClick={() => void onRefreshWeather()}>
+      <button
+        type="button"
+        className={styles.weather}
+        onClick={() => void onRefreshWeather()}
+        aria-label={t(locale, "refreshWeather")}
+      >
         {weather ? (
           <>
             <span aria-hidden>{weatherCodeToEmoji(weather.weatherCode)}</span>

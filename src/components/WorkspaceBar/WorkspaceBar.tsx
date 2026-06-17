@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
+import { t } from "@/app";
 import type { WorkspaceBarProps } from "./types/WorkspaceBarProps";
 import styles from "./WorkspaceBar.module.scss";
 
-export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, onDelete }: WorkspaceBarProps) {
+export function WorkspaceBar({ locale, workspaces, activeWorkspaceId, onSelect, onAdd, onDelete }: WorkspaceBarProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState("");
   const [hoveredWorkspaceId, setHoveredWorkspaceId] = useState<string | null>(null);
@@ -18,7 +19,7 @@ export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, o
   };
 
   return (
-    <nav className={styles.workspaceBar} aria-label="Воркспейсы">
+    <nav className={styles.workspaceBar} aria-label={t(locale, "workspaceBarAriaLabel")}>
       {workspaces.map((workspace, index) => {
         const isActive = workspace.id === activeWorkspaceId;
 
@@ -44,7 +45,7 @@ export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, o
                   type="button"
                   className={`${styles.removeButton} ${hoveredWorkspaceId === workspace.id ? styles.isVisible : ""}`}
                   onClick={() => void onDelete(workspace.id)}
-                  aria-label={`Удалить ${workspace.name}`}
+                  aria-label={`${t(locale, "remove")} ${workspace.name}`}
                 >
                   ×
                 </button>
@@ -59,8 +60,8 @@ export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, o
           <input
             value={name}
             onChange={event => setName(event.target.value)}
-            placeholder="Название"
-            aria-label="Название воркспейса"
+            placeholder={t(locale, "bookmarkTitle")}
+            aria-label={t(locale, "workspaceNameAriaLabel")}
             autoFocus
             required
           />
@@ -74,7 +75,7 @@ export function WorkspaceBar({ workspaces, activeWorkspaceId, onSelect, onAdd, o
       ) : (
         <>
           {workspaces.length > 0 ? <span className={styles.separator} aria-hidden>|</span> : null}
-          <button type="button" className={styles.addButton} onClick={() => setIsAdding(true)} aria-label="Добавить воркспейс">
+          <button type="button" className={styles.addButton} onClick={() => setIsAdding(true)} aria-label={t(locale, "addWorkspaceAriaLabel")}>
             +
           </button>
         </>

@@ -1,6 +1,7 @@
-import type { WeatherCache } from "@/db/types";
+import type { AppLocale, WeatherCache } from "@/db/types";
 
 export interface TopBarProps {
+  locale: AppLocale;
   time: string;
   date: string;
   weather: WeatherCache | null;

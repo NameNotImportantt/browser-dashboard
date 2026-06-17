@@ -1,11 +1,11 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
-import { buildSearchUrl, getSearchEngineOptions } from "@/app";
+import { buildSearchUrl, getSearchEngineOptions, t } from "@/app";
 import { Select } from "@/components/Select";
 import type { SearchCoreProps } from "./types/SearchCoreProps";
 import styles from "./SearchCore.module.scss";
 
-export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngineChange }: SearchCoreProps) {
+export function SearchCore({ locale, activeSearchEngineId, customSearchEngines, onEngineChange }: SearchCoreProps) {
   const [query, setQuery] = useState("");
   const engineOptions = getSearchEngineOptions(customSearchEngines);
   const engineSelectOptions = useMemo(
@@ -22,15 +22,15 @@ export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngine
   };
 
   return (
-    <section className={styles.searchCore} aria-label="Поиск">
+    <section className={styles.searchCore} aria-label={t(locale, "searchAriaLabel")}>
       <form className={styles.searchForm} onSubmit={submit}>
         <label className={styles.searchField}>
           <Search className={styles.searchIcon} size={22} strokeWidth={2.25} aria-hidden />
           <input
             value={query}
             onChange={event => setQuery(event.target.value)}
-            placeholder="Поиск..."
-            aria-label="Поиск"
+            placeholder={t(locale, "searchPlaceholder")}
+            aria-label={t(locale, "searchAriaLabel")}
             autoFocus
           />
         </label>
@@ -41,7 +41,7 @@ export function SearchCore({ activeSearchEngineId, customSearchEngines, onEngine
           value={activeSearchEngineId}
           options={engineSelectOptions}
           onChange={value => void onEngineChange(value)}
-          ariaLabel="Поисковая система"
+          ariaLabel={t(locale, "searchEngineAriaLabel")}
         />
       </form>
     </section>

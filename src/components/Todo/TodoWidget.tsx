@@ -42,23 +42,35 @@ export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder
   return (
     <section className={`card ${styles.todoWidget}`}>
       <header className={styles.widgetHeader}>
-        <h2>TODO</h2>
+        <h2>{t(locale, "navTodo")}</h2>
       </header>
 
       <form className={styles.stackForm} onSubmit={submit}>
-        <input className={styles.inputField} value={title} onChange={event => setTitle(event.target.value)} placeholder="Новая задача" required />
+        <input
+          className={styles.inputField}
+          value={title}
+          onChange={event => setTitle(event.target.value)}
+          placeholder={t(locale, "todoNewPlaceholder")}
+          required
+        />
         <div className={styles.inlineRow}>
           <Select
             className={styles.inputField}
             value={priority}
             options={priorityOptions}
             onChange={value => setPriority(value as TodoPriority)}
-            ariaLabel="Приоритет"
+            ariaLabel={t(locale, "todoPriority")}
           />
-          <input className={styles.inputField} type="date" value={dueDate} onChange={event => setDueDate(event.target.value)} />
+          <input
+            className={styles.inputField}
+            type="date"
+            value={dueDate}
+            onChange={event => setDueDate(event.target.value)}
+            aria-label={t(locale, "todoDueDateAriaLabel")}
+          />
         </div>
         <button className="primary" type="submit">
-          Добавить задачу
+          {t(locale, "todoAdd")}
         </button>
       </form>
 
@@ -85,7 +97,7 @@ export function TodoWidget({ todos, locale, onAdd, onToggle, onDelete, onReorder
               <small className={`${styles.todoBadge} ${priorityBadgeClass(todo.priority)}`}>{priorityLabel(todo.priority, locale)}</small>
               {todo.dueDate ? <small className={styles.todoBadge}>{todo.dueDate}</small> : null}
               <button type="button" className={styles.dangerButton} onClick={() => void onDelete(todo.id)}>
-                Удалить
+                {t(locale, "remove")}
               </button>
             </div>
           </li>
