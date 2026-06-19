@@ -4,25 +4,33 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
-const logoPath = fileURLToPath(new URL("./src/logo.svg", import.meta.url));
+const faviconPath = fileURLToPath(
+  new URL("./src/assets/favicon.png", import.meta.url),
+);
 
 function inlineFavicon(): Plugin {
   return {
     name: "inline-favicon",
     transformIndexHtml(html) {
-      const svg = readFileSync(logoPath, "utf-8");
-      const href = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+      const png = readFileSync(faviconPath);
+      const href = `data:image/png;base64,${png.toString("base64")}`;
       return html.replace(
         /<!-- inline-favicon -->/,
-        `<link rel="icon" type="image/svg+xml" href="${href}" />`,
+        `<link rel="icon" type="image/png" href="${href}" />`,
       );
     },
   };
 }
 
 export default defineConfig({
+  root: "./src",
+  publicDir: false,
   plugins: [react(), inlineFavicon(), viteSingleFile()],
   base: "./",
+  build: {
+    outDir: "../dist",
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

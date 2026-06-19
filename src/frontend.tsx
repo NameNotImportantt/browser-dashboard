@@ -1,5 +1,5 @@
 /**
- * Entry point for the React app — see root `index.html`.
+ * Entry point for the React app — see `src/index.html`.
  */
 
 import { StrictMode } from "react";
