@@ -1,58 +1,157 @@
-# browser-dashboard
+<p align="right">
+  <strong>English</strong> | <a href="./docs/README.ru.md">Русский</a>
+</p>
 
-Атмосферная локальная стартовая страница браузера с фокусом на скорость, минимализм и оффлайн-first подход.
+<div align="center">
+  <img src="./src/assets/favicon.png" width="144" height="144" alt="Browser Dashboard icon" />
+  <h1>Browser Dashboard</h1>
 
-## Что внутри
+  <p><strong>A fast, offline-first browser start page with search, tasks, habits, and bookmarks.</strong></p>
 
-- Рабочие пространства с быстрым переключением.
-- Виджеты: задачи, привычки, заметки, закладки, поиск, погода, часы/дата.
-- Персистентность данных в IndexedDB через Dexie.
-- Легковесный UI на React + TypeScript + SCSS Modules.
-- Статическая сборка для деплоя как обычного фронтенд-приложения.
+  <p>
+    <img src="https://img.shields.io/badge/status-alpha-orange" alt="status alpha" />
+    <img src="https://img.shields.io/badge/offline--first-yes-8b5cf6" alt="offline first" />
+    <img src="https://img.shields.io/badge/single--file-HTML-e879f9" alt="single file html" />
+    <img src="https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white" alt="bun" />
+    <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="react 19" />
+    <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="typescript 5" />
+    <img src="https://img.shields.io/badge/Dexie-IndexedDB-336791" alt="dexie indexeddb" />
+  </p>
+</div>
 
-## Технологический стек
+## Table of Contents
 
-- `Bun`
-- `React 19`
-- `TypeScript`
-- `Vite`
-- `Dexie` (IndexedDB)
-- `Sсss`
+- [What Is It](#what-is-it)
+- [What It Is For](#what-it-is-for)
+- [Problem It Solves](#problem-it-solves)
+- [Features and How They Work](#features-and-how-they-work)
+- [Installation](#installation)
+- [Set as Browser Start Page](#set-as-browser-start-page)
+- [Limitations](#limitations)
+- [Screenshots](#screenshots)
+- [For Developers](#for-developers)
 
-## Быстрый старт
+---
 
-### Требования
+### What Is It
 
-- Установленный [Bun](https://bun.sh/)
-- `Node.js` версии `20.19+` или `22.12+` (требование `Vite`)
+**Browser Dashboard** is a self-contained local start page for your browser. It ships as a single `index.html` file and runs entirely in the browser without a backend server.
 
-### Установка
+The UI is built around a dark, atmospheric aesthetic with a focus on speed, minimalism, and instant access to everyday tools: search, bookmarks, tasks, habits, notes, clock, and weather.
 
-```bash
-bun install
-```
+### What It Is For
 
-### Запуск в разработке
+Use it as a personal home screen when you open the browser or a new tab. It replaces generic search-provider start pages with a workspace you control: your links, your tasks, your habits, and your layout preferences — all stored locally on your machine.
 
-```bash
-bun run dev
-```
+### Problem It Solves
 
-### Production-сборка
+Most built-in browser start pages are either too noisy, too generic, or tied to a single search provider. Cloud dashboards require accounts, sync infrastructure, and constant connectivity.
 
-```bash
-bun run build
-```
+Browser Dashboard offers a middle ground:
 
-Собранные файлы находятся в `dist/`.
+- **Local-first** — your data stays in the browser (IndexedDB), not on someone else's server.
+- **Zero setup beyond one file** — download a release, point the browser to it, done.
+- **Fast and lightweight** — a single static HTML bundle with no install wizard or background services.
+- **Focused toolkit** — search, quick links, daily overview, and lightweight productivity widgets in one calm screen.
 
-## Скрипты
+### Features and How They Work
 
-- `bun run dev` — генерация `.d.ts` для SCSS-модулей и запуск Vite dev-сервера.
-- `bun run build` — проверка TypeScript (`tsc -b`) и production-сборка через Vite.
-- `bun run start` — локальный предпросмотр production-сборки.
+| Area | What you get | How it works |
+| --- | --- | --- |
+| **Workspaces** | Separate contexts (e.g. *Work*, *Personal*) | Each workspace has its own todos, habits, bookmarks, and note. Switch via the bar at the bottom; the active workspace is remembered. |
+| **Search** | Central search bar with engine picker | Built-in Google and DuckDuckGo, plus custom engines via `{q}` URL templates. Queries open in a new tab. Recent queries are stored locally; online suggestions come from Google Suggest (JSONP) when available. |
+| **Quick Links** | Bookmark grid with categories | Save URLs with titles, group them into categories, filter by category on the home screen. |
+| **Tasks** | Full todo list with priorities and due dates | Add, complete, reorder, and delete tasks. The home sidebar shows up to five active tasks for today. |
+| **Habits** | Daily habit tracker with streaks | Mark habits done for today; streak length is calculated from completion history. |
+| **Notes** | One persistent note per workspace | Auto-saved text note, loaded lazily when you open the Notes screen. |
+| **Clock & Date** | Top bar time and date | Respects 12h/24h format, timezone (auto or manual), and locale-aware date formatting. |
+| **Weather** | Current temperature in the top bar | City is geocoded via Open-Meteo; forecast data is fetched on demand and cached for 30 minutes. Requires internet. |
+| **Settings** | Theme, locale, appearance, search, weather | Light/dark theme, Russian/English UI, custom background image, text color overrides, tab title, and search engine management. |
+| **Storage** | Offline persistence | All core data lives in IndexedDB through Dexie (`browser-home-page-db`). No account, no cloud sync. |
 
-## Данные и оффлайн-режим
+### Installation
 
-- Основные данные хранятся в IndexedDB (`Dexie`).
-- Погода кэшируется локально с TTL.
+1. Open [GitHub Releases](https://github.com/NameNotImportantt/browser-dashboard/releases).
+2. Download the latest `index.html` from the release assets.
+3. Save it anywhere on your disk, for example:
+   - Linux: `~/Documents/browser-dashboard/index.html`
+   - macOS: `~/Documents/browser-dashboard/index.html`
+   - Windows: `C:\Users\You\Documents\browser-dashboard\index.html`
+
+> [!IMPORTANT]
+> Each release contains **one self-contained `index.html` file**. All JavaScript, styles, and assets are inlined at build time — you do not need Node.js, Bun, or any server to use it.
+
+No package manager, no build step, and no dependencies are required for end users.
+
+### Set as Browser Start Page
+
+> [!NOTE]
+> **In work.** Browser setup instructions are being expanded and verified. The steps below are a draft.
+
+Use a `file:///` URL pointing to your downloaded file.
+
+**Example paths**
+
+| OS | Example `file:///` URL |
+| --- | --- |
+| Linux | `file:///home/you/Documents/browser-dashboard/index.html` |
+| macOS | `file:///Users/you/Documents/browser-dashboard/index.html` |
+| Windows | `file:///C:/Users/You/Documents/browser-dashboard/index.html` |
+
+#### Blink (Chrome, Chromium, Brave, Edge, Vivaldi, Opera)
+
+**Homepage on startup**
+
+1. Open browser **Settings**.
+2. Find **On startup** / **Start up**.
+3. Choose **Open a specific page or set of pages**.
+4. Add your `file:///` URL to `index.html`.
+
+**New tab page (optional)**
+
+Browsers on Blink do not allow replacing the new-tab page with a local file out of the box. Options:
+
+- Use a new-tab override extension and point it to your local file, or
+- Rely on the startup homepage if opening the browser is enough for your workflow.
+
+#### Gecko (Firefox, LibreWolf, Zen, etc.)
+
+**Homepage and new windows**
+
+1. Open **Settings → Home** (or `about:preferences#home`).
+2. Set **Homepage and new windows** to **Custom URLs…**.
+3. Paste your `file:///` URL.
+
+**New tab (optional)**
+
+1. Open `about:config`.
+2. Set `browser.newtab.url` to your `file:///` URL.
+
+> [!TIP]
+> Keep the file in a stable folder. If you move or rename it, update the browser setting to the new path.
+
+### Limitations
+
+- **Local data only** — todos, habits, bookmarks, notes, and settings are stored in IndexedDB for the current browser profile. Clearing site data removes everything. There is no built-in export, import, or cross-device sync.
+- **One browser profile = one dataset** — data is not shared between Blink and Gecko browsers, or between different profiles on the same browser.
+- **Weather needs the network** — geocoding and forecast use Open-Meteo APIs. Without internet, only the last cached value (up to 30 minutes old) is shown.
+- **Search suggestions need the network** — online suggestions call Google Suggest over JSONP. Ad blockers, strict privacy settings, or offline mode may disable them; local search history still works.
+- **Background images are stored locally** — uploaded images are compressed and saved inside IndexedDB (max 8 MB source file, longest edge resized to 1920 px). Very large libraries of custom backgrounds are not supported.
+- **Single note per workspace** — the Notes screen holds one text field per workspace, not a full notes app with multiple pages.
+- **`file://` constraints** — some browser policies treat local files differently. If a feature that requires `fetch()` fails, check browser security settings or try serving the file through a local static server during development.
+- **Alpha status** — the project is under active development; UI and behavior may change between releases.
+
+### Screenshots
+
+<p align="center">
+  <img src="./docs/screenshots/mainPage.png" width="48%" alt="Home screen with search and quick links" />
+  <img src="./docs/screenshots/tasks.png" width="48%" alt="Tasks screen" />
+  <img src="./docs/screenshots/habits.png" width="48%" alt="Habits screen" />
+  <img src="./docs/screenshots/Notes.png" width="48%" alt="Notes screen" />
+  <img src="./docs/screenshots/settingPage.png" width="48%" alt="Settings screen" />
+  <img src="./docs/screenshots/lightTheme.png" width="48%" alt="Light theme" />
+</p>
+
+### For Developers
+
+See the [Developer Guide](./docs/DEVELOPERS.en.md).
