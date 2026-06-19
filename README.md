@@ -9,6 +9,7 @@
   <p><strong>A fast, offline-first browser start page with search, tasks, habits, and bookmarks.</strong></p>
 
   <p>
+    <a href="https://github.com/NameNotImportantt/browser-dashboard/releases"><img src="https://img.shields.io/github/v/release/NameNotImportantt/browser-dashboard" alt="release" /></a>
     <img src="https://img.shields.io/badge/status-alpha-orange" alt="status alpha" />
     <img src="https://img.shields.io/badge/offline--first-yes-8b5cf6" alt="offline first" />
     <img src="https://img.shields.io/badge/single--file-HTML-e879f9" alt="single file html" />
@@ -20,8 +21,21 @@
   </p>
 </div>
 
+## Features
+
+- 🔍 Multi-engine search
+- 📁 Bookmark categories
+- ✅ Todo manager
+- 🔥 Habit tracking
+- 📝 Notes
+- 🌤 Weather
+- 🗂 Workspaces
+- 💾 Offline-first storage
+- 🚫 No account required
+
 ## Table of Contents
 
+- [Features](#features)
 - [What Is It](#what-is-it)
 - [What It Is For](#what-it-is-for)
 - [Problem It Solves](#problem-it-solves)
@@ -30,6 +44,7 @@
 - [Set as Browser Start Page](#set-as-browser-start-page)
 - [Limitations](#limitations)
 - [Screenshots](#screenshots)
+- [Roadmap](#roadmap)
 - [For Developers](#for-developers)
 - [License](#license)
 
@@ -153,6 +168,45 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
   <img src="./docs/screenshots/settingPage.png" width="48%" alt="Settings screen" />
   <img src="./docs/screenshots/lightTheme.png" width="48%" alt="Light theme" />
 </p>
+
+### Roadmap
+
+#### User-facing
+
+- [x] Workspaces — separate contexts for tasks, habits, bookmarks, and notes
+- [x] Tasks — priorities, due dates, drag-and-drop reorder
+- [x] Habits — daily tracking with streaks
+- [x] Notes — one persistent note per workspace
+- [x] Bookmark categories — group and filter quick links
+- [x] Multi-engine search — built-in and custom `{q}` templates
+- [x] Search history and online suggestions
+- [x] Weather — Open-Meteo with local cache
+- [x] Clock and date — timezone and format settings
+- [x] Theme and appearance — light/dark, custom background, text colors
+- [ ] Data import and export
+- [ ] Local backup
+- [ ] PWA mode — installable, offline shell
+- [ ] Workspace delete confirmation
+- [ ] Search history management — view and clear
+- [ ] Opt-out for online search suggestions
+- [ ] New widgets
+- [ ] Task filters and grouping
+- [ ] Habit calendar and statistics
+- [ ] Bookmark drag-and-drop reorder
+- [ ] Bookmark favicons
+- [ ] Debounced note autosave
+- [ ] Keyboard shortcuts
+- [ ] Undo for destructive actions
+- [ ] Scheduled theme — dark/light by time of day
+
+#### Engineering
+
+- [ ] Content Security Policy
+- [ ] Refactor data layer — split `useDashboardData` into focused modules
+- [ ] Tests and CI
+- [ ] React error boundary
+- [ ] SCSS modules only — remove global `styles.css`
+- [ ] Loading skeletons
 
 ### For Developers
 
