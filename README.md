@@ -16,6 +16,7 @@
     <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="react 19" />
     <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="typescript 5" />
     <img src="https://img.shields.io/badge/Dexie-IndexedDB-336791" alt="dexie indexeddb" />
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
   </p>
 </div>
 
@@ -30,6 +31,7 @@
 - [Limitations](#limitations)
 - [Screenshots](#screenshots)
 - [For Developers](#for-developers)
+- [License](#license)
 
 ---
 
@@ -154,4 +156,11 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 
 ### For Developers
 
-See the [Developer Guide](./docs/DEVELOPERS.en.md).
+See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
+
+### License
+
+Licensed under the [MIT License](./LICENSE). 
+Copyright (c) 2026 NameNotImportantt.
+
+See the [Code of Conduct](./CODE_OF_CONDUCT.md) for community guidelines.

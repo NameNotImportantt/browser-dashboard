@@ -59,6 +59,7 @@ src/
 - ORM: [Dexie](https://dexie.org/) (IndexedDB)
 - Domain types live in `src/db/types/*` (one file per entity)
 - Component prop types live in `src/components/<Name>/types/*`
+- Page types live in `src/pages/types/*`
 
 ### Styling Rules
 
@@ -97,14 +98,20 @@ UI follows a dark, atmospheric aesthetic inspired by the novels *The Beginning A
 - Prefer small, focused diffs; preserve fast UI response
 - Do not commit or create branches unless explicitly asked by maintainers
 
-## Release Checklist
+See [Contributing](../CONTRIBUTING.md) for the full contribution workflow.
 
-1. Run `bun run build`
-2. Verify `dist/index.html` opens and core flows work
-3. Attach `dist/index.html` to a GitHub Release
-4. Update user-facing docs if behavior changed
+## License
+
+This project is licensed under the [MIT License](../LICENSE). Copyright (c) 2026 NameNotImportantt.
+
+By contributing, you agree that your contributions will be licensed under the same terms.
+
+Please follow the [Code of Conduct](../CODE_OF_CONDUCT.md) in all project spaces.
 
 ## Links
 
 - [User documentation (English)](../README.md)
 - [User documentation (Russian)](./README.ru.md)
+- [MIT License](../LICENSE)
+- [Code of Conduct](../CODE_OF_CONDUCT.md)
+- [Contributing](../CONTRIBUTING.md)
