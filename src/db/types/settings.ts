@@ -27,6 +27,7 @@ export interface AppSettings {
   theme: ThemeMode;
   activeSearchEngineId: string;
   customSearchEngines: CustomSearchEngine[];
+  onlineSearchSuggestionsEnabled: boolean;
   searchHistoryEnabled: boolean;
   timeFormat: TimeFormat;
   timezone: string;

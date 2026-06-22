@@ -104,6 +104,11 @@ export function SearchCore() {
             return;
         }
 
+        if (!settings.onlineSearchSuggestionsEnabled) {
+            abortRef.current?.abort();
+            return;
+        }
+
         abortRef.current?.abort();
         const controller = new AbortController();
 
@@ -122,7 +127,7 @@ export function SearchCore() {
             .catch(() => undefined);
 
         return () => controller.abort();
-    }, [debouncedQuery, isFocused, searchHistory]);
+    }, [debouncedQuery, isFocused, searchHistory, settings.onlineSearchSuggestionsEnabled]);
 
     useEffect(() => {
         if (!isOpen || activeIndex < 0) {

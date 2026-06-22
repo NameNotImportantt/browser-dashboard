@@ -1,5 +1,7 @@
 import {useMemo, useState} from 'react';
+import clsx from 'clsx';
 import {getSearchEngineOptions, SEARCH_URL_HINT, t} from '@/app';
+import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import settingsStyles from '../../../../SettingsPanel.module.scss';
 import styles from './AddSearchEngineControls.module.scss';
@@ -9,6 +11,7 @@ export interface AddSearchEngineControlsProps {
   locale: AppLocale;
   settings: AppSettings;
   onSelectActiveEngine: (engineId: string) => Promise<void>;
+  onToggleOnlineSuggestionsEnabled: (enabled: boolean) => Promise<void>;
   onAddCustomEngine: (payload: { name: string; urlTemplate: string }) => Promise<void>;
   onRemoveCustomEngine: (engineId: string) => Promise<void>;
 }
@@ -17,12 +20,14 @@ export function AddSearchEngineControls({
     locale,
     settings,
     onSelectActiveEngine,
+    onToggleOnlineSuggestionsEnabled,
     onAddCustomEngine,
     onRemoveCustomEngine,
 }: AddSearchEngineControlsProps) {
     const [engineName, setEngineName] = useState('');
     const [engineUrl, setEngineUrl] = useState('');
     const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
+    const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
 
     const searchEngineSelectOptions = useMemo(
         () => searchOptions.map(option => ({value: option.id, label: option.name})),
@@ -64,6 +69,15 @@ export function AddSearchEngineControls({
                 <button type="button" className="primary" onClick={() => void addEngine()}>
                     {t(locale, 'addSearchEngine')}
                 </button>
+            </div>
+
+            <div className={onlineSuggestionsFieldClassName}>
+                <Checkbox
+                    checked={settings.onlineSearchSuggestionsEnabled}
+                    onChange={() => void onToggleOnlineSuggestionsEnabled(!settings.onlineSearchSuggestionsEnabled)}
+                    label={t(locale, 'onlineSearchSuggestionsEnabled')}
+                />
+                <small className={settingsStyles.hint}>{t(locale, 'onlineSearchSuggestionsHint')}</small>
             </div>
 
             {settings.customSearchEngines.length > 0 ? (

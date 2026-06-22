@@ -7,6 +7,7 @@ export function SearchEnginesSettingsSection() {
     const {
         settings,
         setActiveSearchEngineId,
+        setOnlineSearchSuggestionsEnabled,
         setSearchHistoryEnabled,
         addCustomSearchEngine,
         removeCustomSearchEngine,
@@ -23,6 +24,7 @@ export function SearchEnginesSettingsSection() {
                 locale={locale}
                 settings={settings}
                 onSelectActiveEngine={setActiveSearchEngineId}
+                onToggleOnlineSuggestionsEnabled={setOnlineSearchSuggestionsEnabled}
                 onAddCustomEngine={addCustomSearchEngine}
                 onRemoveCustomEngine={removeCustomSearchEngine}
             />

@@ -44,6 +44,7 @@ export class DashboardDatabase extends Dexie {
 
                         settings.activeSearchEngineId = settings.activeSearchEngineId ?? legacySearchEngine ?? 'duckduckgo';
                         settings.customSearchEngines = settings.customSearchEngines ?? [];
+                        settings.onlineSearchSuggestionsEnabled = settings.onlineSearchSuggestionsEnabled ?? true;
                         settings.timeFormat = settings.timeFormat ?? '24h';
                         settings.timezone = settings.timezone ?? 'auto';
                         settings.locale = settings.locale ?? 'ru';
@@ -124,6 +125,27 @@ export class DashboardDatabase extends Dexie {
                     .toCollection()
                     .modify((settings: Record<string, unknown>) => {
                         settings.searchHistoryEnabled = settings.searchHistoryEnabled ?? true;
+                    });
+            });
+
+        this.version(7)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+                bookmarkCategories: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+                searchHistory: 'id,usedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('settings')
+                    .toCollection()
+                    .modify((settings: Record<string, unknown>) => {
+                        settings.onlineSearchSuggestionsEnabled = settings.onlineSearchSuggestionsEnabled ?? true;
                     });
             });
     }
