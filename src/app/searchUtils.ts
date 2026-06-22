@@ -7,6 +7,20 @@ export const BUILTIN_SEARCH_ENGINES = [
 
 export const SEARCH_URL_HINT = 'https://example.com/search?q={q}';
 
+function isHttpUrl(value: string) {
+    try {
+        const url = new URL(value);
+
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+function fallbackSearchUrl(encodedQuery: string) {
+    return BUILTIN_SEARCH_ENGINES[1].urlTemplate.replace('{q}', encodedQuery);
+}
+
 export function buildSearchUrl(engineId: string, query: string, customEngines: CustomSearchEngine[]) {
     const encoded = encodeURIComponent(query.trim());
     const builtin = BUILTIN_SEARCH_ENGINES.find(engine => engine.id === engineId);
@@ -18,10 +32,12 @@ export function buildSearchUrl(engineId: string, query: string, customEngines: C
     const custom = customEngines.find(engine => engine.id === engineId);
 
     if (custom?.urlTemplate.includes('{q}')) {
-        return custom.urlTemplate.replace(/\{q\}/g, encoded);
+        const url = custom.urlTemplate.replace(/\{q\}/g, encoded);
+
+        return isHttpUrl(url) ? url : fallbackSearchUrl(encoded);
     }
 
-    return BUILTIN_SEARCH_ENGINES[1].urlTemplate.replace('{q}', encoded);
+    return fallbackSearchUrl(encoded);
 }
 
 export function getSearchEngineOptions(customEngines: CustomSearchEngine[]) {
@@ -32,5 +48,5 @@ export function getSearchEngineOptions(customEngines: CustomSearchEngine[]) {
 }
 
 export function isValidSearchUrlTemplate(template: string) {
-    return template.includes('{q}') && /^https?:\/\//i.test(template.trim());
+    return template.includes('{q}') && isHttpUrl(template.replace(/\{q\}/g, 'test'));
 }

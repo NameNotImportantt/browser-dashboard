@@ -115,7 +115,7 @@ export function QuickLinks() {
                                 ·
                             </span>
                         ) : null}
-                        <a href={bookmark.url} target="_blank" rel="noreferrer">
+                        <a href={bookmark.url} target="_blank" rel="noopener noreferrer">
                             {bookmark.title}
                         </a>
                         <button

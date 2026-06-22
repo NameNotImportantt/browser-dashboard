@@ -10,7 +10,7 @@ export async function addBookmark(
     if (!activeWorkspaceId) {return;}
 
     const title = payload.title.trim();
-    const url = payload.url.trim();
+    const url = normalizeUrl(payload.url);
 
     if (!title || !url) {return;}
 
@@ -22,7 +22,7 @@ export async function addBookmark(
         workspaceId: activeWorkspaceId,
         categoryId,
         title,
-        url: normalizeUrl(url),
+        url,
         position: categoryBookmarks.length,
         createdAt: Date.now(),
     });

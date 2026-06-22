@@ -85,9 +85,18 @@ export function weatherCodeToEmoji(code: number) {
 }
 
 export function normalizeUrl(raw: string) {
-    if (/^https?:\/\//i.test(raw)) {
-        return raw;
-    }
+    const trimmed = raw.trim();
+    const candidate = /^[a-z][a-z\d+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`;
 
-    return `https://${raw}`;
+    try {
+        const url = new URL(candidate);
+
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+            return null;
+        }
+
+        return url.toString();
+    } catch {
+        return null;
+    }
 }
