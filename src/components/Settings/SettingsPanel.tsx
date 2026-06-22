@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import {t} from '@/app';
 import {useSettings} from '@/dashboard';
 import {AppearanceSettingsSection} from './components/AppearanceSettingsSection';
@@ -9,9 +10,10 @@ import styles from './SettingsPanel.module.scss';
 export function SettingsPanel() {
     const {settings} = useSettings();
     const locale = settings.locale;
+    const settingsPanelClassName = clsx('card', styles.settingsPanel);
 
     return (
-        <section className={`card ${styles.settingsPanel}`} aria-label={t(locale, 'settings')}>
+        <section className={settingsPanelClassName} aria-label={t(locale, 'settings')}>
             <header className={styles.header}>
                 <h2>{t(locale, 'settings')}</h2>
             </header>

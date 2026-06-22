@@ -8,6 +8,7 @@ import {
     type FormEvent,
     type KeyboardEvent,
 } from 'react';
+import clsx from 'clsx';
 import {Clock, Globe, Search} from 'lucide-react';
 import {
     buildSearchUrl,
@@ -200,6 +201,7 @@ export function SearchCore() {
                     <label className={styles.searchField}>
                         <Search className={styles.searchIcon} size={22} strokeWidth={2.25} aria-hidden />
                         <input
+                            className={styles.searchInput}
                             ref={inputRef}
                             value={query}
                             onChange={event => setQuery(event.target.value)}
@@ -232,13 +234,17 @@ export function SearchCore() {
                             {suggestions.map((suggestion, index) => {
                                 const SourceIcon = suggestion.source === 'history' ? Clock : Globe;
 
+                                const suggestionClassName = clsx(styles.suggestion, {
+                                    [styles.suggestionActive]: index === activeIndex,
+                                });
+
                                 return (
                                     <li
                                         key={suggestion.id}
                                         id={`${listboxId}-option-${index}`}
                                         role="option"
                                         aria-selected={index === activeIndex}
-                                        className={`${styles.suggestion} ${index === activeIndex ? styles.suggestionActive : ''}`}
+                                        className={suggestionClassName}
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onMouseDown={event => {
                                             event.preventDefault();

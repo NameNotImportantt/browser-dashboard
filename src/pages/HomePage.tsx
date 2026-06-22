@@ -1,4 +1,5 @@
 import {lazy, memo, Suspense, useState} from 'react';
+import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
 import {t} from '@/app';
 import {
@@ -23,10 +24,28 @@ export const HomePage = memo(function HomePage() {
     const {settings, locale, setTheme} = useSettings();
     const [activeScreen, setActiveScreen] = useState<ScreenId>('home');
     const theme = settings.theme;
+    const glowOrbClassName = clsx('glow', styles.glowOrb);
+
+    const contentClassName = clsx(styles.content, {
+        [styles.contentHome]: activeScreen === 'home',
+        [styles.contentSettings]: activeScreen === 'settings',
+    });
+
+    const homeLayoutClassName = clsx(styles.contentPane, styles.homeLayout);
+    const screenPanelClassName = clsx(styles.contentPane, styles.screenPanel);
+
+    const screenPanelSettingsClassName = clsx(
+        styles.contentPane,
+        styles.screenPanel,
+        styles.screenPanelWide,
+        styles.screenPanelSettings,
+    );
+
+    const widgetFallbackClassName = clsx('card', styles.widgetFallback);
 
     return (
         <main className={styles.shell}>
-            <div className={`glow ${styles.glowOrb}`} aria-hidden />
+            <div className={glowOrbClassName} aria-hidden />
 
             <header className={styles.headerRow}>
                 <TopBar />
@@ -44,11 +63,9 @@ export const HomePage = memo(function HomePage() {
                 </div>
             </header>
 
-            <div
-                className={`${styles.content} ${activeScreen === 'home' ? styles.contentHome : ''} ${activeScreen === 'settings' ? styles.contentSettings : ''}`}
-            >
+            <div className={contentClassName}>
                 {activeScreen === 'home' ? (
-                    <div className={styles.homeLayout}>
+                    <div className={homeLayoutClassName}>
                         <div className={styles.homeMain}>
                             <div className={styles.homeMainCenter}>
                                 <div className={styles.homeMainStack}>
@@ -64,29 +81,29 @@ export const HomePage = memo(function HomePage() {
                 ) : null}
 
                 {activeScreen === 'todo' ? (
-                    <div className={styles.screenPanel}>
+                    <div className={screenPanelClassName}>
                         <TodoWidget />
                     </div>
                 ) : null}
 
                 {activeScreen === 'habits' ? (
-                    <div className={styles.screenPanel}>
-                        <Suspense fallback={<section className={`card ${styles.widgetFallback}`}>{t(locale, 'loadingHabits')}</section>}>
+                    <div className={screenPanelClassName}>
+                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingHabits')}</section>}>
                             <HabitsWidget />
                         </Suspense>
                     </div>
                 ) : null}
 
                 {activeScreen === 'notes' ? (
-                    <div className={styles.screenPanel}>
-                        <Suspense fallback={<section className={`card ${styles.widgetFallback}`}>{t(locale, 'loadingNotes')}</section>}>
+                    <div className={screenPanelClassName}>
+                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingNotes')}</section>}>
                             <NotesWidget />
                         </Suspense>
                     </div>
                 ) : null}
 
                 {activeScreen === 'settings' ? (
-                    <div className={`${styles.screenPanel} ${styles.screenPanelWide} ${styles.screenPanelSettings}`}>
+                    <div className={screenPanelSettingsClassName}>
                         <SettingsPanel />
                     </div>
                 ) : null}

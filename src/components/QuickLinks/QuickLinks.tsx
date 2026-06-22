@@ -1,4 +1,5 @@
 import {useMemo, useState, type FormEvent} from 'react';
+import clsx from 'clsx';
 import {t} from '@/app';
 import {useBookmarks, useSettings} from '@/dashboard';
 import styles from './QuickLinks.module.scss';
@@ -22,6 +23,7 @@ export function QuickLinks() {
     }, [activeFilter, bookmarks]);
 
     const activeCategoryId = activeFilter === 'all' ? null : activeFilter;
+    const allCategoryPillClassName = clsx(styles.categoryPill, {[styles.categoryPillActive]: activeFilter === 'all'});
 
     const submitLink = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -51,31 +53,35 @@ export function QuickLinks() {
             <div className={styles.categoryRow}>
                 <button
                     type="button"
-                    className={`${styles.categoryPill} ${activeFilter === 'all' ? styles.categoryPillActive : ''}`}
+                    className={allCategoryPillClassName}
                     onClick={() => setActiveFilter('all')}
                 >
                     {t(locale, 'allLinks')}
                 </button>
 
-                {categories.map(category => (
-                    <span className={styles.categoryPillWrap} key={category.id}>
-                        <button
-                            type="button"
-                            className={`${styles.categoryPill} ${activeFilter === category.id ? styles.categoryPillActive : ''}`}
-                            onClick={() => setActiveFilter(category.id)}
-                        >
-                            {category.name}
-                        </button>
-                        <button
-                            type="button"
-                            className={styles.categoryRemove}
-                            onClick={() => void handleDeleteCategory(category.id)}
-                            aria-label={`${t(locale, 'deleteCategory')} ${category.name}`}
-                        >
-                            ×
-                        </button>
-                    </span>
-                ))}
+                {categories.map(category => {
+                    const categoryPillClassName = clsx(styles.categoryPill, {[styles.categoryPillActive]: activeFilter === category.id});
+
+                    return (
+                        <span className={styles.categoryPillWrap} key={category.id}>
+                            <button
+                                type="button"
+                                className={categoryPillClassName}
+                                onClick={() => setActiveFilter(category.id)}
+                            >
+                                {category.name}
+                            </button>
+                            <button
+                                type="button"
+                                className={styles.categoryRemove}
+                                onClick={() => void handleDeleteCategory(category.id)}
+                                aria-label={`${t(locale, 'deleteCategory')} ${category.name}`}
+                            >
+                                ×
+                            </button>
+                        </span>
+                    );
+                })}
 
                 <button
                     type="button"
@@ -115,7 +121,7 @@ export function QuickLinks() {
                                 ·
                             </span>
                         ) : null}
-                        <a href={bookmark.url} target="_blank" rel="noopener noreferrer">
+                        <a className={styles.linkAnchor} href={bookmark.url} target="_blank" rel="noopener noreferrer">
                             {bookmark.title}
                         </a>
                         <button

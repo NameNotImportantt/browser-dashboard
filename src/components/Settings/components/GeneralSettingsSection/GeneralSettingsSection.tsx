@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
+import clsx from 'clsx';
 import {t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
@@ -11,6 +12,7 @@ export function GeneralSettingsSection() {
     const [tabTitle, setTabTitle] = useState(settings.tabTitle);
     const [weatherCity, setWeatherCity] = useState(settings.weatherLocation?.label ?? '');
     const [weatherError, setWeatherError] = useState<string | null>(null);
+    const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
     useEffect(() => {
         setTabTitle(settings.tabTitle);
@@ -40,7 +42,7 @@ export function GeneralSettingsSection() {
     };
 
     return (
-        <section className={`${styles.section} ${styles.sectionFirst}`}>
+        <section className={sectionClassName}>
             <h3>{t(locale, 'settingsGeneral')}</h3>
             <div className={styles.grid}>
                 <div className={styles.field}>

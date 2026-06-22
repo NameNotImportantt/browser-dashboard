@@ -1,5 +1,6 @@
 import {useEffect, type MouseEvent, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
+import clsx from 'clsx';
 import styles from './Modal.module.scss';
 
 export type ModalSize = 'sm' | 'md' | 'lg';
@@ -52,7 +53,8 @@ export function Modal({
     }
 
     const sizeClassName = size === 'sm' ? styles.modalCardSm : size === 'lg' ? styles.modalCardLg : styles.modalCardMd;
-    const modalClassName = [styles.modalCard, sizeClassName, className].filter(Boolean).join(' ');
+    const modalClassName = clsx(styles.modalCard, sizeClassName, className);
+    const modalCardClassName = clsx('card', modalClassName);
 
     const handleOverlayMouseDown = (event: MouseEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
@@ -62,9 +64,9 @@ export function Modal({
 
     return createPortal(
         <div className={styles.modalOverlay} onMouseDown={handleOverlayMouseDown}>
-            <section className={`card ${modalClassName}`} role="dialog" aria-modal="true" aria-label={title}>
+            <section className={modalCardClassName} role="dialog" aria-modal="true" aria-label={title}>
                 <header className={styles.modalHeader}>
-                    <h3>{title}</h3>
+                    <h3 className={styles.modalTitle}>{title}</h3>
                     <button type="button" className={styles.compactButton} onClick={onClose}>
                         {closeLabel}
                     </button>

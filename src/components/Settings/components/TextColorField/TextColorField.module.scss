@@ -3,7 +3,7 @@
   gap: 0.35rem;
 }
 
-.field span {
+.fieldLabel {
   color: var(--text-soft);
   font-size: 0.9rem;
 }
@@ -35,15 +35,15 @@
   border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
   box-shadow: var(--shadow-sm);
   transform: none;
-}
 
-.swatch:hover {
-  transform: scale(1.06);
-  border-color: var(--border-strong);
-}
+  &:hover {
+    transform: scale(1.06);
+    border-color: var(--border-strong);
+  }
 
-.swatchSelected {
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
-    var(--shadow-sm);
+  &.swatchSelected {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+      var(--shadow-sm);
+  }
 }

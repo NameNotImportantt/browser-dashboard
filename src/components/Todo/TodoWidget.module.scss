@@ -19,7 +19,7 @@
   gap: 0.5rem;
 }
 
-.inlineRow .inputField {
+.inlineRowField {
   flex: 1;
   min-width: 0;
 }
@@ -118,8 +118,8 @@
   color: color-mix(in srgb, var(--danger) 80%, var(--text));
   padding: 0.3rem 0.55rem;
   font-size: 0.9rem;
-}
 
-.dangerButton:hover {
-  border-color: var(--danger);
+  &:hover {
+    border-color: var(--danger);
+  }
 }

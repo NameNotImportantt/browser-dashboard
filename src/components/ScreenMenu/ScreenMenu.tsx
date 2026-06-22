@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import {Settings} from 'lucide-react';
 import {t} from '@/app';
 import {SCREENS} from './constants';
@@ -14,6 +15,7 @@ export interface ScreenMenuProps {
 
 export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
     const isSettingsActive = activeScreen === 'settings';
+    const settingsButtonClassName = clsx(styles.menuButton, styles.iconButton, {[styles.isActive]: isSettingsActive});
 
     return (
         <nav className={styles.screenMenu} aria-label={t(locale, 'screenNavAriaLabel')}>
@@ -22,11 +24,15 @@ export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
 
                 const Icon = screen.icon;
 
+                const screenButtonClassName = clsx(styles.menuButton, Icon ? styles.iconButton : styles.textButton, {
+                    [styles.isActive]: isActive,
+                });
+
                 return (
                     <button
                         key={screen.id}
                         type="button"
-                        className={`${Icon ? styles.iconButton : ''} ${isActive ? styles.isActive : ''}`.trim() || undefined}
+                        className={screenButtonClassName}
                         aria-current={isActive ? 'page' : undefined}
                         aria-label={Icon ? t(locale, screen.labelKey) : undefined}
                         onClick={() => onSelect(screen.id)}
@@ -38,7 +44,7 @@ export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
 
             <button
                 type="button"
-                className={`${styles.iconButton} ${isSettingsActive ? styles.isActive : ''}`}
+                className={settingsButtonClassName}
                 aria-current={isSettingsActive ? 'page' : undefined}
                 aria-label={t(locale, 'settings')}
                 onClick={() => onSelect('settings')}

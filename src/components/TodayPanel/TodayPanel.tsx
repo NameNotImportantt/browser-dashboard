@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import clsx from 'clsx';
 import {AlertCircle, ArrowDown, Minus} from 'lucide-react';
 import {getHabitStreak, t, todayKey} from '@/app';
 import {useHabits, useSettings, useTodos} from '@/dashboard';
@@ -10,6 +11,8 @@ export function TodayPanel() {
     const {habits} = useHabits();
     const {locale} = useSettings();
     const today = todayKey();
+    const todayPanelClassName = clsx('card', styles.todayPanel);
+    const habitsSectionClassName = clsx(styles.section, styles.sectionSeparated);
 
     const activeTodos = useMemo(() => todos.filter(item => !item.completed).slice(0, 5), [todos]);
 
@@ -24,7 +27,7 @@ export function TodayPanel() {
     );
 
     return (
-        <section className={`card ${styles.todayPanel}`} aria-label={t(locale, 'todayTasks')}>
+        <section className={todayPanelClassName} aria-label={t(locale, 'todayTasks')}>
             <div className={styles.columns}>
                 <div className={styles.section}>
                     <h2 className={styles.sectionTitle}>{t(locale, 'todayTasks')}</h2>
@@ -42,7 +45,7 @@ export function TodayPanel() {
                     </ul>
                 </div>
 
-                <div className={styles.section}>
+                <div className={habitsSectionClassName}>
                     <h2 className={styles.sectionTitle}>{t(locale, 'habits')}</h2>
                     <ul className={styles.habitList}>
                         {habitStreaks.length > 0 ? (
@@ -67,9 +70,13 @@ function PriorityIcon({priority, locale}: { priority: TodoPriority; locale: AppL
     const label =
     priority === 'high' ? t(locale, 'priorityHigh') : priority === 'low' ? t(locale, 'priorityLow') : t(locale, 'priorityMedium');
 
+    const highPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityHigh);
+    const lowPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityLow);
+    const mediumPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityMedium);
+
     if (priority === 'high') {
         return (
-            <span className={`${styles.priorityIcon} ${styles.priorityHigh}`} aria-label={label} title={label}>
+            <span className={highPriorityIconClassName} aria-label={label} title={label}>
                 <AlertCircle size={14} strokeWidth={2.25} />
             </span>
         );
@@ -77,14 +84,14 @@ function PriorityIcon({priority, locale}: { priority: TodoPriority; locale: AppL
 
     if (priority === 'low') {
         return (
-            <span className={`${styles.priorityIcon} ${styles.priorityLow}`} aria-label={label} title={label}>
+            <span className={lowPriorityIconClassName} aria-label={label} title={label}>
                 <ArrowDown size={14} strokeWidth={2.25} />
             </span>
         );
     }
 
     return (
-        <span className={`${styles.priorityIcon} ${styles.priorityMedium}`} aria-label={label} title={label}>
+        <span className={mediumPriorityIconClassName} aria-label={label} title={label}>
             <Minus size={14} strokeWidth={2.25} />
         </span>
     );

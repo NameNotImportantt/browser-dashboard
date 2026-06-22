@@ -1,4 +1,5 @@
 import {useId, type ReactNode} from 'react';
+import clsx from 'clsx';
 import {Check} from 'lucide-react';
 import styles from './Checkbox.module.scss';
 
@@ -13,7 +14,7 @@ export interface CheckboxProps {
 export function Checkbox({checked, onChange, label, className, id}: CheckboxProps) {
     const generatedId = useId();
     const inputId = id ?? generatedId;
-    const rootClassName = [styles.checkbox, className].filter(Boolean).join(' ');
+    const rootClassName = clsx(styles.checkbox, className);
 
     return (
         <label className={rootClassName} htmlFor={inputId}>

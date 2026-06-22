@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent} from 'react';
 import {createPortal} from 'react-dom';
+import clsx from 'clsx';
 import {ChevronDown} from 'lucide-react';
 import styles from './Select.module.scss';
 
@@ -143,8 +144,9 @@ export function Select({value, options, onChange, ariaLabel, className, triggerC
         }
     };
 
-    const rootClassName = [styles.select, className].filter(Boolean).join(' ');
-    const triggerClassNames = [styles.trigger, triggerClassName].filter(Boolean).join(' ');
+    const rootClassName = clsx(styles.select, className);
+    const triggerClassNameValue = clsx(styles.trigger, triggerClassName);
+    const chevronClassName = clsx(styles.chevron, {[styles.chevronOpen]: isOpen});
 
     const listboxStyle: CSSProperties | undefined = listboxPosition
         ? {
@@ -165,13 +167,10 @@ export function Select({value, options, onChange, ariaLabel, className, triggerC
             style={listboxStyle}
         >
             {options.map((option, index) => {
-                const optionClassName = [
-                    styles.option,
-                    option.value === value ? styles.optionSelected : '',
-                    index === activeIndex ? styles.optionActive : '',
-                ]
-                    .filter(Boolean)
-                    .join(' ');
+                const optionClassName = clsx(styles.option, {
+                    [styles.optionSelected]: option.value === value,
+                    [styles.optionActive]: index === activeIndex,
+                });
 
                 return (
                     <li
@@ -195,7 +194,7 @@ export function Select({value, options, onChange, ariaLabel, className, triggerC
             <button
                 ref={triggerRef}
                 type="button"
-                className={triggerClassNames}
+                className={triggerClassNameValue}
                 aria-label={ariaLabel}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
@@ -205,7 +204,7 @@ export function Select({value, options, onChange, ariaLabel, className, triggerC
             >
                 <span className={styles.triggerLabel}>{displayLabel}</span>
                 <ChevronDown
-                    className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`.trim()}
+                    className={chevronClassName}
                     size={16}
                     strokeWidth={2.25}
                     aria-hidden
