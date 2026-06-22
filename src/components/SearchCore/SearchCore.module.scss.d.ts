@@ -1,13 +1,25 @@
 export declare const engineSelect: string;
+
 export declare const engineTrigger: string;
+
 export declare const searchCore: string;
+
 export declare const searchField: string;
+
 export declare const searchForm: string;
+
 export declare const searchIcon: string;
+
 export declare const searchInputWrap: string;
+
 export declare const suggestion: string;
+
 export declare const suggestionActive: string;
+
 export declare const suggestionIcon: string;
+
 export declare const suggestionLabel: string;
+
 export declare const suggestionMeta: string;
+
 export declare const suggestions: string;

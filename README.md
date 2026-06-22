@@ -16,6 +16,7 @@
     <img src="https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white" alt="bun" />
     <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="react 19" />
     <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="typescript 5" />
+    <img src="https://img.shields.io/badge/Zustand-state-764ABC" alt="zustand state" />
     <img src="https://img.shields.io/badge/Dexie-IndexedDB-336791" alt="dexie indexeddb" />
     <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
   </p>
@@ -84,6 +85,7 @@ Browser Dashboard offers a middle ground:
 | **Clock & Date** | Top bar time and date | Respects 12h/24h format, timezone (auto or manual), and locale-aware date formatting. |
 | **Weather** | Current temperature in the top bar | City is geocoded via Open-Meteo; forecast data is fetched on demand and cached for 30 minutes. Requires internet. |
 | **Settings** | Theme, locale, appearance, search, weather | Light/dark theme, Russian/English UI, custom background image, text color overrides, tab title, and search engine management. |
+| **State** | Dashboard data flow | Zustand store and domain hooks power todos, habits, bookmarks, notes, settings, weather, and search history. |
 | **Storage** | Offline persistence | All core data lives in IndexedDB through Dexie (`browser-home-page-db`). No account, no cloud sync. |
 
 ### Installation
@@ -202,7 +204,7 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 #### Engineering
 
 - [ ] Content Security Policy
-- [ ] Refactor data layer — split `useDashboardData` into focused modules
+- [x] Refactor data layer — split dashboard data into `data/`, Zustand store, and domain hooks
 - [ ] Tests and CI
 - [ ] React error boundary
 - [ ] SCSS modules only — remove global `styles.css`

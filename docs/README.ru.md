@@ -16,6 +16,7 @@
     <img src="https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white" alt="bun" />
     <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="react 19" />
     <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="typescript 5" />
+    <img src="https://img.shields.io/badge/Zustand-state-764ABC" alt="zustand state" />
     <img src="https://img.shields.io/badge/Dexie-IndexedDB-336791" alt="dexie indexeddb" />
     <a href="../LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
   </p>
@@ -85,6 +86,7 @@ Browser Dashboard — компромисс между простотой и по
 | **Часы и дата**          | Время и дата в верхней панели                   | Формат 12/24 ч, часовой пояс (авто или вручную), локализованный формат даты.                                                                                                                              |
 | **Погода**               | Температура в верхней панели                    | Город геокодируется через Open-Meteo; прогноз запрашивается по необходимости и кэшируется на 30 минут. Нужен интернет.                                                                                    |
 | **Настройки**            | Тема, язык, внешний вид, поиск, погода          | Светлая/тёмная тема, русский/английский UI, фон, цвета текста, заголовок вкладки, управление поисковыми движками.                                                                                         |
+| **Состояние**            | Поток данных dashboard                          | Zustand store и доменные хуки обслуживают задачи, привычки, закладки, заметки, настройки, погоду и историю поиска.                                                                                        |
 | **Хранение**             | Оффлайн-персистентность                         | Все основные данные — в IndexedDB через Dexie (`browser-home-page-db`). Без аккаунта и облачной синхронизации.                                                                                            |
 
 
@@ -206,7 +208,7 @@ Browser Dashboard — компромисс между простотой и по
 #### Инженерия
 
 - [ ] Content Security Policy
-- [ ] Рефакторинг слоя данных — разбить `useDashboardData` на модули
+- [x] Рефакторинг слоя данных — разделить dashboard data на `data/`, Zustand store и доменные хуки
 - [ ] Тесты и CI
 - [ ] React error boundary
 - [ ] Только SCSS modules — убрать глобальный `styles.css`

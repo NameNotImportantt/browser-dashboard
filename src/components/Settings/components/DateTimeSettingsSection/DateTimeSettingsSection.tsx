@@ -1,0 +1,74 @@
+import {useMemo} from 'react';
+import {t} from '@/app';
+import {Select} from '@/components/Select';
+import {useSettings} from '@/dashboard';
+import {TIMEZONE_OPTIONS} from '../../constants';
+import styles from '../../SettingsPanel.module.scss';
+
+export function DateTimeSettingsSection() {
+    const {settings, setTimeFormat, setTimezone, setDateFormat} = useSettings();
+    const locale = settings.locale;
+
+    const timeFormatOptions = useMemo(
+        () => [
+            {value: '24h', label: t(locale, 'format24h')},
+            {value: '12h', label: t(locale, 'format12h')},
+        ],
+        [locale],
+    );
+
+    const timezoneOptions = useMemo(
+        () =>
+            TIMEZONE_OPTIONS.map(zone => ({
+                value: zone,
+                label: zone === 'auto' ? t(locale, 'autoTimezone') : zone,
+            })),
+        [locale],
+    );
+
+    const dateFormatOptions = useMemo(
+        () => [
+            {value: 'dd.MM.yyyy', label: 'dd.MM.yyyy'},
+            {value: 'MM/dd/yyyy', label: 'MM/dd/yyyy'},
+            {value: 'yyyy-MM-dd', label: 'yyyy-MM-dd'},
+        ],
+        [],
+    );
+
+    return (
+        <section className={styles.section}>
+            <h3>{t(locale, 'settingsDateTime')}</h3>
+            <div className={styles.grid}>
+                <div className={styles.field}>
+                    <span>{t(locale, 'timeFormat')}</span>
+                    <Select
+                        value={settings.timeFormat}
+                        options={timeFormatOptions}
+                        onChange={value => void setTimeFormat(value as typeof settings.timeFormat)}
+                        ariaLabel={t(locale, 'timeFormat')}
+                    />
+                </div>
+
+                <div className={styles.field}>
+                    <span>{t(locale, 'timezone')}</span>
+                    <Select
+                        value={settings.timezone}
+                        options={timezoneOptions}
+                        onChange={value => void setTimezone(value)}
+                        ariaLabel={t(locale, 'timezone')}
+                    />
+                </div>
+
+                <div className={styles.field}>
+                    <span>{t(locale, 'dateFormat')}</span>
+                    <Select
+                        value={settings.dateFormat}
+                        options={dateFormatOptions}
+                        onChange={value => void setDateFormat(value as typeof settings.dateFormat)}
+                        ariaLabel={t(locale, 'dateFormat')}
+                    />
+                </div>
+            </div>
+        </section>
+    );
+}

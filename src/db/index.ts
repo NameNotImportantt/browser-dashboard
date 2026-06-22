@@ -1,1 +1,3 @@
-export { db } from "./database";
+export {db} from './database';
+
+export type * from './types';

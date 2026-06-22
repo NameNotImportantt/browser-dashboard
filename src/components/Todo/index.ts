@@ -1,2 +1,3 @@
-export { TodoWidget } from "./TodoWidget";
-export type { TodoPriority, TodoWidgetProps } from "./types/TodoWidgetProps";
+export {TodoWidget} from './TodoWidget';
+
+export type {TodoPriority} from '@/db';

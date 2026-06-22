@@ -1,2 +1,1 @@
-export { HabitsWidget } from "./HabitsWidget";
-export type { HabitsWidgetProps } from "./types/HabitsWidgetProps";
+export {HabitsWidget} from './HabitsWidget';
