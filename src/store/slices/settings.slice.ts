@@ -32,6 +32,9 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = set => ({
     setSearchHistoryEnabled: async (searchHistoryEnabled: boolean) => {
         patchSnapshotSettings(set, await repository.setSearchHistoryEnabled(searchHistoryEnabled));
     },
+    setBookmarkFaviconsEnabled: async bookmarkFaviconsEnabled => {
+        patchSnapshotSettings(set, await repository.setBookmarkFaviconsEnabled(bookmarkFaviconsEnabled));
+    },
     setTimeFormat: async timeFormat => {
         patchSnapshotSettings(set, await repository.setTimeFormat(timeFormat));
     },

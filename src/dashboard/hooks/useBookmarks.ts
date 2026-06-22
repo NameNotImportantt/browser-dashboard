@@ -24,6 +24,8 @@ export function useBookmarks() {
         useShallow(dashboardStore => ({
             addBookmark: dashboardStore.addBookmark,
             deleteBookmark: dashboardStore.deleteBookmark,
+            refreshBookmarkFavicon: dashboardStore.refreshBookmarkFavicon,
+            refreshBookmarkFavicons: dashboardStore.refreshBookmarkFavicons,
             addBookmarkCategory: dashboardStore.addBookmarkCategory,
             deleteBookmarkCategory: dashboardStore.deleteBookmarkCategory,
         })),

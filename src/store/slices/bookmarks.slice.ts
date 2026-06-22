@@ -1,3 +1,4 @@
+import {DEFAULT_SETTINGS} from '@/app';
 import * as repository from '@/data/bookmarkRepository';
 import type {BookmarksSlice, DashboardStore, SliceCreator} from '../types';
 
@@ -15,11 +16,35 @@ function getWorkspaceBookmarkCategories(dashboardStore: DashboardStore) {
 
 export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) => ({
     addBookmark: async payload => {
-        await repository.addBookmark(payload, get().activeWorkspaceId, getWorkspaceBookmarks(get()));
+        const bookmarkId = await repository.addBookmark(payload, get().activeWorkspaceId, getWorkspaceBookmarks(get()));
+        const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
+
         await get().refresh();
+
+        if (bookmarkId && bookmarkFaviconsEnabled) {
+            void repository.refreshBookmarkFavicon(bookmarkId)
+                .then(() => get().refresh())
+                .catch(() => undefined);
+        }
     },
     deleteBookmark: async bookmarkId => {
         await repository.deleteBookmark(bookmarkId);
+        await get().refresh();
+    },
+    refreshBookmarkFavicon: async bookmarkId => {
+        const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
+
+        if (!bookmarkFaviconsEnabled) {return;}
+
+        await repository.refreshBookmarkFavicon(bookmarkId);
+        await get().refresh();
+    },
+    refreshBookmarkFavicons: async bookmarkIds => {
+        const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
+
+        if (!bookmarkFaviconsEnabled) {return;}
+
+        await Promise.allSettled(bookmarkIds.map(bookmarkId => repository.refreshBookmarkFavicon(bookmarkId)));
         await get().refresh();
     },
     addBookmarkCategory: async payload => {

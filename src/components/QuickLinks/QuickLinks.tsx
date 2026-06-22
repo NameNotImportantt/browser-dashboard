@@ -1,5 +1,6 @@
-import {useMemo, useState, type FormEvent} from 'react';
+import {Fragment, useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
+import {Link, RefreshCw} from 'lucide-react';
 import {t} from '@/app';
 import {useBookmarks, useSettings} from '@/dashboard';
 import styles from './QuickLinks.module.scss';
@@ -7,8 +8,17 @@ import styles from './QuickLinks.module.scss';
 type CategoryFilter = 'all' | string;
 
 export function QuickLinks() {
-    const {bookmarks, categories, addBookmark, deleteBookmark, addBookmarkCategory, deleteBookmarkCategory} = useBookmarks();
-    const {locale} = useSettings();
+    const {
+        bookmarks,
+        categories,
+        addBookmark,
+        deleteBookmark,
+        refreshBookmarkFavicons,
+        addBookmarkCategory,
+        deleteBookmarkCategory,
+    } = useBookmarks();
+
+    const {settings, locale} = useSettings();
     const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
     const [isAddingLink, setIsAddingLink] = useState(false);
     const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -47,6 +57,12 @@ export function QuickLinks() {
             setActiveFilter('all');
         }
     };
+
+    const refreshVisibleFavicons = async () => {
+        await refreshBookmarkFavicons(visibleBookmarks.map(bookmark => bookmark.id)).catch(() => undefined);
+    };
+
+    const areBookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled;
 
     return (
         <section className={styles.quickLinks} aria-label={t(locale, 'savedLinks')}>
@@ -115,24 +131,33 @@ export function QuickLinks() {
 
             <div className={styles.linksRow}>
                 {visibleBookmarks.map((bookmark, index) => (
-                    <span className={styles.linkItem} key={bookmark.id}>
+                    <Fragment key={bookmark.id}>
                         {index > 0 ? (
                             <span className={styles.separator} aria-hidden>
                                 ·
                             </span>
                         ) : null}
-                        <a className={styles.linkAnchor} href={bookmark.url} target="_blank" rel="noopener noreferrer">
-                            {bookmark.title}
-                        </a>
-                        <button
-                            type="button"
-                            className={styles.removeButton}
-                            onClick={() => void deleteBookmark(bookmark.id)}
-                            aria-label={`${t(locale, 'remove')} ${bookmark.title}`}
-                        >
-                            ×
-                        </button>
-                    </span>
+                        <span className={styles.linkItem}>
+                            <a className={styles.linkAnchor} href={bookmark.url} target="_blank" rel="noopener noreferrer">
+                                <span className={styles.faviconWrap} aria-hidden>
+                                    {areBookmarkFaviconsEnabled && bookmark.faviconUrl ? (
+                                        <img className={styles.favicon} src={bookmark.faviconUrl} alt="" loading="lazy" />
+                                    ) : (
+                                        <Link size={14} strokeWidth={2} />
+                                    )}
+                                </span>
+                                {bookmark.title}
+                            </a>
+                            <button
+                                type="button"
+                                className={styles.iconButton}
+                                onClick={() => void deleteBookmark(bookmark.id)}
+                                aria-label={`${t(locale, 'remove')} ${bookmark.title}`}
+                            >
+                                ×
+                            </button>
+                        </span>
+                    </Fragment>
                 ))}
 
                 <button
@@ -144,6 +169,17 @@ export function QuickLinks() {
                     }}
                 >
                     + {t(locale, 'addLink')}
+                </button>
+
+                <button
+                    type="button"
+                    className={styles.refreshButton}
+                    onClick={() => void refreshVisibleFavicons()}
+                    disabled={!areBookmarkFaviconsEnabled || visibleBookmarks.length === 0}
+                    aria-label={t(locale, 'refreshBookmarkFavicons')}
+                    title={t(locale, 'refreshBookmarkFavicons')}
+                >
+                    <RefreshCw size={14} strokeWidth={2} />
                 </button>
             </div>
 

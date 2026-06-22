@@ -4,6 +4,7 @@ import {useSettings} from '@/dashboard';
 import {AppearanceSettingsSection} from './components/AppearanceSettingsSection';
 import {DateTimeSettingsSection} from './components/DateTimeSettingsSection';
 import {GeneralSettingsSection} from './components/GeneralSettingsSection';
+import {OthersSettingsSection} from './components/OthersSettingsSection';
 import {SearchEnginesSettingsSection} from './components/SearchEnginesSettingsSection';
 import styles from './SettingsPanel.module.scss';
 
@@ -26,6 +27,7 @@ export function SettingsPanel() {
                 <div className={styles.rowDivider} role="separator" aria-hidden />
 
                 <AppearanceSettingsSection />
+                <OthersSettingsSection />
             </div>
         </section>
     );

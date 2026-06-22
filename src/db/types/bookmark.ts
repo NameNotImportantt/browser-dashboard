@@ -4,6 +4,7 @@ export interface Bookmark {
   categoryId: string | null;
   title: string;
   url: string;
+  faviconUrl: string | null;
   position: number;
   createdAt: number;
 }

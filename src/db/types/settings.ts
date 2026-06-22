@@ -29,6 +29,7 @@ export interface AppSettings {
   customSearchEngines: CustomSearchEngine[];
   onlineSearchSuggestionsEnabled: boolean;
   searchHistoryEnabled: boolean;
+  bookmarkFaviconsEnabled: boolean;
   timeFormat: TimeFormat;
   timezone: string;
   locale: AppLocale;

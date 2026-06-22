@@ -5,6 +5,7 @@ export interface SettingsSlice {
   setActiveSearchEngineId: (activeSearchEngineId: string) => Promise<void>;
   setOnlineSearchSuggestionsEnabled: (onlineSearchSuggestionsEnabled: boolean) => Promise<void>;
   setSearchHistoryEnabled: (searchHistoryEnabled: boolean) => Promise<void>;
+  setBookmarkFaviconsEnabled: (bookmarkFaviconsEnabled: boolean) => Promise<void>;
   setTimeFormat: (timeFormat: TimeFormat) => Promise<void>;
   setTimezone: (timezone: string) => Promise<void>;
   setLocale: (locale: AppLocale) => Promise<void>;
