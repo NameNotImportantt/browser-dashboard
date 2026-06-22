@@ -9,6 +9,7 @@ export function useSettings() {
         useShallow(dashboardStore => ({
             setTheme: dashboardStore.setTheme,
             setActiveSearchEngineId: dashboardStore.setActiveSearchEngineId,
+            setSearchHistoryEnabled: dashboardStore.setSearchHistoryEnabled,
             setTimeFormat: dashboardStore.setTimeFormat,
             setTimezone: dashboardStore.setTimezone,
             setLocale: dashboardStore.setLocale,

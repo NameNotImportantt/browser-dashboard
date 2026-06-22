@@ -40,7 +40,7 @@ export function DateTimeSettingsSection() {
             <h3>{t(locale, 'settingsDateTime')}</h3>
             <div className={styles.grid}>
                 <div className={styles.field}>
-                    <span>{t(locale, 'timeFormat')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'timeFormat')}</span>
                     <Select
                         value={settings.timeFormat}
                         options={timeFormatOptions}
@@ -50,7 +50,7 @@ export function DateTimeSettingsSection() {
                 </div>
 
                 <div className={styles.field}>
-                    <span>{t(locale, 'timezone')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'timezone')}</span>
                     <Select
                         value={settings.timezone}
                         options={timezoneOptions}
@@ -60,7 +60,7 @@ export function DateTimeSettingsSection() {
                 </div>
 
                 <div className={styles.field}>
-                    <span>{t(locale, 'dateFormat')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'dateFormat')}</span>
                     <Select
                         value={settings.dateFormat}
                         options={dateFormatOptions}

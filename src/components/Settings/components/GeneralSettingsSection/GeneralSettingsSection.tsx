@@ -44,7 +44,7 @@ export function GeneralSettingsSection() {
             <h3>{t(locale, 'settingsGeneral')}</h3>
             <div className={styles.grid}>
                 <div className={styles.field}>
-                    <span>{t(locale, 'locale')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'locale')}</span>
                     <Select
                         value={settings.locale}
                         options={localeOptions}
@@ -54,7 +54,7 @@ export function GeneralSettingsSection() {
                 </div>
 
                 <label className={styles.field}>
-                    <span>{t(locale, 'tabTitle')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'tabTitle')}</span>
                     <div className={styles.inlineRow}>
                         <input value={tabTitle} onChange={event => setTabTitle(event.target.value)} />
                         <button type="button" onClick={() => void saveTabTitle()}>
@@ -64,7 +64,7 @@ export function GeneralSettingsSection() {
                 </label>
 
                 <div className={styles.field}>
-                    <span>{t(locale, 'weatherCity')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'weatherCity')}</span>
                     <div className={styles.inlineRow}>
                         <input
                             value={weatherCity}

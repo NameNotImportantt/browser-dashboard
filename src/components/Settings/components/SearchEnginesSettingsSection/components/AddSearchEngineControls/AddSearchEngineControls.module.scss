@@ -1,0 +1,52 @@
+.customEngineForm {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.engineList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.65rem;
+    font-size: 0.9rem;
+  }
+}
+
+.engineItemText {
+  min-width: 0;
+}
+
+.dangerButton {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+  padding: 0.3rem 0.55rem;
+  font-size: 0.85rem;
+
+  &:hover {
+    border-color: var(--danger);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
+    color: var(--text-muted);
+    box-shadow: none;
+  }
+
+  &:disabled:hover {
+    border-color: var(--border);
+  }
+}

@@ -1,0 +1,11 @@
+export declare const checkboxField: string;
+export declare const compactButton: string;
+export declare const dangerButton: string;
+export declare const historyActionsRow: string;
+export declare const historyButton: string;
+export declare const historyCheckbox: string;
+export declare const historyItem: string;
+export declare const historyList: string;
+export declare const historyQuery: string;
+export declare const titleLabel: string;
+export declare const titleRow: string;

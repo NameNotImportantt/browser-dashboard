@@ -105,6 +105,27 @@ export class DashboardDatabase extends Dexie {
             weatherCache: 'id,fetchedAt',
             searchHistory: 'id,usedAt',
         });
+
+        this.version(6)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+                bookmarkCategories: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+                searchHistory: 'id,usedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('settings')
+                    .toCollection()
+                    .modify((settings: Record<string, unknown>) => {
+                        settings.searchHistoryEnabled = settings.searchHistoryEnabled ?? true;
+                    });
+            });
     }
 }
 

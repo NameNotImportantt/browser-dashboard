@@ -112,7 +112,7 @@ export function AppearanceSettingsSection() {
             <h3>{t(locale, 'settingsAppearance')}</h3>
             <div className={styles.grid}>
                 <div className={styles.field}>
-                    <span>{t(locale, 'backgroundImage')}</span>
+                    <span className={styles.fieldLabel}>{t(locale, 'backgroundImage')}</span>
                     <input
                         ref={backgroundInputRef}
                         type="file"
@@ -139,7 +139,7 @@ export function AppearanceSettingsSection() {
                     {settings.customBackgroundImage ? (
                         <div className={styles.field}>
                             <label className={styles.scrimField} htmlFor="background-scrim">
-                                <span>
+                                <span className={styles.scrimLabel}>
                                     {t(locale, 'backgroundScrim')}: {settings.backgroundScrimOpacity}%
                                 </span>
                                 <input
