@@ -39,6 +39,10 @@ export async function setActiveSearchEngineId(activeSearchEngineId: string) {
     return patchSettings({activeSearchEngineId});
 }
 
+export async function setSearchHistoryEnabled(searchHistoryEnabled: boolean) {
+    return patchSettings({searchHistoryEnabled});
+}
+
 export async function setTimeFormat(timeFormat: TimeFormat) {
     return patchSettings({timeFormat});
 }

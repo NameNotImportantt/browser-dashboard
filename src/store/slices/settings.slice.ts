@@ -26,6 +26,9 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = set => ({
     setActiveSearchEngineId: async activeSearchEngineId => {
         patchSnapshotSettings(set, await repository.setActiveSearchEngineId(activeSearchEngineId));
     },
+    setSearchHistoryEnabled: async (searchHistoryEnabled: boolean) => {
+        patchSnapshotSettings(set, await repository.setSearchHistoryEnabled(searchHistoryEnabled));
+    },
     setTimeFormat: async timeFormat => {
         patchSnapshotSettings(set, await repository.setTimeFormat(timeFormat));
     },

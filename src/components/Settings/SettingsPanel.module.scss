@@ -19,6 +19,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: 1.75rem;
   row-gap: 1.35rem;
+  align-items: stretch;
   padding: 0.15rem 0.25rem 0.35rem 0;
 }
 
@@ -32,18 +33,19 @@
 .header {
   margin-bottom: 0.85rem;
   flex-shrink: 0;
-}
 
-.header h2 {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
 }
 
 .grid {
   display: grid;
   gap: 0.85rem;
+  align-content: start;
 }
 
 .field {
@@ -51,7 +53,7 @@
   gap: 0.35rem;
 }
 
-.field span {
+.fieldLabel {
   color: var(--text-soft);
   font-size: 0.9rem;
 }
@@ -59,19 +61,30 @@
 .inlineRow {
   display: flex;
   gap: 0.5rem;
-}
 
-.inlineRow input {
-  flex: 1;
+  input {
+    flex: 1;
+  }
 }
 
 .section {
   display: grid;
   gap: 0.75rem;
+  align-content: start;
+  align-self: stretch;
   min-width: 0;
   overflow: visible;
   padding-left: 1.25rem;
   border-left: 1px solid var(--border);
+
+  h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
 }
 
 .sectionFirst {
@@ -79,51 +92,18 @@
   border-left: none;
 }
 
-.section h3 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.customEngineForm {
-  display: grid;
-  gap: 0.5rem;
-}
-
 .hint {
   color: var(--text-muted);
   font-size: 0.85rem;
-}
 
-.hint code {
-  color: var(--text-soft);
+  code {
+    color: var(--text-soft);
+  }
 }
 
 .error {
   color: var(--danger);
   font-size: 0.85rem;
-}
-
-.engineList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.5rem;
-}
-
-.engineList li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 0.5rem 0.65rem;
-  font-size: 0.9rem;
 }
 
 .dangerButton {
@@ -132,10 +112,23 @@
   color: color-mix(in srgb, var(--danger) 80%, var(--text));
   padding: 0.3rem 0.55rem;
   font-size: 0.85rem;
-}
 
-.dangerButton:hover {
-  border-color: var(--danger);
+  &:hover {
+    border-color: var(--danger);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
+    color: var(--text-muted);
+    box-shadow: none;
+  }
+
+  &:disabled:hover {
+    border-color: var(--border);
+  }
 }
 
 .hiddenInput {
@@ -149,13 +142,13 @@
   aspect-ratio: 16 / 9;
   max-height: 140px;
   box-shadow: var(--shadow-sm);
-}
 
-.backgroundPreview img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .scrimField {
@@ -163,7 +156,7 @@
   gap: 0.45rem;
 }
 
-.scrimField span {
+.scrimLabel {
   color: var(--text-soft);
   font-size: 0.9rem;
 }

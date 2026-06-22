@@ -6,4 +6,16 @@ export const createSearchHistorySlice: SliceCreator<SearchHistorySlice> = (_set,
         await repository.addSearchHistoryEntry(query);
         await get().refresh();
     },
+    deleteSearchHistoryEntry: async entryId => {
+        await repository.deleteSearchHistoryEntry(entryId);
+        await get().refresh();
+    },
+    deleteSearchHistoryEntries: async entryIds => {
+        await repository.deleteSearchHistoryEntries(entryIds);
+        await get().refresh();
+    },
+    clearSearchHistory: async () => {
+        await repository.clearSearchHistory();
+        await get().refresh();
+    },
 });

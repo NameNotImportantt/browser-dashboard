@@ -8,6 +8,8 @@ export {SearchCore} from './SearchCore';
 
 export {SettingsPanel} from './Settings';
 
+export {Modal} from './Modal';
+
 export {TodayPanel} from './TodayPanel';
 
 export {TodoWidget} from './Todo';
