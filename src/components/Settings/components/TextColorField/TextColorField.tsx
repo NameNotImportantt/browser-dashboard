@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import {normalizeHexColor} from '@/app';
 import styles from './TextColorField.module.scss';
 
@@ -14,7 +15,7 @@ export function TextColorField({label, value, placeholder, swatches, onChange}: 
 
     return (
         <label className={styles.field}>
-            <span>{label}</span>
+            <span className={styles.fieldLabel}>{label}</span>
             <div className={styles.controlRow}>
                 <input
                     className={styles.hexInput}
@@ -28,12 +29,13 @@ export function TextColorField({label, value, placeholder, swatches, onChange}: 
                 <div className={styles.swatchRow} role="list" aria-label={label}>
                     {swatches.map((color, index) => {
                         const isSelected = normalizedValue === color;
+                        const swatchClassName = clsx(styles.swatch, {[styles.swatchSelected]: isSelected});
 
                         return (
                             <button
                                 key={`${color}-${index}`}
                                 type="button"
-                                className={`${styles.swatch} ${isSelected ? styles.swatchSelected : ''}`}
+                                className={swatchClassName}
                                 style={{backgroundColor: color}}
                                 onClick={() => onChange(color, true)}
                                 aria-label={color}

@@ -17,16 +17,16 @@
     0 10px 36px color-mix(in srgb, var(--accent-glow) 88%, transparent),
     0 22px 56px color-mix(in srgb, var(--accent-glow) 55%, transparent),
     0 8px 28px rgba(7, 10, 17, 0.28);
-}
 
-.todayPanel:hover {
-  transform: none;
-  border-color: color-mix(in srgb, var(--accent) 34%, var(--border-strong));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent),
-    0 12px 40px color-mix(in srgb, var(--accent-glow) 95%, transparent),
-    0 26px 64px color-mix(in srgb, var(--accent-glow) 62%, transparent),
-    0 10px 32px rgba(7, 10, 17, 0.32);
+  &:hover {
+    transform: none;
+    border-color: color-mix(in srgb, var(--accent) 34%, var(--border-strong));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent),
+      0 12px 40px color-mix(in srgb, var(--accent-glow) 95%, transparent),
+      0 26px 64px color-mix(in srgb, var(--accent-glow) 62%, transparent),
+      0 10px 32px rgba(7, 10, 17, 0.32);
+  }
 }
 
 .columns {
@@ -100,7 +100,7 @@
   font-size: 0.86rem;
 }
 
-.section + .section {
+.sectionSeparated {
   padding-top: 0.7rem;
   border-top: 1px solid var(--border);
 }

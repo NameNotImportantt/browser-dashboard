@@ -7,3 +7,4 @@ export declare const modalCardMd: string;
 export declare const modalCardSm: string;
 export declare const modalHeader: string;
 export declare const modalOverlay: string;
+export declare const modalTitle: string;

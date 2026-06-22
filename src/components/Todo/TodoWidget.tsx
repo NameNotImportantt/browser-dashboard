@@ -1,4 +1,5 @@
 import {useMemo, useState, type FormEvent} from 'react';
+import clsx from 'clsx';
 import {reorderIds, t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
@@ -25,6 +26,9 @@ export function TodoWidget() {
         [locale],
     );
 
+    const todoWidgetClassName = clsx('card', styles.todoWidget);
+    const todoListClassName = clsx(styles.widgetList, styles.todoList);
+
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         await addTodo({
@@ -46,7 +50,7 @@ export function TodoWidget() {
     };
 
     return (
-        <section className={`card ${styles.todoWidget}`}>
+        <section className={todoWidgetClassName}>
             <header className={styles.widgetHeader}>
                 <h2>{t(locale, 'navTodo')}</h2>
             </header>
@@ -61,14 +65,14 @@ export function TodoWidget() {
                 />
                 <div className={styles.inlineRow}>
                     <Select
-                        className={styles.inputField}
+                        className={styles.inlineRowField}
                         value={priority}
                         options={priorityOptions}
                         onChange={value => setPriority(value as TodoPriority)}
                         ariaLabel={t(locale, 'todoPriority')}
                     />
                     <input
-                        className={styles.inputField}
+                        className={styles.inlineRowField}
                         type="date"
                         value={dueDate}
                         onChange={event => setDueDate(event.target.value)}
@@ -80,34 +84,40 @@ export function TodoWidget() {
                 </button>
             </form>
 
-            <ul className={`${styles.widgetList} ${styles.todoList}`}>
-                {todos.map(todo => (
-                    <li
-                        className={`${styles.todoItem} ${priorityItemClass(todo.priority)}`}
-                        key={todo.id}
-                        draggable
-                        onDragStart={() => setDraggedId(todo.id)}
-                        onDragOver={event => event.preventDefault()}
-                        onDrop={() => {
-                            void dropOn(todo.id);
-                        }}
-                    >
-                        <Checkbox
-                            className={styles.todoLabel}
-                            checked={todo.completed}
-                            onChange={() => void toggleTodo(todo.id)}
-                            label={<span className={todo.completed ? styles.isCompleted : ''}>{todo.title}</span>}
-                        />
+            <ul className={todoListClassName}>
+                {todos.map(todo => {
+                    const todoItemClassName = clsx(styles.todoItem, priorityItemClass(todo.priority));
+                    const todoTitleClassName = clsx({[styles.isCompleted]: todo.completed});
+                    const todoPriorityBadgeClassName = clsx(styles.todoBadge, priorityBadgeClass(todo.priority));
 
-                        <div className={styles.todoMeta}>
-                            <small className={`${styles.todoBadge} ${priorityBadgeClass(todo.priority)}`}>{priorityLabel(todo.priority, locale)}</small>
-                            {todo.dueDate ? <small className={styles.todoBadge}>{todo.dueDate}</small> : null}
-                            <button type="button" className={styles.dangerButton} onClick={() => void deleteTodo(todo.id)}>
-                                {t(locale, 'remove')}
-                            </button>
-                        </div>
-                    </li>
-                ))}
+                    return (
+                        <li
+                            className={todoItemClassName}
+                            key={todo.id}
+                            draggable
+                            onDragStart={() => setDraggedId(todo.id)}
+                            onDragOver={event => event.preventDefault()}
+                            onDrop={() => {
+                                void dropOn(todo.id);
+                            }}
+                        >
+                            <Checkbox
+                                className={styles.todoLabel}
+                                checked={todo.completed}
+                                onChange={() => void toggleTodo(todo.id)}
+                                label={<span className={todoTitleClassName}>{todo.title}</span>}
+                            />
+
+                            <div className={styles.todoMeta}>
+                                <small className={todoPriorityBadgeClassName}>{priorityLabel(todo.priority, locale)}</small>
+                                {todo.dueDate ? <small className={styles.todoBadge}>{todo.dueDate}</small> : null}
+                                <button type="button" className={styles.dangerButton} onClick={() => void deleteTodo(todo.id)}>
+                                    {t(locale, 'remove')}
+                                </button>
+                            </div>
+                        </li>
+                    );
+                })}
             </ul>
         </section>
     );

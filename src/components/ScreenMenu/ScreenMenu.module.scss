@@ -6,7 +6,7 @@
   gap: 0.35rem;
 }
 
-.screenMenu button {
+.menuButton {
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -16,20 +16,23 @@
   padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
   box-shadow: none;
+
+  &:hover {
+    color: var(--text-soft);
+    transform: none;
+    box-shadow: none;
+  }
+
+  &.isActive {
+    color: var(--text);
+    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  }
 }
 
-.screenMenu button:hover {
-  color: var(--text-soft);
-  transform: none;
-  box-shadow: none;
+.textButton {
+  min-width: 3rem;
 }
 
-.screenMenu .isActive {
-  color: var(--text);
-  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
-}
-
-.settingsButton,
 .iconButton {
   display: inline-flex;
   align-items: center;
@@ -38,9 +41,8 @@
   height: 2rem;
   padding: 0;
   box-shadow: none;
-}
 
-.settingsButton:hover,
-.iconButton:hover {
-  box-shadow: none;
+  &:hover {
+    box-shadow: none;
+  }
 }

@@ -30,19 +30,19 @@
   line-height: 1.2;
   box-shadow: none;
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-}
 
-.categoryPill:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
-  transform: none;
-  box-shadow: none;
-}
+  &:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: none;
+    box-shadow: none;
+  }
 
-.categoryPillActive {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  background: color-mix(in srgb, var(--accent-soft) 65%, transparent);
+  &.categoryPillActive {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    background: color-mix(in srgb, var(--accent-soft) 65%, transparent);
+  }
 }
 
 .categoryRemove {
@@ -61,17 +61,20 @@
   opacity: 0;
   box-shadow: none;
   transition: opacity 0.18s ease, color 0.18s ease;
+
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--danger);
+    transform: none;
+    box-shadow: none;
+  }
 }
 
-.categoryPillWrap:hover .categoryRemove,
-.categoryRemove:focus-visible {
+.categoryPillWrap:hover .categoryRemove {
   opacity: 1;
-}
-
-.categoryRemove:hover {
-  color: var(--danger);
-  transform: none;
-  box-shadow: none;
 }
 
 .newCategoryButton {
@@ -82,13 +85,12 @@
   padding: 0.3rem 0.75rem;
   font-size: 0.84rem;
   box-shadow: none;
-}
-
-.newCategoryButton:hover {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-  transform: none;
-  box-shadow: none;
+  &:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 .inlineForm {
@@ -111,19 +113,19 @@
   gap: 0.15rem;
 }
 
-.linkItem a {
+.linkAnchor {
   color: var(--text-soft);
   padding: 0.2rem 0.35rem;
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
   transform: translateY(-1px);
   transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
 
-.linkItem a:hover {
-  color: var(--text);
-  background: transparent;
-  transform: translateY(0);
+  &:hover {
+    color: var(--text);
+    background: transparent;
+    transform: translateY(0);
+  }
 }
 
 .separator {
@@ -141,17 +143,20 @@
   opacity: 0;
   box-shadow: none;
   transition: opacity 0.18s ease, color 0.18s ease;
+
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--danger);
+    transform: none;
+    box-shadow: none;
+  }
 }
 
-.linkItem:hover .removeButton,
-.removeButton:focus-visible {
+.linkItem:hover .removeButton {
   opacity: 1;
-}
-
-.removeButton:hover {
-  color: var(--danger);
-  transform: none;
-  box-shadow: none;
 }
 
 .addButton {
@@ -161,12 +166,11 @@
   font-size: 0.88rem;
   padding: 0.2rem 0.45rem;
   box-shadow: none;
-}
-
-.addButton:hover {
-  color: var(--accent);
-  transform: none;
-  box-shadow: none;
+  &:hover {
+    color: var(--accent);
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 .addForm {

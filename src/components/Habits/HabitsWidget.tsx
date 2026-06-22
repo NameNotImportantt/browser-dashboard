@@ -1,4 +1,5 @@
 import {useMemo, useState, type FormEvent} from 'react';
+import clsx from 'clsx';
 import {getHabitStreak, t, todayKey} from '@/app';
 import {useHabits, useSettings} from '@/dashboard';
 import styles from './HabitsWidget.module.scss';
@@ -8,6 +9,7 @@ export function HabitsWidget() {
     const {locale} = useSettings();
     const [title, setTitle] = useState('');
     const today = todayKey();
+    const habitsWidgetClassName = clsx('card', styles.habitsWidget);
 
     const enrichedHabits = useMemo(
         () =>
@@ -26,7 +28,7 @@ export function HabitsWidget() {
     };
 
     return (
-        <section className={`card ${styles.habitsWidget}`}>
+        <section className={habitsWidgetClassName}>
             <header className={styles.widgetHeader}>
                 <h2>{t(locale, 'navHabits')}</h2>
             </header>
@@ -49,7 +51,7 @@ export function HabitsWidget() {
                     <li className={styles.habitItem} key={habit.id}>
                         <div className={styles.habitInfo}>
                             <strong>{habit.title}</strong>
-                            <small>
+                            <small className={styles.habitMeta}>
                                 {t(locale, 'habitStreakLabel')} {habit.streak} {t(locale, 'days')}
                             </small>
                         </div>

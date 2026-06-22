@@ -31,14 +31,14 @@
   font-size: 0.92rem;
   transform: none;
   box-shadow: none;
-}
 
-.weather:hover {
-  color: var(--text-soft);
-  background: transparent;
-  border-color: transparent;
-  transform: none;
-  box-shadow: none;
+  &:hover {
+    color: var(--text-soft);
+    background: transparent;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 @media (max-width: 640px) {

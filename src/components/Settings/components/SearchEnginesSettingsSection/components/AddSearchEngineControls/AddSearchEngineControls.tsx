@@ -69,7 +69,7 @@ export function AddSearchEngineControls({
             {settings.customSearchEngines.length > 0 ? (
                 <ul className={styles.engineList}>
                     {settings.customSearchEngines.map(engine => (
-                        <li key={engine.id}>
+                        <li className={styles.engineItem} key={engine.id}>
                             <span className={styles.engineItemText}>
                                 {engine.name}: {engine.urlTemplate}
                             </span>

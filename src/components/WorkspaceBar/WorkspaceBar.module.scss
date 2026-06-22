@@ -11,26 +11,26 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-}
 
-.workspaceItem:hover,
-.workspaceItem.isHovered {
-  z-index: 3;
+  &:hover,
+  &.isHovered {
+    z-index: 3;
+  }
 }
 
 .workspaceControl {
   position: relative;
   display: inline-flex;
-}
 
-.workspaceControl::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 1rem;
-  height: 1.4rem;
-  transform: translate(1rem, -50%);
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 1rem;
+    height: 1.4rem;
+    transform: translate(1rem, -50%);
+  }
 }
 
 .workspaceButton {
@@ -43,16 +43,16 @@
   padding: 0.1rem 0.35rem;
   line-height: 1.2;
   box-shadow: none;
-}
 
-.workspaceButton:hover {
-  color: var(--text-soft);
-  transform: none;
-  box-shadow: none;
-}
+  &:hover {
+    color: var(--text-soft);
+    transform: none;
+    box-shadow: none;
+  }
 
-.workspaceButton.isActive {
-  color: var(--text);
+  &.isActive {
+    color: var(--text);
+  }
 }
 
 .removeButton {
@@ -73,27 +73,22 @@
   pointer-events: none;
   transform: translate(1rem, -50%);
   transition: opacity 0.18s ease, color 0.18s ease;
+
+  &.isVisible,
+  &:focus-visible,
+  &:hover {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    color: var(--danger);
+    transform: translate(1rem, -50%);
+  }
 }
 
-.workspaceItem:hover + .workspaceItem > .separator,
-.workspaceItem.isHovered + .workspaceItem > .separator,
-.workspaceItem:last-of-type:hover + .separator,
-.workspaceItem:last-of-type.isHovered + .separator {
+.separatorHidden {
   opacity: 0;
-}
-
-.workspaceItem:hover .removeButton,
-.workspaceItem.isHovered .removeButton,
-.removeButton.isVisible,
-.removeButton:focus-visible,
-.removeButton:hover {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.removeButton:hover {
-  color: var(--danger);
-  transform: translate(1rem, -50%);
 }
 
 .separator {
@@ -118,13 +113,12 @@
   line-height: 1;
   padding: 0;
   box-shadow: var(--shadow-glow);
-}
-
-.addButton:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  transform: none;
-  box-shadow: var(--shadow-md);
+  &:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .addForm {
@@ -133,13 +127,13 @@
   gap: 0.35rem;
 }
 
-.addForm input {
+.addInput {
   width: 8.5rem;
   padding: 0.35rem 0.55rem;
   font-size: 0.82rem;
 }
 
-.addForm button {
+.addFormButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;

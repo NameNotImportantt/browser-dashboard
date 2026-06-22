@@ -1,17 +1,10 @@
 export declare const dangerButton: string;
-
 export declare const habitInfo: string;
-
 export declare const habitItem: string;
-
+export declare const habitMeta: string;
 export declare const habitsWidget: string;
-
 export declare const inlineForm: string;
-
 export declare const inlineRow: string;
-
 export declare const inputField: string;
-
 export declare const widgetHeader: string;
-
 export declare const widgetList: string;

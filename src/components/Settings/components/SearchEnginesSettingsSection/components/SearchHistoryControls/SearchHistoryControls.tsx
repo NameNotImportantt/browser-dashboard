@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import clsx from 'clsx';
 import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {Modal} from '@/components/Modal';
@@ -26,6 +27,9 @@ export function SearchHistoryControls({
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [selectedHistoryIds, setSelectedHistoryIds] = useState<string[]>([]);
     const selectedCount = selectedHistoryIds.length;
+    const clearHistoryButtonClassName = clsx(styles.dangerButton, styles.compactButton);
+    const checkboxFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
+    const deleteSelectedButtonClassName = clsx(styles.dangerButton, styles.compactButton);
 
     const toggleHistorySelection = (entryId: string) => {
         setSelectedHistoryIds(current =>
@@ -72,7 +76,7 @@ export function SearchHistoryControls({
                     {searchHistory.length > 0 ? (
                         <button
                             type="button"
-                            className={`${styles.dangerButton} ${styles.compactButton}`}
+                            className={clearHistoryButtonClassName}
                             onClick={() => void onClearSearchHistory()}
                         >
                             {t(locale, 'clearSearchHistory')}
@@ -82,7 +86,7 @@ export function SearchHistoryControls({
                 {searchHistory.length === 0 ? <small className={settingsStyles.hint}>{t(locale, 'searchHistoryEmpty')}</small> : null}
             </div>
 
-            <div className={`${settingsStyles.field} ${styles.checkboxField}`}>
+            <div className={checkboxFieldClassName}>
                 <Checkbox
                     checked={searchHistoryEnabled}
                     onChange={() => void onToggleSearchHistoryEnabled(!searchHistoryEnabled)}
@@ -107,7 +111,7 @@ export function SearchHistoryControls({
                             </button>
                             <button
                                 type="button"
-                                className={`${styles.dangerButton} ${styles.compactButton}`}
+                                className={deleteSelectedButtonClassName}
                                 onClick={() => void removeSelectedHistory()}
                                 disabled={selectedCount === 0}
                             >

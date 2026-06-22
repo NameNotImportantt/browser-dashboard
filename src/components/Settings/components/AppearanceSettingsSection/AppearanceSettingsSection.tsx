@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState, type ChangeEvent} from 'react';
+import clsx from 'clsx';
 import {
     BackgroundImageError,
     getTextColorSwatches,
@@ -39,6 +40,7 @@ export function AppearanceSettingsSection() {
     const [backgroundError, setBackgroundError] = useState<string | null>(null);
     const [textColorDrafts, setTextColorDrafts] = useState(() => buildTextColorDrafts(theme, settings.customTextColors));
     const backgroundInputRef = useRef<HTMLInputElement>(null);
+    const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
     useEffect(() => {
         setTextColorDrafts(buildTextColorDrafts(theme, settings.customTextColors));
@@ -108,7 +110,7 @@ export function AppearanceSettingsSection() {
     };
 
     return (
-        <section className={`${styles.section} ${styles.sectionFirst}`}>
+        <section className={sectionClassName}>
             <h3>{t(locale, 'settingsAppearance')}</h3>
             <div className={styles.grid}>
                 <div className={styles.field}>

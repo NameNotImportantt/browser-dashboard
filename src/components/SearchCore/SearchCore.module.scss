@@ -32,14 +32,14 @@
     0 8px 32px color-mix(in srgb, var(--accent-glow) 70%, transparent),
     0 18px 52px color-mix(in srgb, var(--accent-glow) 38%, transparent);
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
-}
 
-.searchField:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 10px 36px color-mix(in srgb, var(--accent-glow) 82%, transparent),
-    0 22px 58px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  &:focus-within {
+    border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+      0 10px 36px color-mix(in srgb, var(--accent-glow) 82%, transparent),
+      0 22px 58px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  }
 }
 
 .searchIcon {
@@ -47,7 +47,7 @@
   color: var(--text-muted);
 }
 
-.searchField input {
+.searchInput {
   width: 100%;
   border: none;
   background: transparent;
@@ -56,16 +56,16 @@
   font-size: 1.05rem;
   box-shadow: none;
   outline: none;
-}
 
-.searchField input:focus {
-  border: none;
-  box-shadow: none;
-  outline: none;
-}
+  &:focus {
+    border: none;
+    box-shadow: none;
+    outline: none;
+  }
 
-.searchField input::placeholder {
-  color: var(--text-muted);
+  &::placeholder {
+    color: var(--text-muted);
+  }
 }
 
 .suggestions {
@@ -144,20 +144,20 @@
     0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
     0 8px 32px color-mix(in srgb, var(--accent-glow) 70%, transparent),
     0 18px 52px color-mix(in srgb, var(--accent-glow) 38%, transparent);
-}
 
-.engineTrigger:hover {
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
-    0 8px 32px color-mix(in srgb, var(--accent-glow) 70%, transparent),
-    0 18px 52px color-mix(in srgb, var(--accent-glow) 38%, transparent);
-}
+  &:hover {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
+      0 8px 32px color-mix(in srgb, var(--accent-glow) 70%, transparent),
+      0 18px 52px color-mix(in srgb, var(--accent-glow) 38%, transparent);
+  }
 
-.engineTrigger:focus-visible {
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 10px 36px color-mix(in srgb, var(--accent-glow) 82%, transparent),
-    0 22px 58px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  &:focus-visible {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+      0 10px 36px color-mix(in srgb, var(--accent-glow) 82%, transparent),
+      0 22px 58px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  }
 }
 
 @media (max-width: 640px) {
