@@ -1,61 +1,65 @@
 import * as repository from '@/data/settingsRepository';
 import type {SettingsSlice, SliceCreator} from '../types';
+import type {AppSettings} from '@/db';
 
-export const createSettingsSlice: SliceCreator<SettingsSlice> = (_set, get) => ({
+function patchSnapshotSettings(set: Parameters<SliceCreator<SettingsSlice>>[0], settings: AppSettings | null) {
+    if (!settings) {return;}
+
+    set(state => {
+        if (!state.snapshot) {
+            return {};
+        }
+
+        return {
+            snapshot: {
+                ...state.snapshot,
+                settings,
+            },
+        };
+    });
+}
+
+export const createSettingsSlice: SliceCreator<SettingsSlice> = set => ({
     setTheme: async theme => {
-        await repository.setTheme(theme);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setTheme(theme));
     },
     setActiveSearchEngineId: async activeSearchEngineId => {
-        await repository.setActiveSearchEngineId(activeSearchEngineId);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setActiveSearchEngineId(activeSearchEngineId));
     },
     setTimeFormat: async timeFormat => {
-        await repository.setTimeFormat(timeFormat);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setTimeFormat(timeFormat));
     },
     setTimezone: async timezone => {
-        await repository.setTimezone(timezone);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setTimezone(timezone));
     },
     setLocale: async locale => {
-        await repository.setLocale(locale);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setLocale(locale));
     },
     setDateFormat: async dateFormat => {
-        await repository.setDateFormat(dateFormat);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setDateFormat(dateFormat));
     },
     setTabTitle: async tabTitle => {
-        await repository.setTabTitle(tabTitle);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setTabTitle(tabTitle));
     },
     setBackgroundImageFromFile: async file => {
-        await repository.setBackgroundImageFromFile(file);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setBackgroundImageFromFile(file));
     },
     clearBackgroundImage: async () => {
-        await repository.clearBackgroundImage();
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.clearBackgroundImage());
     },
     setBackgroundScrimOpacity: async backgroundScrimOpacity => {
-        await repository.setBackgroundScrimOpacity(backgroundScrimOpacity);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setBackgroundScrimOpacity(backgroundScrimOpacity));
     },
     setTextColor: async (key, value) => {
-        await repository.setTextColor(key, value);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.setTextColor(key, value));
     },
     resetTextColors: async () => {
-        await repository.resetTextColors();
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.resetTextColors());
     },
     addCustomSearchEngine: async payload => {
-        await repository.addCustomSearchEngine(payload);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.addCustomSearchEngine(payload));
     },
     removeCustomSearchEngine: async engineId => {
-        await repository.removeCustomSearchEngine(engineId);
-        await get().refresh();
+        patchSnapshotSettings(set, await repository.removeCustomSearchEngine(engineId));
     },
 });
