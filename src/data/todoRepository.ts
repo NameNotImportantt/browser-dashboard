@@ -40,13 +40,11 @@ export async function deleteTodo(todoId: string) {
 }
 
 export async function reorderTodos(orderedIds: string[]) {
-    const updates = orderedIds.map((id, index) => ({
-        key: id,
-        changes: {
-            position: index,
-            updatedAt: Date.now(),
-        },
-    }));
+    const updatedAt = Date.now();
 
-    await Promise.all(updates.map(item => db.todos.update(item.key, item.changes)));
+    await db.transaction('rw', db.todos, async () => {
+        for (const [position, todoId] of orderedIds.entries()) {
+            await db.todos.update(todoId, {position, updatedAt});
+        }
+    });
 }
