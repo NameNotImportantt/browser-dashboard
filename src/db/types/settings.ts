@@ -1,12 +1,12 @@
-import type { WeatherLocation } from "./weather";
+import type {WeatherLocation} from './weather';
 
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = 'light' | 'dark';
 
-export type TimeFormat = "12h" | "24h";
+export type TimeFormat = '12h' | '24h';
 
-export type AppLocale = "ru" | "en";
+export type AppLocale = 'ru' | 'en';
 
-export type DateFormatPreset = "dd.MM.yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd";
+export type DateFormatPreset = 'dd.MM.yyyy' | 'MM/dd/yyyy' | 'yyyy-MM-dd';
 
 export interface CustomSearchEngine {
   id: string;
@@ -14,7 +14,7 @@ export interface CustomSearchEngine {
   urlTemplate: string;
 }
 
-export type TextColorKey = "text" | "textSoft" | "textMuted";
+export type TextColorKey = 'text' | 'textSoft' | 'textMuted';
 
 export interface CustomTextColors {
   text: string | null;
@@ -23,7 +23,7 @@ export interface CustomTextColors {
 }
 
 export interface AppSettings {
-  key: "app";
+  key: 'app';
   theme: ThemeMode;
   activeSearchEngineId: string;
   customSearchEngines: CustomSearchEngine[];

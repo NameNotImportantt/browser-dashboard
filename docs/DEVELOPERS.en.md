@@ -47,9 +47,12 @@ Everything — JavaScript, CSS, inlined favicon — is bundled into that HTML. T
 src/
 ├── app/           # App shell, i18n, search utils, theme helpers
 ├── components/    # UI widgets (SearchCore, TodoWidget, SettingsPanel, …)
+├── dashboard/     # Domain hooks used by UI components
+├── data/          # Snapshot, repositories, and Dexie-backed services
 ├── db/            # Dexie schema and domain types
-├── hooks/         # useDashboardData, useClock
+├── hooks/         # Shared hooks and dashboard hook re-exports
 ├── pages/         # HomePage layout
+├── store/         # Zustand store, slices, and store types
 └── frontend.tsx   # Entry point
 ```
 
@@ -57,9 +60,14 @@ src/
 
 - Database name: `browser-home-page-db`
 - ORM: [Dexie](https://dexie.org/) (IndexedDB)
+- Dexie calls are isolated in `src/data/*`: snapshot, repositories, weather/search services
+- Dashboard state is stored in Zustand (`src/store/dashboardStore.ts`)
+- Derived data is computed in domain hooks next to the UI consumer.
+- Components access data through domain hooks in `src/dashboard/hooks/*`
 - Domain types live in `src/db/types/*` (one file per entity)
-- Component prop types live in `src/components/<Name>/types/*`
-- Page types live in `src/pages/types/*`
+- Zustand slice types live in `src/store/types/*` (one file per slice/entity)
+- Component prop types live in the component file right after imports
+- Page types live next to the page only when they are actually needed
 
 ### Styling Rules
 
@@ -69,7 +77,8 @@ src/
 
 ## Architecture Notes
 
-- **State**: `useDashboardData` loads a snapshot from IndexedDB and exposes mutation handlers. Components receive props from `AppShell` → `HomePage`.
+- **State**: one Zustand store holds `snapshot`, `activeWorkspaceId`, `loading`, and `error`. Domain slices call repositories and then update the snapshot through `refresh()`.
+- **UI access**: widgets no longer receive CRUD callbacks through `HomePage`; they use domain hooks (`useTodos`, `useSettings`, `useBookmarks`, etc.).
 - **Workspaces**: Most entities are scoped by `workspaceId`. Settings are global (`settings` table, key `app`).
 - **Lazy loading**: `HabitsWidget` and `NotesWidget` are code-split with `React.lazy`.
 - **Weather**: Open-Meteo geocoding + forecast; cache TTL is 30 minutes (`WEATHER_CACHE_TTL_MS`).

@@ -1,4 +1,4 @@
-export type TodoPriority = "low" | "medium" | "high";
+export type TodoPriority = 'low' | 'medium' | 'high';
 
 export interface TodoItem {
   id: string;

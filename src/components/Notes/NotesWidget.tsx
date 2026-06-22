@@ -1,41 +1,45 @@
-import { useEffect, useState } from "react";
-import { t } from "@/app";
-import type { NotesWidgetProps } from "./types/NotesWidgetProps";
-import styles from "./NotesWidget.module.scss";
+import {useEffect, useState} from 'react';
+import {t} from '@/app';
+import {useNotes, useSettings} from '@/dashboard';
+import styles from './NotesWidget.module.scss';
 
-export function NotesWidget({ text, locale, onSave }: NotesWidgetProps) {
-  const [draft, setDraft] = useState(text);
-  const [isSaving, setIsSaving] = useState(false);
+export function NotesWidget() {
+    const {noteText, saveNote} = useNotes();
+    const {locale} = useSettings();
+    const [draft, setDraft] = useState(noteText);
+    const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    setDraft(text);
-  }, [text]);
+    useEffect(() => {
+        setDraft(noteText);
+    }, [noteText]);
 
-  const save = async () => {
-    if (draft === text) return;
-    setIsSaving(true);
-    try {
-      await onSave(draft);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    const save = async () => {
+        if (draft === noteText) {return;}
 
-  return (
-    <section className={`card ${styles.notesWidget}`}>
-      <header className={styles.widgetHeader}>
-        <h2>{t(locale, "navNotes")}</h2>
-        {isSaving ? <span className={styles.status}>{t(locale, "notesSaving")}</span> : null}
-      </header>
+        setIsSaving(true);
 
-      <textarea
-        className={styles.noteField}
-        value={draft}
-        onChange={event => setDraft(event.target.value)}
-        onBlur={() => void save()}
-        placeholder={t(locale, "notesPlaceholder")}
-        aria-label={t(locale, "notesAriaLabel")}
-      />
-    </section>
-  );
+        try {
+            await saveNote(draft);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    return (
+        <section className={`card ${styles.notesWidget}`}>
+            <header className={styles.widgetHeader}>
+                <h2>{t(locale, 'navNotes')}</h2>
+                {isSaving ? <span className={styles.status}>{t(locale, 'notesSaving')}</span> : null}
+            </header>
+
+            <textarea
+                className={styles.noteField}
+                value={draft}
+                onChange={event => setDraft(event.target.value)}
+                onBlur={() => void save()}
+                placeholder={t(locale, 'notesPlaceholder')}
+                aria-label={t(locale, 'notesAriaLabel')}
+            />
+        </section>
+    );
 }

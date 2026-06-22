@@ -1,2 +1,3 @@
-export { useClock } from "./useClock";
-export { useDashboardData } from "./useDashboardData";
+export {useClock} from './useClock';
+
+export * from '@/dashboard';

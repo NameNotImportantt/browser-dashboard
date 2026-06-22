@@ -1,111 +1,111 @@
-import Dexie, { type Table } from "dexie";
-import type { AppSettings, Bookmark, BookmarkCategory, Habit, Note, SearchHistoryEntry, TodoItem, WeatherCache, Workspace } from "./types";
+import Dexie, {type Table} from 'dexie';
+import type {AppSettings, Bookmark, BookmarkCategory, Habit, Note, SearchHistoryEntry, TodoItem, WeatherCache, Workspace} from './types';
 
 export class DashboardDatabase extends Dexie {
-  workspaces!: Table<Workspace, string>;
-  todos!: Table<TodoItem, string>;
-  notes!: Table<Note, string>;
-  habits!: Table<Habit, string>;
-  bookmarks!: Table<Bookmark, string>;
-  bookmarkCategories!: Table<BookmarkCategory, string>;
-  settings!: Table<AppSettings, string>;
-  weatherCache!: Table<WeatherCache, string>;
-  searchHistory!: Table<SearchHistoryEntry, string>;
+    public workspaces!: Table<Workspace, string>;
+    public todos!: Table<TodoItem, string>;
+    public notes!: Table<Note, string>;
+    public habits!: Table<Habit, string>;
+    public bookmarks!: Table<Bookmark, string>;
+    public bookmarkCategories!: Table<BookmarkCategory, string>;
+    public settings!: Table<AppSettings, string>;
+    public weatherCache!: Table<WeatherCache, string>;
+    public searchHistory!: Table<SearchHistoryEntry, string>;
 
-  constructor() {
-    super("browser-home-page-db");
+    public constructor() {
+        super('browser-home-page-db');
 
-    this.version(1).stores({
-      workspaces: "id,position,createdAt",
-      todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
-      notes: "id,workspaceId,updatedAt",
-      habits: "id,workspaceId,position,createdAt",
-      bookmarks: "id,workspaceId,position,createdAt",
-      settings: "key,updatedAt",
-      weatherCache: "id,fetchedAt",
-    });
+        this.version(1).stores({
+            workspaces: 'id,position,createdAt',
+            todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+            notes: 'id,workspaceId,updatedAt',
+            habits: 'id,workspaceId,position,createdAt',
+            bookmarks: 'id,workspaceId,position,createdAt',
+            settings: 'key,updatedAt',
+            weatherCache: 'id,fetchedAt',
+        });
 
-    this.version(2)
-      .stores({
-        workspaces: "id,position,createdAt",
-        todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
-        notes: "id,workspaceId,updatedAt",
-        habits: "id,workspaceId,position,createdAt",
-        bookmarks: "id,workspaceId,position,createdAt",
-        settings: "key,updatedAt",
-        weatherCache: "id,fetchedAt",
-      })
-      .upgrade(async transaction => {
-        await transaction
-          .table("settings")
-          .toCollection()
-          .modify((settings: Record<string, unknown>) => {
-            const legacySearchEngine = settings.searchEngine as string | undefined;
+        this.version(2)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('settings')
+                    .toCollection()
+                    .modify((settings: Record<string, unknown>) => {
+                        const legacySearchEngine = settings.searchEngine as string | undefined;
 
-            settings.activeSearchEngineId = settings.activeSearchEngineId ?? legacySearchEngine ?? "duckduckgo";
-            settings.customSearchEngines = settings.customSearchEngines ?? [];
-            settings.timeFormat = settings.timeFormat ?? "24h";
-            settings.timezone = settings.timezone ?? "auto";
-            settings.locale = settings.locale ?? "ru";
-            settings.dateFormat = settings.dateFormat ?? "dd.MM.yyyy";
-            settings.tabTitle = settings.tabTitle ?? "Personal Dashboard";
+                        settings.activeSearchEngineId = settings.activeSearchEngineId ?? legacySearchEngine ?? 'duckduckgo';
+                        settings.customSearchEngines = settings.customSearchEngines ?? [];
+                        settings.timeFormat = settings.timeFormat ?? '24h';
+                        settings.timezone = settings.timezone ?? 'auto';
+                        settings.locale = settings.locale ?? 'ru';
+                        settings.dateFormat = settings.dateFormat ?? 'dd.MM.yyyy';
+                        settings.tabTitle = settings.tabTitle ?? 'Personal Dashboard';
 
-            delete settings.searchEngine;
-          });
-      });
+                        delete settings.searchEngine;
+                    });
+            });
 
-    this.version(3)
-      .stores({
-        workspaces: "id,position,createdAt",
-        todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
-        notes: "id,workspaceId,updatedAt",
-        habits: "id,workspaceId,position,createdAt",
-        bookmarks: "id,workspaceId,categoryId,position,createdAt",
-        bookmarkCategories: "id,workspaceId,position,createdAt",
-        settings: "key,updatedAt",
-        weatherCache: "id,fetchedAt",
-      })
-      .upgrade(async transaction => {
-        await transaction
-          .table("bookmarks")
-          .toCollection()
-          .modify((bookmark: Record<string, unknown>) => {
-            bookmark.categoryId = bookmark.categoryId ?? null;
-          });
-      });
+        this.version(3)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+                bookmarkCategories: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('bookmarks')
+                    .toCollection()
+                    .modify((bookmark: Record<string, unknown>) => {
+                        bookmark.categoryId = bookmark.categoryId ?? null;
+                    });
+            });
 
-    this.version(4)
-      .stores({
-        workspaces: "id,position,createdAt",
-        todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
-        notes: "id,workspaceId,updatedAt",
-        habits: "id,workspaceId,position,createdAt",
-        bookmarks: "id,workspaceId,categoryId,position,createdAt",
-        bookmarkCategories: "id,workspaceId,position,createdAt",
-        settings: "key,updatedAt",
-        weatherCache: "id,fetchedAt",
-      })
-      .upgrade(async transaction => {
-        await transaction
-          .table("settings")
-          .toCollection()
-          .modify((settings: Record<string, unknown>) => {
-            settings.backgroundScrimOpacity = settings.backgroundScrimOpacity ?? 65;
-          });
-      });
+        this.version(4)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+                bookmarkCategories: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('settings')
+                    .toCollection()
+                    .modify((settings: Record<string, unknown>) => {
+                        settings.backgroundScrimOpacity = settings.backgroundScrimOpacity ?? 65;
+                    });
+            });
 
-    this.version(5).stores({
-      workspaces: "id,position,createdAt",
-      todos: "id,workspaceId,completed,priority,dueDate,position,updatedAt",
-      notes: "id,workspaceId,updatedAt",
-      habits: "id,workspaceId,position,createdAt",
-      bookmarks: "id,workspaceId,categoryId,position,createdAt",
-      bookmarkCategories: "id,workspaceId,position,createdAt",
-      settings: "key,updatedAt",
-      weatherCache: "id,fetchedAt",
-      searchHistory: "id,usedAt",
-    });
-  }
+        this.version(5).stores({
+            workspaces: 'id,position,createdAt',
+            todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+            notes: 'id,workspaceId,updatedAt',
+            habits: 'id,workspaceId,position,createdAt',
+            bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+            bookmarkCategories: 'id,workspaceId,position,createdAt',
+            settings: 'key,updatedAt',
+            weatherCache: 'id,fetchedAt',
+            searchHistory: 'id,usedAt',
+        });
+    }
 }
 
 export const db = new DashboardDatabase();

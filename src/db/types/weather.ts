@@ -5,7 +5,7 @@ export interface WeatherLocation {
 }
 
 export interface WeatherCache {
-  id: "current";
+  id: 'current';
   locationLabel: string;
   temperatureC: number;
   weatherCode: number;
