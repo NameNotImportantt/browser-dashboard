@@ -3,7 +3,7 @@
 </p>
 
 <div align="center">
-  <img src="../src/assets/favicon.png" width="144" height="144" alt="Иконка Browser Dashboard" />
+  <img src="./assets/favicon.png" width="144" height="144" alt="Иконка Browser Dashboard" />
   <h1>Browser Dashboard</h1>
 
   <p><strong>Быстрая оффлайн-first стартовая страница браузера с поиском, задачами, привычками и закладками.</strong></p>

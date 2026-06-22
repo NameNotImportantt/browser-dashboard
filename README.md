@@ -3,7 +3,7 @@
 </p>
 
 <div align="center">
-  <img src="./src/assets/favicon.png" width="144" height="144" alt="Browser Dashboard icon" />
+  <img src="./docs/assets/favicon.png" width="144" height="144" alt="Browser Dashboard icon" />
   <h1>Browser Dashboard</h1>
 
   <p><strong>A fast, offline-first browser start page with search, tasks, habits, and bookmarks.</strong></p>
