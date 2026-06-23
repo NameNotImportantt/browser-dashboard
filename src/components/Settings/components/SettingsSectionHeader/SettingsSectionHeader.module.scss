@@ -1,0 +1,46 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  color: var(--text);
+  font-size: 1.08rem;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.compact {
+  gap: 0.55rem;
+
+  .icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 0.65rem;
+  }
+
+  .title {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+}

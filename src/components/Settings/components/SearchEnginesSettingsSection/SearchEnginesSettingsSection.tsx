@@ -1,6 +1,8 @@
+import {Search} from 'lucide-react';
 import {t} from '@/app';
 import {useSearchHistory, useSettings} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import {AddSearchEngineControls, SearchHistoryControls} from './components';
 
 interface SearchEnginesSettingsSectionProps {
@@ -23,7 +25,7 @@ export function SearchEnginesSettingsSection({dismissRequestId = 0}: SearchEngin
 
     return (
         <section className={styles.section}>
-            <h3>{t(locale, 'searchEngines')}</h3>
+            <SettingsSectionHeader title={t(locale, 'searchEngines')} icon={Search} />
             <AddSearchEngineControls
                 dismissRequestId={dismissRequestId}
                 locale={locale}
