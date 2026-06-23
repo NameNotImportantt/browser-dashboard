@@ -1,5 +1,7 @@
 export {useBookmarks} from './useBookmarks';
 
+export {useBackupActions} from './useBackupActions';
+
 export {useDashboardCore} from './useDashboardCore';
 
 export {useDashboardShellEffects} from './useDashboardShellEffects';

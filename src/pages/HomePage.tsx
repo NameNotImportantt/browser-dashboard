@@ -1,7 +1,7 @@
 import {lazy, memo, Suspense, useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
-import {t} from '@/app';
+import {isBackupReminderOverdue, t} from '@/app';
 import {
     QuickLinks,
     ScreenMenu,
@@ -15,6 +15,7 @@ import {
     type ScreenId,
 } from '@/components';
 import {useSettings} from '@/dashboard';
+import {BackupReminderCard} from './components/BackupReminderCard/BackupReminderCard';
 import {KeyboardHelpAction} from './components/KeyboardHelpAction/KeyboardHelpAction';
 import styles from './HomePage.module.scss';
 import {useHomePageKeyboardShortcuts} from './useHomePageKeyboardShortcuts';
@@ -29,6 +30,7 @@ export const HomePage = memo(function HomePage() {
     const [dismissRequestId, setDismissRequestId] = useState(0);
     const [isKeyboardHelpOpen, setIsKeyboardHelpOpen] = useState(false);
     const theme = settings.theme;
+    const shouldShowBackupReminder = isBackupReminderOverdue(settings);
     const glowOrbClassName = clsx('glow', styles.glowOrb);
     const shouldShowKeyboardHelp = activeScreen !== 'settings';
     const shouldShowFooter = activeScreen !== 'settings';
@@ -90,6 +92,9 @@ export const HomePage = memo(function HomePage() {
                         <div className={styles.homeMain}>
                             <div className={styles.homeMainCenter}>
                                 <div className={styles.homeMainStack}>
+                                    {shouldShowBackupReminder ? (
+                                        <BackupReminderCard onOpenSettings={() => setActiveScreen('settings')} />
+                                    ) : null}
                                     <SearchCore focusRequestId={searchFocusRequestId} dismissRequestId={dismissRequestId} />
                                     <QuickLinks dismissRequestId={dismissRequestId} />
                                 </div>

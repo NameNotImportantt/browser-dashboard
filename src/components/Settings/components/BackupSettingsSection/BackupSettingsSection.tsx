@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import {isBackupReminderOverdue, t} from '@/app';
 import {Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
-import {useDashboardCore, useSettings} from '@/dashboard';
-import {createDashboardBackupDownloadPayload, DashboardBackupError} from '@/data';
+import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
+import {DashboardBackupError} from '@/data';
 import panelStyles from '../../SettingsPanel.module.scss';
 import styles from './BackupSettingsSection.module.scss';
 
@@ -32,14 +32,14 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         settings,
         setBackupReminderEnabled,
         setBackupReminderIntervalDays,
-        setLastBackupExportedAt,
     } = useSettings();
+
     const {importDashboardBackupJson} = useDashboardCore();
+    const {exportBackup, isExporting} = useBackupActions();
     const locale = settings.locale;
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
-    const [isExporting, setIsExporting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [intervalDaysDraft, setIntervalDaysDraft] = useState(() => String(settings.backupReminderIntervalDays));
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
@@ -97,28 +97,12 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     };
 
     const handleExport = async () => {
-        setIsExporting(true);
         setErrorMessage(null);
 
         try {
-            const payload = await createDashboardBackupDownloadPayload();
-            const objectUrl = URL.createObjectURL(payload.blob);
-
-            try {
-                const anchor = document.createElement('a');
-
-                anchor.href = objectUrl;
-                anchor.download = payload.fileName;
-                anchor.click();
-            } finally {
-                URL.revokeObjectURL(objectUrl);
-            }
-
-            await setLastBackupExportedAt(payload.exportedAt);
+            await exportBackup();
         } catch {
             setErrorMessage(t(locale, 'backupExportFailed'));
-        } finally {
-            setIsExporting(false);
         }
     };
 
@@ -126,7 +110,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         setSelectedFile(null);
         setIsConfirmOpen(false);
         setIsImporting(false);
-        setIsExporting(false);
         setErrorMessage(null);
     }, [dismissRequestId]);
 
@@ -151,10 +134,28 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     />
                 </div>
 
+                {backupReminderOverdue ? (
+                    <div className={styles.reminderBanner} role="status" aria-live="polite">
+                        <div className={styles.reminderCopy}>
+                            <h5 className={styles.reminderTitle}>{t(locale, 'backupReminderSettingsTitle')}</h5>
+                            <p className={styles.reminderBody}>{t(locale, 'backupReminderSettingsBody')}</p>
+                        </div>
+                        <button
+                            type="button"
+                            className={styles.reminderAction}
+                            onClick={() => void handleExport()}
+                            disabled={isExporting || isImporting}
+                        >
+                            {isExporting ? t(locale, 'backupExporting') : t(locale, 'backupExport')}
+                        </button>
+                    </div>
+                ) : null}
+
                 <label className={panelStyles.field}>
                     <span className={panelStyles.fieldLabel}>{t(locale, 'backupReminderIntervalDays')}</span>
                     <div className={styles.inlineRow}>
                         <input
+                            className={styles.intervalInput}
                             type="number"
                             min={1}
                             max={365}
