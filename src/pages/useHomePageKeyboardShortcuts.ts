@@ -5,12 +5,14 @@ import type {ScreenId} from '@/components';
 interface UseHomePageKeyboardShortcutsOptions {
   onSelectScreen: (screen: ScreenId) => void;
   onFocusSearch: () => void;
+  onOpenHelp: () => void;
   onDismissTransientUi: () => void;
 }
 
 export function useHomePageKeyboardShortcuts({
     onSelectScreen,
     onFocusSearch,
+    onOpenHelp,
     onDismissTransientUi,
 }: UseHomePageKeyboardShortcutsOptions) {
     const dismissAndBlurActiveElement = () => {
@@ -28,6 +30,7 @@ export function useHomePageKeyboardShortcuts({
             {
                 key: '/',
                 code: 'Slash',
+                shiftKey: false,
                 preventDefault: true,
                 ignoreRepeat: true,
                 handler: () => {
@@ -72,6 +75,14 @@ export function useHomePageKeyboardShortcuts({
                 },
             },
             {
+                key: '?',
+                preventDefault: true,
+                ignoreRepeat: true,
+                handler: () => {
+                    onOpenHelp();
+                },
+            },
+            {
                 key: 'Escape',
                 allowInEditable: true,
                 ignoreRepeat: true,
@@ -84,7 +95,7 @@ export function useHomePageKeyboardShortcuts({
                 },
             },
         ],
-        [onFocusSearch, onSelectScreen, onDismissTransientUi],
+        [onFocusSearch, onOpenHelp, onSelectScreen, onDismissTransientUi],
     );
 
     useGlobalHotkeys(hotkeys);

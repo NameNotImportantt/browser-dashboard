@@ -108,6 +108,13 @@ const messages = {
         settingsDateTime: 'Дата и время',
         currentSearchEngines: 'Текущие поисковики',
         searchEngineLinkPlaceholder: 'Ссылка поисковика',
+        keyboardHelpButton: 'Подсказки клавиатуры',
+        keyboardHelpTitle: 'Горячие клавиши',
+        keyboardHelpInputHint:
+            'Shortcut не перехватываются во время ввода в поля и селекты, кроме Esc для снятия фокуса и закрытия временного UI.',
+        keyboardShortcutFocusSearch: 'Главная и фокус на поиск',
+        keyboardShortcutOpenHelp: 'Открыть подсказки клавиатуры',
+        keyboardShortcutDismiss: 'Закрыть временный UI и снять фокус',
     },
     en: {
         appLoading: 'Loading dashboard...',
@@ -216,6 +223,13 @@ const messages = {
         settingsDateTime: 'Date & time',
         currentSearchEngines: 'Current search engines',
         searchEngineLinkPlaceholder: 'Search engine link',
+        keyboardHelpButton: 'Keyboard shortcuts',
+        keyboardHelpTitle: 'Keyboard shortcuts',
+        keyboardHelpInputHint:
+            'Shortcuts are ignored while typing in fields and selects, except Escape which blurs the field and closes transient UI.',
+        keyboardShortcutFocusSearch: 'Go Home and focus search',
+        keyboardShortcutOpenHelp: 'Open keyboard shortcuts',
+        keyboardShortcutDismiss: 'Close transient UI and blur focus',
     },
 } as const;
 
