@@ -115,18 +115,24 @@
   position: relative;
   padding: 8px;
   margin: 0 0.18rem;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: var(--shadow-sm);
   transform-origin: center;
   transition:
     background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
     transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
     padding-right 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 
   &:hover,
   &:focus-within {
-    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+    background: color-mix(in srgb, var(--surface-strong) 94%, transparent);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
     transform: scale(1.04);
     padding-right: calc(8px + 1rem + 0.45rem);
   }
