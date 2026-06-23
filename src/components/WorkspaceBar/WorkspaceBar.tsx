@@ -1,10 +1,14 @@
-import {useState, type FormEvent} from 'react';
+import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {t} from '@/app';
 import {useSettings, useWorkspaces} from '@/dashboard';
 import styles from './WorkspaceBar.module.scss';
 
-export function WorkspaceBar() {
+interface WorkspaceBarProps {
+  dismissRequestId?: number;
+}
+
+export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
     const {workspaces, activeWorkspaceId, selectWorkspace, addWorkspace, deleteWorkspace} = useWorkspaces();
     const {locale} = useSettings();
     const [isAdding, setIsAdding] = useState(false);
@@ -26,6 +30,10 @@ export function WorkspaceBar() {
         setName('');
         setIsAdding(false);
     };
+
+    useEffect(() => {
+        setIsAdding(false);
+    }, [dismissRequestId]);
 
     return (
         <nav className={styles.workspaceBar} aria-label={t(locale, 'workspaceBarAriaLabel')}>

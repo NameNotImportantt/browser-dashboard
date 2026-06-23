@@ -1,4 +1,4 @@
-import {Fragment, useMemo, useState, type FormEvent} from 'react';
+import {Fragment, useEffect, useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {Link, RefreshCw} from 'lucide-react';
 import {t} from '@/app';
@@ -7,7 +7,11 @@ import styles from './QuickLinks.module.scss';
 
 type CategoryFilter = 'all' | string;
 
-export function QuickLinks() {
+interface QuickLinksProps {
+  dismissRequestId?: number;
+}
+
+export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
     const {
         bookmarks,
         categories,
@@ -63,6 +67,11 @@ export function QuickLinks() {
     };
 
     const areBookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled;
+
+    useEffect(() => {
+        setIsAddingLink(false);
+        setIsAddingCategory(false);
+    }, [dismissRequestId]);
 
     return (
         <section className={styles.quickLinks} aria-label={t(locale, 'savedLinks')}>

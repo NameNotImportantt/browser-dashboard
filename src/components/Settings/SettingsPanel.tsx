@@ -8,7 +8,11 @@ import {OthersSettingsSection} from './components/OthersSettingsSection';
 import {SearchEnginesSettingsSection} from './components/SearchEnginesSettingsSection';
 import styles from './SettingsPanel.module.scss';
 
-export function SettingsPanel() {
+interface SettingsPanelProps {
+  dismissRequestId?: number;
+}
+
+export function SettingsPanel({dismissRequestId = 0}: SettingsPanelProps) {
     const {settings} = useSettings();
     const locale = settings.locale;
     const settingsPanelClassName = clsx('card', styles.settingsPanel);
@@ -20,9 +24,9 @@ export function SettingsPanel() {
             </header>
 
             <div className={styles.rows}>
-                <GeneralSettingsSection />
-                <DateTimeSettingsSection />
-                <SearchEnginesSettingsSection />
+                <GeneralSettingsSection dismissRequestId={dismissRequestId} />
+                <DateTimeSettingsSection dismissRequestId={dismissRequestId} />
+                <SearchEnginesSettingsSection dismissRequestId={dismissRequestId} />
 
                 <div className={styles.rowDivider} role="separator" aria-hidden />
 

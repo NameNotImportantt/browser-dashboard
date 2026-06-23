@@ -1,4 +1,4 @@
-import {lazy, memo, Suspense, useState} from 'react';
+import {lazy, memo, Suspense, useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
 import {t} from '@/app';
@@ -15,7 +15,9 @@ import {
     type ScreenId,
 } from '@/components';
 import {useSettings} from '@/dashboard';
+import {KeyboardHelpAction} from './components/KeyboardHelpAction/KeyboardHelpAction';
 import styles from './HomePage.module.scss';
+import {useHomePageKeyboardShortcuts} from './useHomePageKeyboardShortcuts';
 
 const HabitsWidget = lazy(() => import('@/components').then(module => ({default: module.HabitsWidget})));
 const NotesWidget = lazy(() => import('@/components').then(module => ({default: module.NotesWidget})));
@@ -23,8 +25,12 @@ const NotesWidget = lazy(() => import('@/components').then(module => ({default: 
 export const HomePage = memo(function HomePage() {
     const {settings, locale, setTheme} = useSettings();
     const [activeScreen, setActiveScreen] = useState<ScreenId>('home');
+    const [searchFocusRequestId, setSearchFocusRequestId] = useState(0);
+    const [dismissRequestId, setDismissRequestId] = useState(0);
+    const [isKeyboardHelpOpen, setIsKeyboardHelpOpen] = useState(false);
     const theme = settings.theme;
     const glowOrbClassName = clsx('glow', styles.glowOrb);
+    const shouldShowKeyboardHelp = activeScreen !== 'settings';
 
     const contentClassName = clsx(styles.content, {
         [styles.contentHome]: activeScreen === 'home',
@@ -42,6 +48,28 @@ export const HomePage = memo(function HomePage() {
     );
 
     const widgetFallbackClassName = clsx('card', styles.widgetFallback);
+
+    useEffect(() => {
+        if (!shouldShowKeyboardHelp) {
+            setIsKeyboardHelpOpen(false);
+        }
+    }, [shouldShowKeyboardHelp]);
+
+    useHomePageKeyboardShortcuts({
+        onSelectScreen: setActiveScreen,
+        onFocusSearch: () => {
+            setSearchFocusRequestId(currentRequestId => currentRequestId + 1);
+        },
+        onOpenHelp: () => {
+            if (shouldShowKeyboardHelp) {
+                setIsKeyboardHelpOpen(true);
+            }
+        },
+        onDismissTransientUi: () => {
+            setIsKeyboardHelpOpen(false);
+            setDismissRequestId(currentRequestId => currentRequestId + 1);
+        },
+    });
 
     return (
         <main className={styles.shell}>
@@ -69,8 +97,8 @@ export const HomePage = memo(function HomePage() {
                         <div className={styles.homeMain}>
                             <div className={styles.homeMainCenter}>
                                 <div className={styles.homeMainStack}>
-                                    <SearchCore />
-                                    <QuickLinks />
+                                    <SearchCore focusRequestId={searchFocusRequestId} dismissRequestId={dismissRequestId} />
+                                    <QuickLinks dismissRequestId={dismissRequestId} />
                                 </div>
                             </div>
                         </div>
@@ -104,13 +132,21 @@ export const HomePage = memo(function HomePage() {
 
                 {activeScreen === 'settings' ? (
                     <div className={screenPanelSettingsClassName}>
-                        <SettingsPanel />
+                        <SettingsPanel dismissRequestId={dismissRequestId} />
                     </div>
                 ) : null}
             </div>
 
             <footer className={styles.footerRow}>
-                <WorkspaceBar />
+                {shouldShowKeyboardHelp ? (
+                    <KeyboardHelpAction
+                        locale={locale}
+                        open={isKeyboardHelpOpen}
+                        onOpen={() => setIsKeyboardHelpOpen(true)}
+                        onClose={() => setIsKeyboardHelpOpen(false)}
+                    />
+                ) : null}
+                <WorkspaceBar dismissRequestId={dismissRequestId} />
             </footer>
         </main>
     );

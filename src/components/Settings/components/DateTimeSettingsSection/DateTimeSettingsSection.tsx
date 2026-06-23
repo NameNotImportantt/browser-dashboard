@@ -5,7 +5,11 @@ import {useSettings} from '@/dashboard';
 import {TIMEZONE_OPTIONS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
 
-export function DateTimeSettingsSection() {
+interface DateTimeSettingsSectionProps {
+  dismissRequestId?: number;
+}
+
+export function DateTimeSettingsSection({dismissRequestId = 0}: DateTimeSettingsSectionProps) {
     const {settings, setTimeFormat, setTimezone, setDateFormat} = useSettings();
     const locale = settings.locale;
 
@@ -42,6 +46,7 @@ export function DateTimeSettingsSection() {
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'timeFormat')}</span>
                     <Select
+                        dismissRequestId={dismissRequestId}
                         value={settings.timeFormat}
                         options={timeFormatOptions}
                         onChange={value => void setTimeFormat(value as typeof settings.timeFormat)}
@@ -52,6 +57,7 @@ export function DateTimeSettingsSection() {
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'timezone')}</span>
                     <Select
+                        dismissRequestId={dismissRequestId}
                         value={settings.timezone}
                         options={timezoneOptions}
                         onChange={value => void setTimezone(value)}
@@ -62,6 +68,7 @@ export function DateTimeSettingsSection() {
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'dateFormat')}</span>
                     <Select
+                        dismissRequestId={dismissRequestId}
                         value={settings.dateFormat}
                         options={dateFormatOptions}
                         onChange={value => void setDateFormat(value as typeof settings.dateFormat)}

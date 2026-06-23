@@ -146,10 +146,11 @@
   position: relative;
   z-index: 1;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
   min-height: 0;
+  gap: 1rem;
   padding: 0.15rem 0 0.1rem;
 }
 
@@ -183,5 +184,10 @@
 
   .headerActions {
     justify-content: space-between;
+  }
+
+  .footerRow {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

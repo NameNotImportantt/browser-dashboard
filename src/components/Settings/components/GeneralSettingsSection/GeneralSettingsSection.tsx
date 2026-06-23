@@ -5,7 +5,11 @@ import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
 
-export function GeneralSettingsSection() {
+interface GeneralSettingsSectionProps {
+  dismissRequestId?: number;
+}
+
+export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSectionProps) {
     const {settings, setLocale, setTabTitle: saveSettingsTabTitle} = useSettings();
     const {setWeatherCity: saveWeatherCity} = useWeather();
     const locale = settings.locale;
@@ -48,6 +52,7 @@ export function GeneralSettingsSection() {
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'locale')}</span>
                     <Select
+                        dismissRequestId={dismissRequestId}
                         value={settings.locale}
                         options={localeOptions}
                         onChange={value => void setLocale(value as typeof settings.locale)}

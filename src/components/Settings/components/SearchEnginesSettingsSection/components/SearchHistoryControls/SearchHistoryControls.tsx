@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
@@ -8,6 +8,7 @@ import styles from './SearchHistoryControls.module.scss';
 import type {AppLocale, SearchHistoryEntry} from '@/db';
 
 export interface SearchHistoryControlsProps {
+  dismissRequestId?: number;
   locale: AppLocale;
   searchHistoryEnabled: boolean;
   searchHistory: SearchHistoryEntry[];
@@ -17,6 +18,7 @@ export interface SearchHistoryControlsProps {
 }
 
 export function SearchHistoryControls({
+    dismissRequestId = 0,
     locale,
     searchHistoryEnabled,
     searchHistory,
@@ -49,6 +51,10 @@ export function SearchHistoryControls({
         setSelectedHistoryIds([]);
         setIsHistoryOpen(false);
     };
+
+    useEffect(() => {
+        closeHistoryModal();
+    }, [dismissRequestId]);
 
     const removeSelectedHistory = async () => {
         if (!selectedHistoryIds.length) {

@@ -24,6 +24,11 @@ import {SUGGESTION_DEBOUNCE_MS} from './constants';
 import styles from './SearchCore.module.scss';
 import type {AppLocale} from '@/db';
 
+interface SearchCoreProps {
+  focusRequestId?: number;
+  dismissRequestId?: number;
+}
+
 function suggestionSourceLabel(locale: AppLocale, source: SearchSuggestion['source']) {
     if (source === 'history') {
         return t(locale, 'searchSuggestionHistory');
@@ -32,7 +37,7 @@ function suggestionSourceLabel(locale: AppLocale, source: SearchSuggestion['sour
     return t(locale, 'searchSuggestionOnline');
 }
 
-export function SearchCore() {
+export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCoreProps) {
     const {settings, locale, setActiveSearchEngineId} = useSettings();
     const {searchHistory, addSearchHistoryEntry} = useSearchHistory();
     const [query, setQuery] = useState('');
@@ -156,6 +161,14 @@ export function SearchCore() {
         return () => document.removeEventListener('mousedown', handlePointerDown);
     }, [closeSuggestions, isOpen]);
 
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, [focusRequestId]);
+
+    useEffect(() => {
+        closeSuggestions();
+    }, [closeSuggestions, dismissRequestId]);
+
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -269,6 +282,7 @@ export function SearchCore() {
                 <Select
                     className={styles.engineSelect}
                     triggerClassName={styles.engineTrigger}
+                    dismissRequestId={dismissRequestId}
                     value={settings.activeSearchEngineId}
                     options={engineSelectOptions}
                     onChange={value => void setActiveSearchEngineId(value)}
