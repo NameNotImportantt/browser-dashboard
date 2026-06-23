@@ -1,9 +1,10 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {t} from '@/app';
+import {isBackupReminderOverdue, t} from '@/app';
 import {Modal} from '@/components';
+import {Checkbox} from '@/components/Checkbox';
 import {useDashboardCore, useSettings} from '@/dashboard';
-import {DashboardBackupError} from '@/data';
+import {createDashboardBackupDownloadPayload, DashboardBackupError} from '@/data';
 import panelStyles from '../../SettingsPanel.module.scss';
 import styles from './BackupSettingsSection.module.scss';
 
@@ -27,14 +28,31 @@ function getBackupImportErrorMessageKey(code: DashboardBackupError['code']) {
 }
 
 export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: BackupSettingsSectionProps) {
-    const {settings} = useSettings();
+    const {
+        settings,
+        setBackupReminderEnabled,
+        setBackupReminderIntervalDays,
+        setLastBackupExportedAt,
+    } = useSettings();
     const {importDashboardBackupJson} = useDashboardCore();
     const locale = settings.locale;
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [intervalDaysDraft, setIntervalDaysDraft] = useState(() => String(settings.backupReminderIntervalDays));
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
+    const backupReminderOverdue = isBackupReminderOverdue(settings);
+
+    const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(value));
+
+    const syncIntervalDaysDraft = (nextValue: number) => {
+        setIntervalDaysDraft(String(nextValue));
+    };
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.item(0) ?? null;
@@ -70,12 +88,51 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         }
     };
 
+    const commitReminderIntervalDays = async () => {
+        const parsedValue = Number(intervalDaysDraft);
+        const normalizedValue = Number.isFinite(parsedValue) ? Math.min(365, Math.max(1, Math.round(parsedValue))) : 7;
+
+        syncIntervalDaysDraft(normalizedValue);
+        await setBackupReminderIntervalDays(normalizedValue);
+    };
+
+    const handleExport = async () => {
+        setIsExporting(true);
+        setErrorMessage(null);
+
+        try {
+            const payload = await createDashboardBackupDownloadPayload();
+            const objectUrl = URL.createObjectURL(payload.blob);
+
+            try {
+                const anchor = document.createElement('a');
+
+                anchor.href = objectUrl;
+                anchor.download = payload.fileName;
+                anchor.click();
+            } finally {
+                URL.revokeObjectURL(objectUrl);
+            }
+
+            await setLastBackupExportedAt(payload.exportedAt);
+        } catch {
+            setErrorMessage(t(locale, 'backupExportFailed'));
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     useEffect(() => {
         setSelectedFile(null);
         setIsConfirmOpen(false);
         setIsImporting(false);
+        setIsExporting(false);
         setErrorMessage(null);
     }, [dismissRequestId]);
+
+    useEffect(() => {
+        syncIntervalDaysDraft(settings.backupReminderIntervalDays);
+    }, [settings.backupReminderIntervalDays]);
 
     const sectionCardClassName = clsx(
         styles.sectionCard,
@@ -86,6 +143,56 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         <>
             {embedded ? <h4 className={styles.embeddedTitle}>{t(locale, 'settingsBackup')}</h4> : null}
             <div className={sectionCardClassName}>
+                <div className={panelStyles.field}>
+                    <Checkbox
+                        checked={settings.backupReminderEnabled}
+                        onChange={() => void setBackupReminderEnabled(!settings.backupReminderEnabled)}
+                        label={t(locale, 'backupReminderEnabled')}
+                    />
+                </div>
+
+                <label className={panelStyles.field}>
+                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupReminderIntervalDays')}</span>
+                    <div className={styles.inlineRow}>
+                        <input
+                            type="number"
+                            min={1}
+                            max={365}
+                            step={1}
+                            value={intervalDaysDraft}
+                            onChange={event => setIntervalDaysDraft(event.target.value)}
+                            onBlur={() => void commitReminderIntervalDays()}
+                        />
+                        <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
+                    </div>
+                    <small className={panelStyles.hint}>{t(locale, 'backupReminderIntervalHint')}</small>
+                </label>
+
+                <div className={panelStyles.field}>
+                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupLastExportedAt')}</span>
+                    <small className={styles.statusText}>
+                        {settings.lastBackupExportedAt === null
+                            ? t(locale, 'backupLastExportedNever')
+                            : formatDateTime(settings.lastBackupExportedAt)}
+                    </small>
+                    <small className={backupReminderOverdue ? panelStyles.error : panelStyles.hint}>
+                        {backupReminderOverdue ? t(locale, 'backupReminderOverdue') : t(locale, 'backupReminderCurrent')}
+                    </small>
+                </div>
+
+                <div className={panelStyles.field}>
+                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupExport')}</span>
+                    <small className={panelStyles.hint}>{t(locale, 'backupExportHint')}</small>
+                </div>
+
+                <div className={styles.actionRow}>
+                    <button type="button" onClick={() => void handleExport()} disabled={isExporting || isImporting}>
+                        {isExporting ? t(locale, 'backupExporting') : t(locale, 'backupExport')}
+                    </button>
+                </div>
+
+                <div className={styles.sectionDivider} role="separator" aria-hidden />
+
                 <div className={panelStyles.field}>
                     <span className={panelStyles.fieldLabel}>{t(locale, 'backupImport')}</span>
                     <small className={panelStyles.hint}>{t(locale, 'backupImportHint')}</small>

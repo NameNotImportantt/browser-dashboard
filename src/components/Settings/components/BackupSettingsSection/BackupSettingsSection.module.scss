@@ -24,11 +24,35 @@
   letter-spacing: 0.02em;
 }
 
+.sectionDivider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
 .actionRow {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
   align-items: center;
+}
+
+.inlineRow {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+
+  input {
+    width: 100%;
+    max-width: 6rem;
+  }
+}
+
+.inputSuffix {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .fileButton {
@@ -63,6 +87,11 @@
   color: var(--text-soft);
   font-size: 0.85rem;
   word-break: break-word;
+}
+
+.statusText {
+  color: var(--text-soft);
+  font-size: 0.9rem;
 }
 
 .warningText {
