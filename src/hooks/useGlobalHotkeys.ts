@@ -2,6 +2,7 @@ import {useEffect} from 'react';
 
 export interface GlobalHotkeyDefinition {
   key: string;
+  code?: string;
   altKey?: boolean;
   ctrlKey?: boolean;
   metaKey?: boolean;
@@ -32,6 +33,10 @@ function matchesModifier(expected: boolean | undefined, actual: boolean) {
 
 function matchesHotkey(event: KeyboardEvent, hotkey: GlobalHotkeyDefinition) {
     if (event.key !== hotkey.key) {
+        if (!hotkey.code || event.code !== hotkey.code) {
+            return false;
+        }
+    } else if (hotkey.code && event.code !== hotkey.code) {
         return false;
     }
 

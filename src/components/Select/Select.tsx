@@ -14,6 +14,7 @@ export interface SelectProps {
   options: SelectOption[];
   onChange: (value: string) => void;
   ariaLabel: string;
+  dismissRequestId?: number;
   className?: string;
   triggerClassName?: string;
 }
@@ -24,7 +25,15 @@ type ListboxPosition = {
   width: number;
 };
 
-export function Select({value, options, onChange, ariaLabel, className, triggerClassName}: SelectProps) {
+export function Select({
+    value,
+    options,
+    onChange,
+    ariaLabel,
+    dismissRequestId = 0,
+    className,
+    triggerClassName,
+}: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const [listboxPosition, setListboxPosition] = useState<ListboxPosition | null>(null);
@@ -105,6 +114,10 @@ export function Select({value, options, onChange, ariaLabel, className, triggerC
 
         setActiveIndex(index >= 0 ? index : 0);
     }, [isOpen, options, value]);
+
+    useEffect(() => {
+        close();
+    }, [close, dismissRequestId]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         if (!isOpen) {

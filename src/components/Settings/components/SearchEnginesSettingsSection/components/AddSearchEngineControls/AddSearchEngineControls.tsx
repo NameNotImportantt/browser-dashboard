@@ -8,6 +8,7 @@ import styles from './AddSearchEngineControls.module.scss';
 import type {AppLocale, AppSettings} from '@/db';
 
 export interface AddSearchEngineControlsProps {
+  dismissRequestId?: number;
   locale: AppLocale;
   settings: AppSettings;
   onSelectActiveEngine: (engineId: string) => Promise<void>;
@@ -17,6 +18,7 @@ export interface AddSearchEngineControlsProps {
 }
 
 export function AddSearchEngineControls({
+    dismissRequestId = 0,
     locale,
     settings,
     onSelectActiveEngine,
@@ -45,6 +47,7 @@ export function AddSearchEngineControls({
             <div className={settingsStyles.field}>
                 <span className={settingsStyles.fieldLabel}>{t(locale, 'currentSearchEngines')}</span>
                 <Select
+                    dismissRequestId={dismissRequestId}
                     value={settings.activeSearchEngineId}
                     options={searchEngineSelectOptions}
                     onChange={value => void onSelectActiveEngine(value)}
