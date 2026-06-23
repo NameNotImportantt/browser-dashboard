@@ -104,45 +104,94 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem 0.2rem;
+  gap: 0.4rem 0.25rem;
 }
 
 .linkItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.15rem;
+  justify-content: center;
+  gap: 0.35rem;
+  position: relative;
+  padding: 8px;
+  margin: 0 0.18rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  transform-origin: center;
+  transition:
+    background 0.22s ease,
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    padding-right 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+
+  &:hover,
+  &:focus-within {
+    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+    transform: scale(1.04);
+    padding-right: calc(8px + 1rem + 0.45rem);
+  }
 }
 
 .linkAnchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-align: center;
   color: var(--text-soft);
-  padding: 0.2rem 0.35rem;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
-  transform: translateY(-1px);
-  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  line-height: 1;
+  min-width: 0;
+  transition: color 0.18s ease;
 
   &:hover {
     color: var(--text);
-    background: transparent;
-    transform: translateY(0);
   }
+}
+
+.faviconWrap {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 0.875rem;
+  color: var(--text-muted);
+}
+
+.favicon {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+  border-radius: 0.2rem;
+  object-fit: contain;
 }
 
 .separator {
   color: var(--text-muted);
-  margin: 0 0.1rem;
+  margin: 0 -0.05rem;
 }
 
-.removeButton {
+.iconButton {
+  position: absolute;
+  top: 50%;
+  right: 8px;
   border: none;
   background: transparent;
   color: var(--text-muted);
-  padding: 0 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
   font-size: 0.85rem;
   line-height: 1;
   opacity: 0;
   box-shadow: none;
-  transition: opacity 0.18s ease, color 0.18s ease;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.72);
+  transition:
+    opacity 0.2s ease,
+    color 0.18s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  display: inline-grid;
+  place-items: center;
 
   &:focus-visible {
     opacity: 1;
@@ -155,8 +204,37 @@
   }
 }
 
-.linkItem:hover .removeButton {
+.linkItem:hover .iconButton,
+.linkItem:focus-within .iconButton {
   opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+.refreshButton {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
 }
 
 .addButton {

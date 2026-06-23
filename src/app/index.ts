@@ -1,5 +1,7 @@
 export {BackgroundImageError, prepareBackgroundImageDataUrl} from './backgroundImage';
 
+export {resolveBookmarkFaviconUrl} from './favicon';
+
 export {t} from './i18n';
 
 export {buildSearchUrl, getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT} from './searchUtils';

@@ -148,6 +148,34 @@ export class DashboardDatabase extends Dexie {
                         settings.onlineSearchSuggestionsEnabled = settings.onlineSearchSuggestionsEnabled ?? true;
                     });
             });
+
+        this.version(8)
+            .stores({
+                workspaces: 'id,position,createdAt',
+                todos: 'id,workspaceId,completed,priority,dueDate,position,updatedAt',
+                notes: 'id,workspaceId,updatedAt',
+                habits: 'id,workspaceId,position,createdAt',
+                bookmarks: 'id,workspaceId,categoryId,position,createdAt',
+                bookmarkCategories: 'id,workspaceId,position,createdAt',
+                settings: 'key,updatedAt',
+                weatherCache: 'id,fetchedAt',
+                searchHistory: 'id,usedAt',
+            })
+            .upgrade(async transaction => {
+                await transaction
+                    .table('bookmarks')
+                    .toCollection()
+                    .modify((bookmark: Record<string, unknown>) => {
+                        bookmark.faviconUrl = bookmark.faviconUrl ?? bookmark.faviconDataUrl ?? null;
+                        delete bookmark.faviconDataUrl;
+                    });
+                await transaction
+                    .table('settings')
+                    .toCollection()
+                    .modify((settings: Record<string, unknown>) => {
+                        settings.bookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled ?? true;
+                    });
+            });
     }
 }
 

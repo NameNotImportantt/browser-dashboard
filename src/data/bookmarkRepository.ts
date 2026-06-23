@@ -1,4 +1,4 @@
-import {createId, normalizeUrl} from '@/app';
+import {createId, normalizeUrl, resolveBookmarkFaviconUrl} from '@/app';
 import {db} from '@/db';
 import type {Bookmark, CreateBookmarkCategoryPayload, CreateBookmarkPayload} from '@/db';
 
@@ -7,29 +7,43 @@ export async function addBookmark(
     activeWorkspaceId: string | null,
     workspaceBookmarks: Bookmark[],
 ) {
-    if (!activeWorkspaceId) {return;}
+    if (!activeWorkspaceId) {return null;}
 
     const title = payload.title.trim();
     const url = normalizeUrl(payload.url);
 
-    if (!title || !url) {return;}
+    if (!title || !url) {return null;}
 
     const categoryId = payload.categoryId ?? null;
     const categoryBookmarks = workspaceBookmarks.filter(item => item.categoryId === categoryId);
+    const id = createId();
 
     await db.bookmarks.add({
-        id: createId(),
+        id,
         workspaceId: activeWorkspaceId,
         categoryId,
         title,
         url,
+        faviconUrl: null,
         position: categoryBookmarks.length,
         createdAt: Date.now(),
     });
+
+    return id;
 }
 
 export async function deleteBookmark(bookmarkId: string) {
     await db.bookmarks.delete(bookmarkId);
+}
+
+export async function refreshBookmarkFavicon(bookmarkId: string) {
+    const bookmark = await db.bookmarks.get(bookmarkId);
+
+    if (!bookmark) {return;}
+
+    const faviconUrl = resolveBookmarkFaviconUrl(bookmark.url);
+
+    await db.bookmarks.update(bookmarkId, {faviconUrl});
 }
 
 export async function addBookmarkCategory(

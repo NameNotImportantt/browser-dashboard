@@ -11,6 +11,7 @@ export function useSettings() {
             setActiveSearchEngineId: dashboardStore.setActiveSearchEngineId,
             setOnlineSearchSuggestionsEnabled: dashboardStore.setOnlineSearchSuggestionsEnabled,
             setSearchHistoryEnabled: dashboardStore.setSearchHistoryEnabled,
+            setBookmarkFaviconsEnabled: dashboardStore.setBookmarkFaviconsEnabled,
             setTimeFormat: dashboardStore.setTimeFormat,
             setTimezone: dashboardStore.setTimezone,
             setLocale: dashboardStore.setLocale,

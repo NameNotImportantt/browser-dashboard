@@ -47,6 +47,10 @@ export async function setSearchHistoryEnabled(searchHistoryEnabled: boolean) {
     return patchSettings({searchHistoryEnabled});
 }
 
+export async function setBookmarkFaviconsEnabled(bookmarkFaviconsEnabled: boolean) {
+    return patchSettings({bookmarkFaviconsEnabled});
+}
+
 export async function setTimeFormat(timeFormat: TimeFormat) {
     return patchSettings({timeFormat});
 }
