@@ -2,8 +2,13 @@ import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {useSettings} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
+import {BackupSettingsSection} from '../BackupSettingsSection';
 
-export function OthersSettingsSection() {
+interface OthersSettingsSectionProps {
+    dismissRequestId?: number;
+}
+
+export function OthersSettingsSection({dismissRequestId = 0}: OthersSettingsSectionProps) {
     const {settings, setBookmarkFaviconsEnabled} = useSettings();
     const locale = settings.locale;
 
@@ -20,6 +25,9 @@ export function OthersSettingsSection() {
                     <small className={styles.hint}>{t(locale, 'bookmarkFaviconsHint')}</small>
                 </div>
             </div>
+            <div className={styles.rowDivider} role="separator" aria-hidden />
+
+            <BackupSettingsSection dismissRequestId={dismissRequestId} embedded />
         </section>
     );
 }

@@ -1,4 +1,4 @@
-import {ensureSeedData, loadSnapshot} from '@/data';
+import {ensureSeedData, importDashboardBackup, loadSnapshot, parseDashboardBackupJson} from '@/data';
 import type {CoreSlice, SliceCreator} from '../types';
 
 export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
@@ -39,5 +39,10 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
                     : nextSnapshot.workspaces[0]?.id ?? null,
             snapshot: nextSnapshot,
         });
+    },
+
+    importDashboardBackupJson: async json => {
+        await importDashboardBackup(parseDashboardBackupJson(json));
+        await get().refresh();
     },
 });
