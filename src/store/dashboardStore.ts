@@ -6,6 +6,7 @@ import {createNotesSlice} from './slices/notes.slice';
 import {createSearchHistorySlice} from './slices/searchHistory.slice';
 import {createSettingsSlice} from './slices/settings.slice';
 import {createTodosSlice} from './slices/todos.slice';
+import {createUndoSlice} from './slices/undo.slice';
 import {createWeatherSlice} from './slices/weather.slice';
 import {createWorkspacesSlice} from './slices/workspaces.slice';
 import type {DashboardStore} from './types';
@@ -13,6 +14,7 @@ import type {DashboardStore} from './types';
 export const useDashboardStore = create<DashboardStore>()((set, get) => ({
     ...createCoreSlice(set, get),
     ...createWorkspacesSlice(set, get),
+    ...createUndoSlice(set, get),
     ...createSettingsSlice(set, get),
     ...createTodosSlice(set, get),
     ...createHabitsSlice(set, get),

@@ -1,6 +1,6 @@
 import {createId, normalizeUrl, resolveBookmarkFaviconUrl} from '@/app';
 import {db} from '@/db';
-import type {Bookmark, CreateBookmarkCategoryPayload, CreateBookmarkPayload} from '@/db';
+import type {Bookmark, BookmarkCategory, CreateBookmarkCategoryPayload, CreateBookmarkPayload} from '@/db';
 
 export async function addBookmark(
     payload: CreateBookmarkPayload,
@@ -34,6 +34,10 @@ export async function addBookmark(
 
 export async function deleteBookmark(bookmarkId: string) {
     await db.bookmarks.delete(bookmarkId);
+}
+
+export async function restoreBookmark(bookmark: Bookmark) {
+    await db.bookmarks.put(bookmark);
 }
 
 export async function refreshBookmarkFavicon(bookmarkId: string) {
@@ -70,5 +74,15 @@ export async function deleteBookmarkCategory(categoryId: string) {
     await db.transaction('rw', [db.bookmarks, db.bookmarkCategories], async () => {
         await db.bookmarks.where('categoryId').equals(categoryId).modify({categoryId: null});
         await db.bookmarkCategories.delete(categoryId);
+    });
+}
+
+export async function restoreBookmarkCategory(category: BookmarkCategory, bookmarkIds: string[]) {
+    await db.transaction('rw', [db.bookmarkCategories, db.bookmarks], async () => {
+        await db.bookmarkCategories.put(category);
+
+        for (const bookmarkId of bookmarkIds) {
+            await db.bookmarks.update(bookmarkId, {categoryId: category.id});
+        }
     });
 }

@@ -16,6 +16,10 @@ export type {SliceCreator} from './sliceCreator';
 
 export type {TodosSlice} from './todosSlice';
 
+export {UndoActionKind} from './undoActionKind';
+
+export type {UndoEntry, UndoEntryInput, UndoSlice} from './undoSlice';
+
 export type {WeatherSlice} from './weatherSlice';
 
 export type {WorkspacesSlice} from './workspacesSlice';

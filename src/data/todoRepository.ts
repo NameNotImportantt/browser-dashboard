@@ -1,6 +1,6 @@
 import {createId} from '@/app';
 import {db} from '@/db';
-import type {CreateTodoPayload} from '@/db';
+import type {CreateTodoPayload, TodoItem} from '@/db';
 
 export async function addTodo(payload: CreateTodoPayload, activeWorkspaceId: string | null, position: number) {
     if (!activeWorkspaceId) {return;}
@@ -37,6 +37,10 @@ export async function toggleTodo(todoId: string) {
 
 export async function deleteTodo(todoId: string) {
     await db.todos.delete(todoId);
+}
+
+export async function restoreTodo(todo: TodoItem) {
+    await db.todos.put(todo);
 }
 
 export async function reorderTodos(orderedIds: string[]) {

@@ -1,5 +1,6 @@
 import {createId, SEARCH_HISTORY_LIMIT} from '@/app';
 import {db} from '@/db';
+import type {SearchHistoryEntry} from '@/db';
 
 export async function addSearchHistoryEntry(query: string) {
     const normalized = query.trim();
@@ -51,4 +52,12 @@ export async function deleteSearchHistoryEntries(entryIds: string[]) {
 
 export async function clearSearchHistory() {
     await db.searchHistory.clear();
+}
+
+export async function restoreSearchHistoryEntries(entries: SearchHistoryEntry[]) {
+    if (!entries.length) {
+        return;
+    }
+
+    await db.searchHistory.bulkPut(entries);
 }

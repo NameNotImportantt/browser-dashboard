@@ -1,5 +1,5 @@
 import * as repository from '@/data/todoRepository';
-import type {DashboardStore, SliceCreator, TodosSlice} from '../types';
+import {UndoActionKind, type DashboardStore, type SliceCreator, type TodosSlice} from '../types';
 
 function getWorkspaceTodos(dashboardStore: DashboardStore) {
     if (!dashboardStore.activeWorkspaceId) {return [];}
@@ -17,7 +17,17 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
         await get().refresh();
     },
     deleteTodo: async todoId => {
+        const todo = getWorkspaceTodos(get()).find(workspaceTodo => workspaceTodo.id === todoId);
+
         await repository.deleteTodo(todoId);
+
+        if (todo) {
+            get().enqueueUndoEntry({
+                kind: UndoActionKind.TodoDelete,
+                todo,
+            });
+        }
+
         await get().refresh();
     },
     reorderTodos: async orderedTodoIdList => {
