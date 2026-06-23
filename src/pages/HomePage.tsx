@@ -35,18 +35,10 @@ export const HomePage = memo(function HomePage() {
 
     const contentClassName = clsx(styles.content, {
         [styles.contentHome]: activeScreen === 'home',
-        [styles.contentSettings]: activeScreen === 'settings',
     });
 
     const homeLayoutClassName = clsx(styles.contentPane, styles.homeLayout);
     const screenPanelClassName = clsx(styles.contentPane, styles.screenPanel);
-
-    const screenPanelSettingsClassName = clsx(
-        styles.contentPane,
-        styles.screenPanel,
-        styles.screenPanelWide,
-        styles.screenPanelSettings,
-    );
 
     const widgetFallbackClassName = clsx('card', styles.widgetFallback);
 
@@ -132,9 +124,7 @@ export const HomePage = memo(function HomePage() {
                 ) : null}
 
                 {activeScreen === 'settings' ? (
-                    <div className={screenPanelSettingsClassName}>
-                        <SettingsPanel dismissRequestId={dismissRequestId} />
-                    </div>
+                    <SettingsPanel dismissRequestId={dismissRequestId} />
                 ) : null}
             </div>
 

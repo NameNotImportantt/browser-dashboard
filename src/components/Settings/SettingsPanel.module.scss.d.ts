@@ -16,3 +16,4 @@ export declare const scrimRange: string;
 export declare const section: string;
 export declare const sectionFirst: string;
 export declare const settingsPanel: string;
+export declare const settingsScreen: string;

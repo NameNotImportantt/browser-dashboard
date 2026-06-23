@@ -16,25 +16,28 @@ interface SettingsPanelProps {
 export function SettingsPanel({dismissRequestId = 0}: SettingsPanelProps) {
     const {settings} = useSettings();
     const locale = settings.locale;
+    const settingsScreenClassName = styles.settingsScreen;
     const settingsPanelClassName = clsx('card', styles.settingsPanel);
 
     return (
-        <section className={settingsPanelClassName} aria-label={t(locale, 'settings')}>
-            <header className={styles.header}>
-                <h2>{t(locale, 'settings')}</h2>
-            </header>
+        <div className={settingsScreenClassName}>
+            <section className={settingsPanelClassName} aria-label={t(locale, 'settings')}>
+                <header className={styles.header}>
+                    <h2>{t(locale, 'settings')}</h2>
+                </header>
 
-            <div className={styles.rows}>
-                <GeneralSettingsSection dismissRequestId={dismissRequestId} />
-                <DateTimeSettingsSection dismissRequestId={dismissRequestId} />
-                <SearchEnginesSettingsSection dismissRequestId={dismissRequestId} />
+                <div className={styles.rows}>
+                    <GeneralSettingsSection dismissRequestId={dismissRequestId} />
+                    <DateTimeSettingsSection dismissRequestId={dismissRequestId} />
+                    <SearchEnginesSettingsSection dismissRequestId={dismissRequestId} />
 
-                <div className={styles.rowDivider} role="separator" aria-hidden />
+                    <div className={styles.rowDivider} role="separator" aria-hidden />
 
-                <AppearanceSettingsSection />
-                <OthersSettingsSection />
-                <AboutSettingsSection dismissRequestId={dismissRequestId} />
-            </div>
-        </section>
+                    <AppearanceSettingsSection />
+                    <OthersSettingsSection />
+                    <AboutSettingsSection dismissRequestId={dismissRequestId} />
+                </div>
+            </section>
+        </div>
     );
 }
