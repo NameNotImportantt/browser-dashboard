@@ -30,6 +30,9 @@ export interface AppSettings {
   onlineSearchSuggestionsEnabled: boolean;
   searchHistoryEnabled: boolean;
   bookmarkFaviconsEnabled: boolean;
+  backupReminderEnabled: boolean;
+  backupReminderIntervalDays: number;
+  lastBackupExportedAt: number | null;
   timeFormat: TimeFormat;
   timezone: string;
   locale: AppLocale;

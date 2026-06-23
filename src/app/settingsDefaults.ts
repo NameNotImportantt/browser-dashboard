@@ -8,6 +8,10 @@ function clampBackgroundScrimOpacity(value: number) {
     return Math.min(100, Math.max(0, Math.round(value)));
 }
 
+function normalizeBackupReminderIntervalDays(value: number) {
+    return Math.min(365, Math.max(1, Math.round(value)));
+}
+
 export const DEFAULT_SETTINGS: AppSettings = {
     key: 'app',
     theme: 'dark',
@@ -16,6 +20,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
     onlineSearchSuggestionsEnabled: true,
     searchHistoryEnabled: true,
     bookmarkFaviconsEnabled: true,
+    backupReminderEnabled: true,
+    backupReminderIntervalDays: 7,
+    lastBackupExportedAt: null,
     timeFormat: '24h',
     timezone: 'auto',
     locale: 'ru',
@@ -44,6 +51,11 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
         onlineSearchSuggestionsEnabled: raw.onlineSearchSuggestionsEnabled ?? DEFAULT_SETTINGS.onlineSearchSuggestionsEnabled,
         searchHistoryEnabled: raw.searchHistoryEnabled ?? DEFAULT_SETTINGS.searchHistoryEnabled,
         bookmarkFaviconsEnabled: raw.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled,
+        backupReminderEnabled: raw.backupReminderEnabled ?? DEFAULT_SETTINGS.backupReminderEnabled,
+        backupReminderIntervalDays: normalizeBackupReminderIntervalDays(
+            raw.backupReminderIntervalDays ?? DEFAULT_SETTINGS.backupReminderIntervalDays,
+        ),
+        lastBackupExportedAt: raw.lastBackupExportedAt ?? DEFAULT_SETTINGS.lastBackupExportedAt,
         timeFormat: raw.timeFormat ?? DEFAULT_SETTINGS.timeFormat,
         timezone: raw.timezone ?? DEFAULT_SETTINGS.timezone,
         locale: raw.locale ?? DEFAULT_SETTINGS.locale,

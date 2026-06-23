@@ -1,3 +1,5 @@
+export * from './backupRepository';
+
 export * from './bookmarkRepository';
 
 export * from './habitRepository';
