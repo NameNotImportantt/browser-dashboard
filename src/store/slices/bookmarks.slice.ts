@@ -1,6 +1,6 @@
 import {DEFAULT_SETTINGS} from '@/app';
 import * as repository from '@/data/bookmarkRepository';
-import type {BookmarksSlice, DashboardStore, SliceCreator} from '../types';
+import {UndoActionKind, type BookmarksSlice, type DashboardStore, type SliceCreator} from '../types';
 
 function getWorkspaceBookmarks(dashboardStore: DashboardStore) {
     if (!dashboardStore.activeWorkspaceId) {return [];}
@@ -28,7 +28,17 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         }
     },
     deleteBookmark: async bookmarkId => {
+        const bookmark = getWorkspaceBookmarks(get()).find(workspaceBookmark => workspaceBookmark.id === bookmarkId);
+
         await repository.deleteBookmark(bookmarkId);
+
+        if (bookmark) {
+            get().enqueueUndoEntry({
+                kind: UndoActionKind.BookmarkDelete,
+                bookmark,
+            });
+        }
+
         await get().refresh();
     },
     refreshBookmarkFavicon: async bookmarkId => {
@@ -52,7 +62,22 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         await get().refresh();
     },
     deleteBookmarkCategory: async categoryId => {
+        const category = getWorkspaceBookmarkCategories(get()).find(workspaceCategory => workspaceCategory.id === categoryId);
+
+        const bookmarkIds = getWorkspaceBookmarks(get())
+            .filter(workspaceBookmark => workspaceBookmark.categoryId === categoryId)
+            .map(workspaceBookmark => workspaceBookmark.id);
+
         await repository.deleteBookmarkCategory(categoryId);
+
+        if (category) {
+            get().enqueueUndoEntry({
+                kind: UndoActionKind.BookmarkCategoryDelete,
+                category,
+                bookmarkIds,
+            });
+        }
+
         await get().refresh();
     },
 });

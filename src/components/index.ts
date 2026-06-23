@@ -16,6 +16,8 @@ export {TodoWidget} from './Todo';
 
 export {TopBar} from './TopBar';
 
+export {UndoSnackbar} from './UndoSnackbar/UndoSnackbar';
+
 export {WorkspaceBar} from './WorkspaceBar';
 
 export {HabitsWidget} from './Habits';
