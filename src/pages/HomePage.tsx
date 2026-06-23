@@ -31,6 +31,7 @@ export const HomePage = memo(function HomePage() {
     const theme = settings.theme;
     const glowOrbClassName = clsx('glow', styles.glowOrb);
     const shouldShowKeyboardHelp = activeScreen !== 'settings';
+    const shouldShowFooter = activeScreen !== 'settings';
 
     const contentClassName = clsx(styles.content, {
         [styles.contentHome]: activeScreen === 'home',
@@ -137,17 +138,19 @@ export const HomePage = memo(function HomePage() {
                 ) : null}
             </div>
 
-            <footer className={styles.footerRow}>
-                {shouldShowKeyboardHelp ? (
-                    <KeyboardHelpAction
-                        locale={locale}
-                        open={isKeyboardHelpOpen}
-                        onOpen={() => setIsKeyboardHelpOpen(true)}
-                        onClose={() => setIsKeyboardHelpOpen(false)}
-                    />
-                ) : null}
-                <WorkspaceBar dismissRequestId={dismissRequestId} />
-            </footer>
+            {shouldShowFooter ? (
+                <footer className={styles.footerRow}>
+                    {shouldShowKeyboardHelp ? (
+                        <KeyboardHelpAction
+                            locale={locale}
+                            open={isKeyboardHelpOpen}
+                            onOpen={() => setIsKeyboardHelpOpen(true)}
+                            onClose={() => setIsKeyboardHelpOpen(false)}
+                        />
+                    ) : null}
+                    <WorkspaceBar dismissRequestId={dismissRequestId} />
+                </footer>
+            ) : null}
         </main>
     );
 });

@@ -1,16 +1,10 @@
 import {useEffect, useRef} from 'react';
 import clsx from 'clsx';
 import {CircleHelp} from 'lucide-react';
-import {t} from '@/app';
+import {KEYBOARD_SHORTCUTS, t} from '@/app';
 import {screenMenuStyles} from '@/components';
 import styles from './KeyboardHelpAction.module.scss';
 import type {AppLocale} from '@/db';
-
-interface ShortcutItem {
-  id: string;
-  description: string;
-  keys: string[];
-}
 
 interface KeyboardHelpActionProps {
   locale: AppLocale;
@@ -23,16 +17,6 @@ export function KeyboardHelpAction({locale, open, onOpen, onClose}: KeyboardHelp
     const wrapRef = useRef<HTMLDivElement>(null);
     const helpButtonClassName = clsx(screenMenuStyles.iconButton, styles.helpButton);
     const closeButtonClassName = clsx(screenMenuStyles.iconButton, styles.closeButton);
-
-    const shortcuts: ShortcutItem[] = [
-        {id: 'search', keys: ['/'], description: t(locale, 'keyboardShortcutFocusSearch')},
-        {id: 'help', keys: ['?'], description: t(locale, 'keyboardShortcutOpenHelp')},
-        {id: 'todo', keys: ['T'], description: t(locale, 'navTodo')},
-        {id: 'habits', keys: ['H'], description: t(locale, 'navHabits')},
-        {id: 'notes', keys: ['N'], description: t(locale, 'navNotes')},
-        {id: 'settings', keys: ['S'], description: t(locale, 'settings')},
-        {id: 'dismiss', keys: ['Esc'], description: t(locale, 'keyboardShortcutDismiss')},
-    ];
 
     useEffect(() => {
         if (!open) {
@@ -73,7 +57,7 @@ export function KeyboardHelpAction({locale, open, onOpen, onClose}: KeyboardHelp
                     </div>
 
                     <ul className={styles.shortcutList}>
-                        {shortcuts.map(shortcut => (
+                        {KEYBOARD_SHORTCUTS.map(shortcut => (
                             <li key={shortcut.id} className={styles.shortcutItem}>
                                 <span className={styles.shortcutKeys} aria-hidden>
                                     {shortcut.keys.map(key => (
@@ -82,7 +66,7 @@ export function KeyboardHelpAction({locale, open, onOpen, onClose}: KeyboardHelp
                                         </span>
                                     ))}
                                 </span>
-                                <span className={styles.shortcutDescription}>{shortcut.description}</span>
+                                <span className={styles.shortcutDescription}>{t(locale, shortcut.descriptionKey)}</span>
                             </li>
                         ))}
                     </ul>

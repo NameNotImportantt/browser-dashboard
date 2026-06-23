@@ -1,0 +1,193 @@
+.sectionCard {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--border));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 56%),
+    color-mix(in srgb, var(--surface-strong) 92%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.identityRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.appIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.9rem;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 18%, transparent);
+  object-fit: cover;
+}
+
+.identityText {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.appName {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.appDescription {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.metaList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.metaItem {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.metaLabel {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metaValue {
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.15rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--text-soft);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow: none;
+
+  &:hover {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    box-shadow: none;
+  }
+}
+
+.helpPanel {
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+.helpHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.helpTitle {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shortcutList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.shortcutItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.shortcutKeys {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.shortcutKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.55rem;
+  height: 1.55rem;
+  padding: 0 0.42rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border));
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.shortcutDescription {
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  min-width: 0;
+}
+
+.helpHint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .sectionCard {
+    padding: 0.9rem;
+  }
+
+  .actionRow {
+    flex-direction: column;
+  }
+
+  .actionButton {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

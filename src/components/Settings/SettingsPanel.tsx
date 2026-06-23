@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import {t} from '@/app';
 import {useSettings} from '@/dashboard';
+import {AboutSettingsSection} from './components/AboutSettingsSection';
 import {AppearanceSettingsSection} from './components/AppearanceSettingsSection';
 import {DateTimeSettingsSection} from './components/DateTimeSettingsSection';
 import {GeneralSettingsSection} from './components/GeneralSettingsSection';
@@ -32,6 +33,7 @@ export function SettingsPanel({dismissRequestId = 0}: SettingsPanelProps) {
 
                 <AppearanceSettingsSection />
                 <OthersSettingsSection />
+                <AboutSettingsSection dismissRequestId={dismissRequestId} />
             </div>
         </section>
     );

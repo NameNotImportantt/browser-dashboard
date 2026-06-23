@@ -1,0 +1,1 @@
+export {AboutSettingsSection} from './AboutSettingsSection';

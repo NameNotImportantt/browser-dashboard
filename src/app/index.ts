@@ -4,6 +4,8 @@ export {resolveBookmarkFaviconUrl} from './favicon';
 
 export {t} from './i18n';
 
+export {KEYBOARD_SHORTCUTS} from './keyboardShortcuts';
+
 export {buildSearchUrl, getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT} from './searchUtils';
 
 export {fetchGoogleSuggestionsJsonp, getLocalSearchSuggestions, loadSearchSuggestions, SEARCH_HISTORY_LIMIT} from './searchSuggestions';
