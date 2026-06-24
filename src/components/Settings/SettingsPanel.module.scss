@@ -30,15 +30,9 @@
 
 .rows {
   display: grid;
-<<<<<<< Updated upstream
   grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: 1.75rem;
   row-gap: 1.35rem;
-=======
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  column-gap: 2rem;
-  row-gap: 1.7rem;
->>>>>>> Stashed changes
   align-items: stretch;
   padding: 0.2rem 0.2rem 0.4rem 0;
 }
@@ -191,6 +185,12 @@
   outline: none;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
   border-radius: var(--radius-sm);
+}
+
+@media (min-width: 1180px) {
+  .rows {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 960px) {

@@ -7,4 +7,5 @@ export interface CoreSlice {
   activeWorkspaceId: string | null;
   init: () => Promise<void>;
   refresh: () => Promise<void>;
+  importDashboardBackupJson: (json: string) => Promise<void>;
 }

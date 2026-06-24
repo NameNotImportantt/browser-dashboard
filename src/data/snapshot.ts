@@ -58,17 +58,17 @@ export async function ensureSeedData() {
 
 export async function loadSnapshot(): Promise<Snapshot> {
     const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
-    await Promise.all([
-        db.workspaces.toArray(),
-        db.todos.toArray(),
-        db.habits.toArray(),
-        db.bookmarks.toArray(),
-        db.bookmarkCategories.toArray(),
-        db.notes.toArray(),
-        db.settings.get('app'),
-        db.weatherCache.get('current'),
-        db.searchHistory.orderBy('usedAt').reverse().toArray(),
-    ]);
+        await Promise.all([
+            db.workspaces.toArray(),
+            db.todos.toArray(),
+            db.habits.toArray(),
+            db.bookmarks.toArray(),
+            db.bookmarkCategories.toArray(),
+            db.notes.toArray(),
+            db.settings.get('app'),
+            db.weatherCache.get('current'),
+            db.searchHistory.orderBy('usedAt').reverse().toArray(),
+        ]);
 
     return {
         workspaces: sortByPosition(workspaces),

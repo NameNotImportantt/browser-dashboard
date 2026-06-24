@@ -51,6 +51,20 @@ export async function setBookmarkFaviconsEnabled(bookmarkFaviconsEnabled: boolea
     return patchSettings({bookmarkFaviconsEnabled});
 }
 
+export async function setBackupReminderEnabled(backupReminderEnabled: boolean) {
+    return patchSettings({backupReminderEnabled});
+}
+
+export async function setBackupReminderIntervalDays(backupReminderIntervalDays: number) {
+    return patchSettings({
+        backupReminderIntervalDays: Math.min(365, Math.max(1, Math.round(backupReminderIntervalDays))),
+    });
+}
+
+export async function setLastBackupExportedAt(lastBackupExportedAt: number | null) {
+    return patchSettings({lastBackupExportedAt});
+}
+
 export async function setTimeFormat(timeFormat: TimeFormat) {
     return patchSettings({timeFormat});
 }

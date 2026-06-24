@@ -34,7 +34,7 @@ export function SettingsPanel({dismissRequestId = 0}: SettingsPanelProps) {
                     <div className={styles.rowDivider} role="separator" aria-hidden />
 
                     <AppearanceSettingsSection />
-                    <OthersSettingsSection />
+                    <OthersSettingsSection dismissRequestId={dismissRequestId} />
                     <AboutSettingsSection dismissRequestId={dismissRequestId} />
                 </div>
             </section>
