@@ -3,6 +3,7 @@ import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {useSettings} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
+import {BackupSettingsSection} from '../BackupSettingsSection';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
 interface OthersSettingsSectionProps {
