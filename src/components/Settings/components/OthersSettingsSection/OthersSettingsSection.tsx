@@ -3,11 +3,7 @@ import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {useSettings} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
-<<<<<<< Updated upstream
-=======
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
-import {BackupSettingsSection} from '../BackupSettingsSection';
->>>>>>> Stashed changes
 
 export function OthersSettingsSection() {
     const {settings, setBookmarkFaviconsEnabled} = useSettings();
