@@ -1,3 +1,4 @@
+import {Palette} from 'lucide-react';
 import {useEffect, useRef, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
 import {
@@ -11,6 +12,7 @@ import {
 import {useSettings} from '@/dashboard';
 import {TEXT_COLOR_FIELDS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import {TextColorField} from '../TextColorField';
 import type {AppSettings, TextColorKey} from '@/db';
 
@@ -111,7 +113,7 @@ export function AppearanceSettingsSection() {
 
     return (
         <section className={sectionClassName}>
-            <h3>{t(locale, 'settingsAppearance')}</h3>
+            <SettingsSectionHeader title={t(locale, 'settingsAppearance')} icon={Palette} />
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'backgroundImage')}</span>

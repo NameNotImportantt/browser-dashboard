@@ -16,14 +16,6 @@
   box-shadow: none;
 }
 
-.embeddedTitle {
-  margin: 0;
-  color: var(--text-soft);
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
 .reminderBanner {
   display: flex;
   align-items: flex-start;
@@ -61,10 +53,13 @@
   align-self: center;
 }
 
-.sectionDivider {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
+.minorTitle {
+  margin: 0.15rem 0 -0.05rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .actionRow {

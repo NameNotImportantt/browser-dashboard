@@ -1,9 +1,11 @@
+import {SlidersHorizontal} from 'lucide-react';
 import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
 import {t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
 interface GeneralSettingsSectionProps {
   dismissRequestId?: number;
@@ -47,7 +49,7 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
 
     return (
         <section className={sectionClassName}>
-            <h3>{t(locale, 'settingsGeneral')}</h3>
+            <SettingsSectionHeader title={t(locale, 'settingsGeneral')} icon={SlidersHorizontal} />
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'locale')}</span>

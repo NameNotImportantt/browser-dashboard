@@ -1,8 +1,10 @@
+import {Layers3} from 'lucide-react';
 import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {useSettings} from '@/dashboard';
 import styles from '../../SettingsPanel.module.scss';
 import {BackupSettingsSection} from '../BackupSettingsSection';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
 interface OthersSettingsSectionProps {
     dismissRequestId?: number;
@@ -14,7 +16,7 @@ export function OthersSettingsSection({dismissRequestId = 0}: OthersSettingsSect
 
     return (
         <section className={styles.section}>
-            <h3>{t(locale, 'settingsOthers')}</h3>
+            <SettingsSectionHeader title={t(locale, 'settingsOthers')} icon={Layers3} />
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <Checkbox

@@ -6,6 +6,7 @@ import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
 import panelStyles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './BackupSettingsSection.module.scss';
 
 interface BackupSettingsSectionProps {
@@ -124,7 +125,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
 
     const content = (
         <>
-            {embedded ? <h4 className={styles.embeddedTitle}>{t(locale, 'settingsBackup')}</h4> : null}
+            {embedded ? <SettingsSectionHeader title={t(locale, 'settingsBackup')} compact /> : null}
             <div className={sectionCardClassName}>
                 <div className={panelStyles.field}>
                     <Checkbox
@@ -151,8 +152,8 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </div>
                 ) : null}
 
+                <h5 className={styles.minorTitle}>{t(locale, 'backupReminderIntervalDays')}</h5>
                 <label className={panelStyles.field}>
-                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupReminderIntervalDays')}</span>
                     <div className={styles.inlineRow}>
                         <input
                             className={styles.intervalInput}
@@ -181,8 +182,8 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </small>
                 </div>
 
+                <h5 className={styles.minorTitle}>{t(locale, 'backupExport')}</h5>
                 <div className={panelStyles.field}>
-                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupExport')}</span>
                     <small className={panelStyles.hint}>{t(locale, 'backupExportHint')}</small>
                 </div>
 
@@ -192,10 +193,8 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </button>
                 </div>
 
-                <div className={styles.sectionDivider} role="separator" aria-hidden />
-
+                <h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>
                 <div className={panelStyles.field}>
-                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupImport')}</span>
                     <small className={panelStyles.hint}>{t(locale, 'backupImportHint')}</small>
                 </div>
 
@@ -236,7 +235,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         <>
             {!embedded ? (
                 <section className={panelStyles.section}>
-                    <h3>{t(locale, 'settingsBackup')}</h3>
+                    <SettingsSectionHeader title={t(locale, 'settingsBackup')} />
                     {content}
                 </section>
             ) : content}

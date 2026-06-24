@@ -5,6 +5,7 @@ import {KEYBOARD_SHORTCUTS, t} from '@/app';
 import appIconUrl from '@/assets/favicon-32x32.png';
 import {useSettings} from '@/dashboard';
 import panelStyles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './AboutSettingsSection.module.scss';
 import {
     ABOUT_AUTHOR_NAME,
@@ -28,7 +29,7 @@ export function AboutSettingsSection({dismissRequestId = 0}: AboutSettingsSectio
 
     return (
         <section className={sectionClassName}>
-            <h3>{t(locale, 'settingsAbout')}</h3>
+            <SettingsSectionHeader title={t(locale, 'settingsAbout')} icon={CircleHelp} />
             <div className={styles.sectionCard}>
                 <div className={styles.identityRow}>
                     <img className={styles.appIcon} src={appIconUrl} alt="" aria-hidden />

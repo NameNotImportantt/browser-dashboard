@@ -1,9 +1,11 @@
+import {CalendarClock} from 'lucide-react';
 import {useMemo} from 'react';
 import {t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings} from '@/dashboard';
 import {TIMEZONE_OPTIONS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
+import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
 interface DateTimeSettingsSectionProps {
   dismissRequestId?: number;
@@ -41,7 +43,7 @@ export function DateTimeSettingsSection({dismissRequestId = 0}: DateTimeSettings
 
     return (
         <section className={styles.section}>
-            <h3>{t(locale, 'settingsDateTime')}</h3>
+            <SettingsSectionHeader title={t(locale, 'settingsDateTime')} icon={CalendarClock} />
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'timeFormat')}</span>
