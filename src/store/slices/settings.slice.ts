@@ -35,6 +35,15 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = set => ({
     setBookmarkFaviconsEnabled: async bookmarkFaviconsEnabled => {
         patchSnapshotSettings(set, await repository.setBookmarkFaviconsEnabled(bookmarkFaviconsEnabled));
     },
+    setBackupReminderEnabled: async backupReminderEnabled => {
+        patchSnapshotSettings(set, await repository.setBackupReminderEnabled(backupReminderEnabled));
+    },
+    setBackupReminderIntervalDays: async backupReminderIntervalDays => {
+        patchSnapshotSettings(set, await repository.setBackupReminderIntervalDays(backupReminderIntervalDays));
+    },
+    setLastBackupExportedAt: async lastBackupExportedAt => {
+        patchSnapshotSettings(set, await repository.setLastBackupExportedAt(lastBackupExportedAt));
+    },
     setTimeFormat: async timeFormat => {
         patchSnapshotSettings(set, await repository.setTimeFormat(timeFormat));
     },

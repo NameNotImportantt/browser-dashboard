@@ -1,5 +1,7 @@
 export {BackgroundImageError, prepareBackgroundImageDataUrl} from './backgroundImage';
 
+export {getBackupReminderDueAt, isBackupReminderOverdue} from './backupReminder';
+
 export {resolveBookmarkFaviconUrl} from './favicon';
 
 export {t} from './i18n';

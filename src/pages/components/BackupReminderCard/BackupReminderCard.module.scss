@@ -1,0 +1,77 @@
+.reminderCard {
+  position: relative;
+  overflow: hidden;
+  padding: 0.95rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 58%),
+    color-mix(in srgb, var(--surface-strong) 94%, transparent);
+  box-shadow: var(--shadow-sm);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 30%, transparent), transparent 52%);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.copy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.title {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.body {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.actionButton {
+  min-width: 0;
+}
+
+.secondaryButton {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+@media (max-width: 640px) {
+  .reminderCard {
+    padding: 0.9rem;
+  }
+
+  .actions {
+    align-items: stretch;
+  }
+
+  .actionButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

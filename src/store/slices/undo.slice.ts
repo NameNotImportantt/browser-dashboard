@@ -3,7 +3,7 @@ import * as bookmarkRepository from '@/data/bookmarkRepository';
 import * as searchHistoryRepository from '@/data/searchHistoryRepository';
 import * as todoRepository from '@/data/todoRepository';
 import * as workspaceRepository from '@/data/workspaceRepository';
-import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoEntryInput, type UndoSlice} from '../types';
+import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoSlice} from '../types';
 
 const UNDO_TIMEOUT_MS = 6000;
 
