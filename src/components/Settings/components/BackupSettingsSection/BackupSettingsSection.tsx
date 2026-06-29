@@ -1,7 +1,7 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
 import {isBackupReminderOverdue, t} from '@/app';
-import {Modal} from '@/components';
+import {Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
@@ -123,6 +123,8 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         embedded ? styles.sectionCardEmbedded : null,
     );
 
+    const isBusy = isExporting || isImporting;
+
     const content = (
         <>
             {embedded ? <SettingsSectionHeader title={t(locale, 'settingsBackup')} compact /> : null}
@@ -147,8 +149,15 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                             onClick={() => void handleExport()}
                             disabled={isExporting || isImporting}
                         >
-                            {isExporting ? t(locale, 'backupExporting') : t(locale, 'backupExport')}
+                            {t(locale, 'backupExport')}
                         </button>
+                        {isExporting ? (
+                            <Loader
+                                className={styles.bannerLoader}
+                                label={t(locale, 'backupExporting')}
+                                tone="inline"
+                            />
+                        ) : null}
                     </div>
                 ) : null}
 
@@ -189,9 +198,16 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
 
                 <div className={styles.actionRow}>
                     <button type="button" onClick={() => void handleExport()} disabled={isExporting || isImporting}>
-                        {isExporting ? t(locale, 'backupExporting') : t(locale, 'backupExport')}
+                        {t(locale, 'backupExport')}
                     </button>
                 </div>
+                {isExporting ? (
+                    <Loader
+                        className={styles.actionStatus}
+                        label={t(locale, 'backupExporting')}
+                        tone="inline"
+                    />
+                ) : null}
 
                 <h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>
                 <div className={panelStyles.field}>
@@ -215,9 +231,16 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         onClick={() => setIsConfirmOpen(true)}
                         disabled={!selectedFile || isImporting}
                     >
-                        {isImporting ? t(locale, 'backupImporting') : t(locale, 'confirmImport')}
+                        {t(locale, 'confirmImport')}
                     </button>
                 </div>
+                {isImporting ? (
+                    <Loader
+                        className={styles.actionStatus}
+                        label={t(locale, 'backupImporting')}
+                        tone="inline"
+                    />
+                ) : null}
 
                 {selectedFile ? (
                     <div className={styles.fileSummary}>
@@ -256,7 +279,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                             onClick={() => void handleImport()}
                             disabled={isImporting}
                         >
-                            {isImporting ? t(locale, 'backupImporting') : t(locale, 'confirmImport')}
+                            {t(locale, 'confirmImport')}
                         </button>
                     )}
                 >
@@ -264,6 +287,13 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         <p>{t(locale, 'backupImportConfirmMessage')}</p>
                         <p className={styles.warningText}>{t(locale, 'backupImportConfirmWarning')}</p>
                         {selectedFile ? <small className={panelStyles.hint}>{selectedFile.name}</small> : null}
+                        {isBusy ? (
+                            <Loader
+                                className={styles.modalLoader}
+                                label={isImporting ? t(locale, 'backupImporting') : t(locale, 'backupExporting')}
+                                tone="inline"
+                            />
+                        ) : null}
                         {errorMessage ? <small className={panelStyles.error}>{errorMessage}</small> : null}
                     </div>
                 </Modal>
