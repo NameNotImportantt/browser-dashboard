@@ -1,10 +1,11 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
 import {isBackupReminderOverdue, t} from '@/app';
-import {Loader, Modal} from '@/components';
+import {ActionStatus, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
+import {useActionStatus} from '@/hooks/useActionStatus';
 import panelStyles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './BackupSettingsSection.module.scss';
@@ -41,8 +42,9 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [intervalDaysDraft, setIntervalDaysDraft] = useState(() => String(settings.backupReminderIntervalDays));
+    const exportStatus = useActionStatus();
+    const importStatus = useActionStatus();
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
     const backupReminderOverdue = isBackupReminderOverdue(settings);
 
@@ -59,7 +61,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         const file = event.target.files?.item(0) ?? null;
 
         setSelectedFile(file);
-        setErrorMessage(null);
+        importStatus.reset();
         setIsConfirmOpen(false);
         event.target.value = '';
     };
@@ -70,7 +72,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         }
 
         setIsImporting(true);
-        setErrorMessage(null);
+        importStatus.start();
 
         try {
             const json = await selectedFile.text();
@@ -78,11 +80,12 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
             await importDashboardBackupJson(json);
             setSelectedFile(null);
             setIsConfirmOpen(false);
+            importStatus.succeed(t(locale, 'backupImportSuccess'));
         } catch (error) {
             if (error instanceof DashboardBackupError) {
-                setErrorMessage(t(locale, getBackupImportErrorMessageKey(error.code)));
+                importStatus.fail(t(locale, getBackupImportErrorMessageKey(error.code)));
             } else {
-                setErrorMessage(t(locale, 'backupImportFailed'));
+                importStatus.fail(t(locale, 'backupImportFailed'));
             }
         } finally {
             setIsImporting(false);
@@ -98,12 +101,13 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     };
 
     const handleExport = async () => {
-        setErrorMessage(null);
+        exportStatus.start();
 
         try {
             await exportBackup();
+            exportStatus.succeed(t(locale, 'backupExportSuccess'));
         } catch {
-            setErrorMessage(t(locale, 'backupExportFailed'));
+            exportStatus.fail(t(locale, 'backupExportFailed'));
         }
     };
 
@@ -111,7 +115,8 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         setSelectedFile(null);
         setIsConfirmOpen(false);
         setIsImporting(false);
-        setErrorMessage(null);
+        exportStatus.reset();
+        importStatus.reset();
     }, [dismissRequestId]);
 
     useEffect(() => {
@@ -201,13 +206,12 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         {t(locale, 'backupExport')}
                     </button>
                 </div>
-                {isExporting ? (
-                    <Loader
-                        className={styles.actionStatus}
-                        label={t(locale, 'backupExporting')}
-                        tone="inline"
-                    />
-                ) : null}
+                <ActionStatus
+                    className={styles.actionStatus}
+                    status={exportStatus.status}
+                    message={exportStatus.message}
+                    pendingLabel={t(locale, 'backupExporting')}
+                />
 
                 <h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>
                 <div className={panelStyles.field}>
@@ -234,13 +238,12 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         {t(locale, 'confirmImport')}
                     </button>
                 </div>
-                {isImporting ? (
-                    <Loader
-                        className={styles.actionStatus}
-                        label={t(locale, 'backupImporting')}
-                        tone="inline"
-                    />
-                ) : null}
+                <ActionStatus
+                    className={styles.actionStatus}
+                    status={importStatus.status}
+                    message={importStatus.message}
+                    pendingLabel={t(locale, 'backupImporting')}
+                />
 
                 {selectedFile ? (
                     <div className={styles.fileSummary}>
@@ -248,8 +251,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         <small className={styles.fileName}>{selectedFile.name}</small>
                     </div>
                 ) : null}
-
-                {errorMessage ? <small className={panelStyles.error}>{errorMessage}</small> : null}
             </div>
         </>
     );
@@ -289,7 +290,9 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                                 tone="inline"
                             />
                         ) : null}
-                        {errorMessage ? <small className={panelStyles.error}>{errorMessage}</small> : null}
+                        {importStatus.status === 'error' && importStatus.message ? (
+                            <small className={panelStyles.error}>{importStatus.message}</small>
+                        ) : null}
                     </div>
                 </Modal>
             ) : null}

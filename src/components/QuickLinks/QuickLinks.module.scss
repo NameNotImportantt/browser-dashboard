@@ -263,6 +263,16 @@
   gap: 0.45rem;
 }
 
+.actionStatus {
+  justify-self: center;
+}
+
+.formError {
+  color: var(--danger);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 @media (max-width: 640px) {
   .inlineForm,
   .addForm {

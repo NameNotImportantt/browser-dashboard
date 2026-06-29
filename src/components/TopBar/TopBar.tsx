@@ -21,7 +21,9 @@ export function TopBar() {
             <button
                 type="button"
                 className={styles.weather}
-                onClick={() => void refreshWeather(true)}
+                onClick={() => {
+                    void refreshWeather(true).catch(() => undefined);
+                }}
                 aria-label={t(locale, 'refreshWeather')}
             >
                 {weather ? (

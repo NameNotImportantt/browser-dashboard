@@ -1,6 +1,6 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
-import {getSearchEngineOptions, SEARCH_URL_HINT, t} from '@/app';
+import {getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT, t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import settingsStyles from '../../../../SettingsPanel.module.scss';
@@ -28,6 +28,7 @@ export function AddSearchEngineControls({
 }: AddSearchEngineControlsProps) {
     const [engineName, setEngineName] = useState('');
     const [engineUrl, setEngineUrl] = useState('');
+    const [engineError, setEngineError] = useState<string | null>(null);
     const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
     const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
 
@@ -36,10 +37,27 @@ export function AddSearchEngineControls({
         [searchOptions],
     );
 
+    useEffect(() => {
+        setEngineError(null);
+        setEngineName('');
+        setEngineUrl('');
+    }, [dismissRequestId]);
+
     const addEngine = async () => {
+        if (!engineName.trim()) {
+            setEngineError(t(locale, 'searchEngineNameRequired'));
+            return;
+        }
+
+        if (!isValidSearchUrlTemplate(engineUrl.trim())) {
+            setEngineError(t(locale, 'customSearchTemplateInvalid'));
+            return;
+        }
+
         await onAddCustomEngine({name: engineName, urlTemplate: engineUrl});
         setEngineName('');
         setEngineUrl('');
+        setEngineError(null);
     };
 
     return (
@@ -58,17 +76,24 @@ export function AddSearchEngineControls({
             <div className={styles.customEngineForm}>
                 <input
                     value={engineName}
-                    onChange={event => setEngineName(event.target.value)}
+                    onChange={event => {
+                        setEngineName(event.target.value);
+                        setEngineError(null);
+                    }}
                     placeholder={t(locale, 'searchEngineNamePlaceholder')}
                 />
                 <input
                     value={engineUrl}
-                    onChange={event => setEngineUrl(event.target.value)}
+                    onChange={event => {
+                        setEngineUrl(event.target.value);
+                        setEngineError(null);
+                    }}
                     placeholder={t(locale, 'searchEngineLinkPlaceholder')}
                 />
                 <small className={settingsStyles.hint}>
                     {t(locale, 'customSearchFormat')} <code>{SEARCH_URL_HINT}</code>
                 </small>
+                {engineError ? <small className={settingsStyles.error}>{engineError}</small> : null}
                 <button type="button" className="primary" onClick={() => void addEngine()}>
                     {t(locale, 'addSearchEngine')}
                 </button>

@@ -1,8 +1,10 @@
 import {Fragment, useEffect, useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {Link, RefreshCw} from 'lucide-react';
-import {t} from '@/app';
+import {normalizeUrl, t} from '@/app';
+import {ActionStatus} from '@/components';
 import {useBookmarks, useSettings} from '@/dashboard';
+import {useActionStatus} from '@/hooks/useActionStatus';
 import styles from './QuickLinks.module.scss';
 
 type CategoryFilter = 'all' | string;
@@ -29,6 +31,8 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
     const [title, setTitle] = useState('');
     const [url, setUrl] = useState('');
     const [categoryName, setCategoryName] = useState('');
+    const [bookmarkError, setBookmarkError] = useState<string | null>(null);
+    const faviconRefreshStatus = useActionStatus();
 
     const visibleBookmarks = useMemo(() => {
         if (activeFilter === 'all') {return bookmarks;}
@@ -41,9 +45,29 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
 
     const submitLink = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        const trimmedTitle = title.trim();
+        const trimmedUrl = url.trim();
+
+        if (!trimmedTitle) {
+            setBookmarkError(t(locale, 'bookmarkTitleRequired'));
+            return;
+        }
+
+        if (!trimmedUrl) {
+            setBookmarkError(t(locale, 'bookmarkUrlRequired'));
+            return;
+        }
+
+        if (!normalizeUrl(trimmedUrl)) {
+            setBookmarkError(t(locale, 'bookmarkUrlInvalid'));
+            return;
+        }
+
         await addBookmark({title, url, categoryId: activeCategoryId});
         setTitle('');
         setUrl('');
+        setBookmarkError(null);
         setIsAddingLink(false);
     };
 
@@ -63,7 +87,14 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
     };
 
     const refreshVisibleFavicons = async () => {
-        await refreshBookmarkFavicons(visibleBookmarks.map(bookmark => bookmark.id)).catch(() => undefined);
+        faviconRefreshStatus.start();
+
+        try {
+            await refreshBookmarkFavicons(visibleBookmarks.map(bookmark => bookmark.id));
+            faviconRefreshStatus.succeed(t(locale, 'bookmarkFaviconsRefreshed'));
+        } catch {
+            faviconRefreshStatus.fail(t(locale, 'bookmarkFaviconsRefreshFailed'));
+        }
     };
 
     const areBookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled;
@@ -71,6 +102,8 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
     useEffect(() => {
         setIsAddingLink(false);
         setIsAddingCategory(false);
+        setBookmarkError(null);
+        faviconRefreshStatus.reset();
     }, [dismissRequestId]);
 
     return (
@@ -114,6 +147,7 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                     onClick={() => {
                         setIsAddingCategory(value => !value);
                         setIsAddingLink(false);
+                        setBookmarkError(null);
                     }}
                 >
                     + {t(locale, 'newCategory')}
@@ -132,7 +166,13 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                     <button className="primary" type="submit">
                         {t(locale, 'add')}
                     </button>
-                    <button type="button" onClick={() => setIsAddingCategory(false)}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsAddingCategory(false);
+                            setCategoryName('');
+                        }}
+                    >
                         {t(locale, 'cancel')}
                     </button>
                 </form>
@@ -175,6 +215,7 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                     onClick={() => {
                         setIsAddingLink(value => !value);
                         setIsAddingCategory(false);
+                        setBookmarkError(null);
                     }}
                 >
                     + {t(locale, 'addLink')}
@@ -184,7 +225,7 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                     type="button"
                     className={styles.refreshButton}
                     onClick={() => void refreshVisibleFavicons()}
-                    disabled={!areBookmarkFaviconsEnabled || visibleBookmarks.length === 0}
+                    disabled={!areBookmarkFaviconsEnabled || visibleBookmarks.length === 0 || faviconRefreshStatus.isPending}
                     aria-label={t(locale, 'refreshBookmarkFavicons')}
                     title={t(locale, 'refreshBookmarkFavicons')}
                 >
@@ -192,23 +233,46 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                 </button>
             </div>
 
+            <ActionStatus
+                className={styles.actionStatus}
+                status={faviconRefreshStatus.status}
+                message={faviconRefreshStatus.message}
+                pendingLabel={t(locale, 'bookmarkFaviconsRefreshing')}
+            />
+
             {isAddingLink ? (
                 <form className={styles.addForm} onSubmit={submitLink}>
                     <input
                         value={title}
-                        onChange={event => setTitle(event.target.value)}
+                        onChange={event => {
+                            setTitle(event.target.value);
+                            setBookmarkError(null);
+                        }}
                         placeholder={t(locale, 'bookmarkTitle')}
-                        required
                     />
-                    <input value={url} onChange={event => setUrl(event.target.value)} placeholder={t(locale, 'bookmarkUrl')} required />
+                    <input
+                        value={url}
+                        onChange={event => {
+                            setUrl(event.target.value);
+                            setBookmarkError(null);
+                        }}
+                        placeholder={t(locale, 'bookmarkUrl')}
+                    />
                     <button className="primary" type="submit">
                         {t(locale, 'add')}
                     </button>
-                    <button type="button" onClick={() => setIsAddingLink(false)}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsAddingLink(false);
+                            setBookmarkError(null);
+                        }}
+                    >
                         {t(locale, 'cancel')}
                     </button>
                 </form>
             ) : null}
+            {bookmarkError ? <small className={styles.formError}>{bookmarkError}</small> : null}
         </section>
     );
 }

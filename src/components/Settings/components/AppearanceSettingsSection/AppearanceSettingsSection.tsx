@@ -9,7 +9,9 @@ import {
     t,
     THEME_TEXT_COLORS,
 } from '@/app';
+import {ActionStatus} from '@/components';
 import {useSettings} from '@/dashboard';
+import {useActionStatus} from '@/hooks/useActionStatus';
 import {TEXT_COLOR_FIELDS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
@@ -39,8 +41,8 @@ export function AppearanceSettingsSection() {
 
     const locale = settings.locale;
     const theme = settings.theme;
-    const [backgroundError, setBackgroundError] = useState<string | null>(null);
     const [textColorDrafts, setTextColorDrafts] = useState(() => buildTextColorDrafts(theme, settings.customTextColors));
+    const backgroundStatus = useActionStatus();
     const backgroundInputRef = useRef<HTMLInputElement>(null);
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
@@ -59,33 +61,40 @@ export function AppearanceSettingsSection() {
 
         if (!file) {return;}
 
-        setBackgroundError(null);
+        backgroundStatus.start();
 
         try {
             await setBackgroundImageFromFile(file);
+            backgroundStatus.succeed(t(locale, 'backgroundImageUpdated'));
         } catch (error) {
             if (error instanceof BackgroundImageError) {
                 if (error.code === 'invalidType') {
-                    setBackgroundError(t(locale, 'backgroundImageInvalidType'));
+                    backgroundStatus.fail(t(locale, 'backgroundImageInvalidType'));
                     return;
                 }
 
                 if (error.code === 'tooLarge') {
-                    setBackgroundError(t(locale, 'backgroundImageTooLarge'));
+                    backgroundStatus.fail(t(locale, 'backgroundImageTooLarge'));
                     return;
                 }
 
-                setBackgroundError(t(locale, 'backgroundImageDecodeFailed'));
+                backgroundStatus.fail(t(locale, 'backgroundImageDecodeFailed'));
                 return;
             }
 
-            setBackgroundError(t(locale, 'backgroundImageDecodeFailed'));
+            backgroundStatus.fail(t(locale, 'backgroundImageDecodeFailed'));
         }
     };
 
     const removeBackgroundImage = async () => {
-        setBackgroundError(null);
-        await clearBackgroundImage();
+        backgroundStatus.start();
+
+        try {
+            await clearBackgroundImage();
+            backgroundStatus.succeed(t(locale, 'backgroundImageRemoved'));
+        } catch {
+            backgroundStatus.fail(t(locale, 'backgroundImageDecodeFailed'));
+        }
     };
 
     const handleTextColorInput = (key: TextColorKey, value: string, commit = false) => {
@@ -163,7 +172,11 @@ export function AppearanceSettingsSection() {
                             <small className={styles.hint}>{t(locale, 'backgroundScrimHint')}</small>
                         </div>
                     ) : null}
-                    {backgroundError ? <small className={styles.error}>{backgroundError}</small> : null}
+                    <ActionStatus
+                        status={backgroundStatus.status}
+                        message={backgroundStatus.message}
+                        pendingLabel={t(locale, 'backgroundImageProcessing')}
+                    />
                 </div>
 
                 {TEXT_COLOR_FIELDS.map(field => (

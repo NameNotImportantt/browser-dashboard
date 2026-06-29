@@ -1,0 +1,15 @@
+.message {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.success {
+  color: var(--accent);
+}
+
+.error {
+  color: var(--danger);
+}

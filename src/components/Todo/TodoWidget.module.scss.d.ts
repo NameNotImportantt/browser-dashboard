@@ -1,4 +1,5 @@
 export declare const emptyState: string;
+export declare const formError: string;
 export declare const inlineRow: string;
 export declare const inlineRowField: string;
 export declare const inputField: string;
