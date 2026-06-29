@@ -1,3 +1,4 @@
+export declare const actionStatus: string;
 export declare const addButton: string;
 export declare const addForm: string;
 export declare const categoryPill: string;
@@ -7,6 +8,7 @@ export declare const categoryRemove: string;
 export declare const categoryRow: string;
 export declare const favicon: string;
 export declare const faviconWrap: string;
+export declare const formError: string;
 export declare const iconButton: string;
 export declare const inlineForm: string;
 export declare const linkAnchor: string;

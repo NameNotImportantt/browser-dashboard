@@ -13,6 +13,7 @@ export function TodoWidget() {
     const {todos, addTodo, toggleTodo, deleteTodo, reorderTodos} = useTodos();
     const {locale} = useSettings();
     const [title, setTitle] = useState('');
+    const [todoError, setTodoError] = useState<string | null>(null);
     const [priority, setPriority] = useState<TodoPriority>('medium');
     const [dueDate, setDueDate] = useState('');
     const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -49,6 +50,11 @@ export function TodoWidget() {
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        if (!title.trim()) {
+            setTodoError(t(locale, 'todoTitleRequired'));
+            return;
+        }
+
         await addTodo({
             title,
             priority,
@@ -56,6 +62,7 @@ export function TodoWidget() {
         });
         setTitle('');
         setDueDate('');
+        setTodoError(null);
     };
 
     const dropOn = async (targetId: string) => {
@@ -83,9 +90,11 @@ export function TodoWidget() {
                 <input
                     className={styles.inputField}
                     value={title}
-                    onChange={event => setTitle(event.target.value)}
+                    onChange={event => {
+                        setTitle(event.target.value);
+                        setTodoError(null);
+                    }}
                     placeholder={t(locale, 'todoNewPlaceholder')}
-                    required
                 />
                 <div className={styles.inlineRow}>
                     <Select
@@ -106,6 +115,7 @@ export function TodoWidget() {
                 <button className="primary" type="submit">
                     {t(locale, 'todoAdd')}
                 </button>
+                {todoError ? <small className={styles.formError}>{todoError}</small> : null}
             </form>
 
             <TodoFilters

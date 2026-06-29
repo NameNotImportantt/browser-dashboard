@@ -127,6 +127,12 @@
   gap: 0.35rem;
 }
 
+.addFormBlock {
+  display: grid;
+  justify-items: end;
+  gap: 0.2rem;
+}
+
 .addInput {
   width: 8.5rem;
   padding: 0.35rem 0.55rem;
@@ -143,4 +149,9 @@
   padding: 0;
   font-size: 0.85rem;
   line-height: 1;
+}
+
+.formError {
+  color: var(--danger);
+  font-size: 0.78rem;
 }

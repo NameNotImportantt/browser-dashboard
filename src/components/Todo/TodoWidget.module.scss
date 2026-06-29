@@ -28,6 +28,11 @@
   width: 100%;
 }
 
+.formError {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
 .widgetList {
   list-style: none;
   margin: 0.82rem 0 0;

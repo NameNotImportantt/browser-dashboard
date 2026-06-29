@@ -13,6 +13,7 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
     const {locale} = useSettings();
     const [isAdding, setIsAdding] = useState(false);
     const [name, setName] = useState('');
+    const [workspaceError, setWorkspaceError] = useState<string | null>(null);
     const [hoveredWorkspaceId, setHoveredWorkspaceId] = useState<string | null>(null);
     const addFormSubmitButtonClassName = clsx(styles.addFormButton, 'primary');
 
@@ -24,15 +25,20 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
         event.preventDefault();
         const value = name.trim();
 
-        if (!value) {return;}
+        if (!value) {
+            setWorkspaceError(t(locale, 'workspaceNameRequired'));
+            return;
+        }
 
         await addWorkspace(value);
         setName('');
+        setWorkspaceError(null);
         setIsAdding(false);
     };
 
     useEffect(() => {
         setIsAdding(false);
+        setWorkspaceError(null);
     }, [dismissRequestId]);
 
     return (
@@ -83,23 +89,35 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
             })}
 
             {isAdding ? (
-                <form className={styles.addForm} onSubmit={submit}>
-                    <input
-                        className={styles.addInput}
-                        value={name}
-                        onChange={event => setName(event.target.value)}
-                        placeholder={t(locale, 'bookmarkTitle')}
-                        aria-label={t(locale, 'workspaceNameAriaLabel')}
-                        autoFocus
-                        required
-                    />
-                    <button className={addFormSubmitButtonClassName} type="submit">
-                        +
-                    </button>
-                    <button className={styles.addFormButton} type="button" onClick={() => setIsAdding(false)}>
-                        ×
-                    </button>
-                </form>
+                <div className={styles.addFormBlock}>
+                    <form className={styles.addForm} onSubmit={submit}>
+                        <input
+                            className={styles.addInput}
+                            value={name}
+                            onChange={event => {
+                                setName(event.target.value);
+                                setWorkspaceError(null);
+                            }}
+                            placeholder={t(locale, 'bookmarkTitle')}
+                            aria-label={t(locale, 'workspaceNameAriaLabel')}
+                            autoFocus
+                        />
+                        <button className={addFormSubmitButtonClassName} type="submit">
+                            +
+                        </button>
+                        <button
+                            className={styles.addFormButton}
+                            type="button"
+                            onClick={() => {
+                                setIsAdding(false);
+                                setWorkspaceError(null);
+                            }}
+                        >
+                            ×
+                        </button>
+                    </form>
+                    {workspaceError ? <small className={styles.formError}>{workspaceError}</small> : null}
+                </div>
             ) : (
                 <>
                     {workspaces.length > 0 ? (

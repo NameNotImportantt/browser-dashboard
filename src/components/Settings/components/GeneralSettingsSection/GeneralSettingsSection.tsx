@@ -2,8 +2,10 @@ import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
 import {t} from '@/app';
+import {ActionStatus} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
+import {useActionStatus} from '@/hooks/useActionStatus';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
@@ -17,13 +19,17 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     const locale = settings.locale;
     const [tabTitle, setTabTitle] = useState(settings.tabTitle);
     const [weatherCity, setWeatherCity] = useState(settings.weatherLocation?.label ?? '');
-    const [weatherError, setWeatherError] = useState<string | null>(null);
+    const weatherStatus = useActionStatus();
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
     useEffect(() => {
         setTabTitle(settings.tabTitle);
         setWeatherCity(settings.weatherLocation?.label ?? '');
     }, [settings.tabTitle, settings.weatherLocation?.label]);
+
+    useEffect(() => {
+        weatherStatus.reset();
+    }, [dismissRequestId]);
 
     const localeOptions = useMemo(
         () => [
@@ -38,12 +44,32 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     };
 
     const lookupWeatherCity = async () => {
-        setWeatherError(null);
+        const nextCity = weatherCity.trim();
+
+        if (!nextCity) {
+            weatherStatus.fail(t(locale, 'weatherCityRequired'));
+            return;
+        }
+
+        weatherStatus.start();
 
         try {
-            await saveWeatherCity(weatherCity);
-        } catch (error) {
-            setWeatherError(error instanceof Error ? error.message : 'Ошибка');
+            await saveWeatherCity(nextCity);
+            weatherStatus.succeed(t(locale, 'weatherLookupSuccess'));
+        } catch {
+            weatherStatus.fail(t(locale, 'weatherLookupFailed'));
+        }
+    };
+
+    const clearWeatherCity = async () => {
+        weatherStatus.start();
+
+        try {
+            await saveWeatherCity('');
+            setWeatherCity('');
+            weatherStatus.succeed(t(locale, 'weatherLookupCleared'));
+        } catch {
+            weatherStatus.fail(t(locale, 'weatherLookupFailed'));
         }
     };
 
@@ -77,15 +103,32 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                     <div className={styles.inlineRow}>
                         <input
                             value={weatherCity}
-                            onChange={event => setWeatherCity(event.target.value)}
+                            onChange={event => {
+                                setWeatherCity(event.target.value);
+                                weatherStatus.reset();
+                            }}
                             placeholder={t(locale, 'weatherCityPlaceholder')}
                         />
-                        <button type="button" onClick={() => void lookupWeatherCity()}>
+                        <button type="button" onClick={() => void lookupWeatherCity()} disabled={weatherStatus.isPending}>
                             {t(locale, 'lookupCity')}
                         </button>
+                        {settings.weatherLocation ? (
+                            <button
+                                type="button"
+                                className={styles.dangerButton}
+                                onClick={() => void clearWeatherCity()}
+                                disabled={weatherStatus.isPending}
+                            >
+                                {t(locale, 'remove')}
+                            </button>
+                        ) : null}
                     </div>
                     {settings.weatherLocation ? <small className={styles.hint}>{settings.weatherLocation.label}</small> : null}
-                    {weatherError ? <small className={styles.error}>{weatherError}</small> : null}
+                    <ActionStatus
+                        status={weatherStatus.status}
+                        message={weatherStatus.message}
+                        pendingLabel={t(locale, 'weatherLookupPending')}
+                    />
                 </div>
             </div>
         </section>
