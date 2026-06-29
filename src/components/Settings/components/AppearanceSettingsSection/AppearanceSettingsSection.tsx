@@ -1,6 +1,6 @@
-import {Palette} from 'lucide-react';
 import {useEffect, useRef, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
+import {Palette} from 'lucide-react';
 import {
     BackgroundImageError,
     getTextColorSwatches,

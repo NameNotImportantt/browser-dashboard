@@ -1,6 +1,6 @@
-import {SlidersHorizontal} from 'lucide-react';
 import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
+import {SlidersHorizontal} from 'lucide-react';
 import {t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';

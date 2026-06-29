@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import type {LucideIcon} from 'lucide-react';
 import styles from './SettingsSectionHeader.module.scss';
+import type {LucideIcon} from 'lucide-react';
 
 interface SettingsSectionHeaderProps {
     title: string;

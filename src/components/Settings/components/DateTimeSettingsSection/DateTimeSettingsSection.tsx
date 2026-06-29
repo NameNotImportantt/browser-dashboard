@@ -1,5 +1,5 @@
-import {CalendarClock} from 'lucide-react';
 import {useMemo} from 'react';
+import {CalendarClock} from 'lucide-react';
 import {t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings} from '@/dashboard';
