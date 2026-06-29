@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
 import {isBackupReminderOverdue, t} from '@/app';
 import {
+    Loader,
     QuickLinks,
     ScreenMenu,
     screenMenuStyles,
@@ -114,7 +115,13 @@ export const HomePage = memo(function HomePage() {
 
                 {activeScreen === 'habits' ? (
                     <div className={screenPanelClassName}>
-                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingHabits')}</section>}>
+                        <Suspense
+                            fallback={(
+                                <section className={widgetFallbackClassName}>
+                                    <Loader label={t(locale, 'loadingHabits')} />
+                                </section>
+                            )}
+                        >
                             <HabitsWidget />
                         </Suspense>
                     </div>
@@ -122,7 +129,13 @@ export const HomePage = memo(function HomePage() {
 
                 {activeScreen === 'notes' ? (
                     <div className={screenPanelClassName}>
-                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingNotes')}</section>}>
+                        <Suspense
+                            fallback={(
+                                <section className={widgetFallbackClassName}>
+                                    <Loader label={t(locale, 'loadingNotes')} />
+                                </section>
+                            )}
+                        >
                             <NotesWidget />
                         </Suspense>
                     </div>
