@@ -10,6 +10,7 @@ export type {
     DashboardBackupDownloadPayload,
     DashboardBackupEnvelope,
     DashboardBackupErrorCode,
+    DashboardBackupNote,
 } from './backupSchema';
 
 export {

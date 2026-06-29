@@ -1,17 +1,48 @@
 import {mergeSettings} from '@/app';
-import {db} from '@/db';
+import {db, type Note} from '@/db';
 import {
     BACKUP_SCHEMA_VERSION,
     DashboardBackupError,
+    type DashboardBackupNote,
     type DashboardBackupEnvelope,
 } from './backupSchema';
 import {isDashboardBackupEnvelope} from './backupValidators';
+import type {BackupJsonValue} from './backupJsonValue';
+
+function normalizeImportedNotes(notes: DashboardBackupNote[]): Note[] {
+    const positionsByWorkspaceId = new Map<string, number>();
+
+    return notes
+        .sort((firstNote, secondNote) => {
+            if (firstNote.workspaceId !== secondNote.workspaceId) {
+                return firstNote.workspaceId.localeCompare(secondNote.workspaceId);
+            }
+
+            return firstNote.updatedAt - secondNote.updatedAt;
+        })
+        .map(note => {
+            const nextPosition = positionsByWorkspaceId.get(note.workspaceId) ?? 0;
+            const updatedAt = note.updatedAt;
+
+            positionsByWorkspaceId.set(note.workspaceId, nextPosition + 1);
+
+            return {
+                id: note.id,
+                workspaceId: note.workspaceId,
+                title: note.title ?? '',
+                text: note.text,
+                createdAt: note.createdAt ?? updatedAt,
+                updatedAt,
+                position: note.position ?? nextPosition,
+            };
+        });
+}
 
 export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope {
-    let parsed: unknown;
+    let parsed: BackupJsonValue;
 
     try {
-        parsed = JSON.parse(json);
+        parsed = JSON.parse(json) as BackupJsonValue;
     } catch {
         throw new DashboardBackupError('invalidJson', 'Backup JSON could not be parsed.');
     }
@@ -29,6 +60,7 @@ export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope 
 
 export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
     const settings = mergeSettings(envelope.data.settings);
+    const notes = normalizeImportedNotes(envelope.data.notes);
 
     try {
         await db.transaction(
@@ -77,8 +109,8 @@ export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
                     await db.bookmarkCategories.bulkPut(envelope.data.bookmarkCategories);
                 }
 
-                if (envelope.data.notes.length > 0) {
-                    await db.notes.bulkPut(envelope.data.notes);
+                if (notes.length > 0) {
+                    await db.notes.bulkPut(notes);
                 }
 
                 await db.settings.put(settings);

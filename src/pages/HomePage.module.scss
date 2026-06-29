@@ -120,6 +120,11 @@
   box-sizing: border-box;
 }
 
+.screenPanelWide {
+  width: 100%;
+  align-self: stretch;
+}
+
 .footerRow {
   position: relative;
   z-index: 1;

@@ -6,7 +6,7 @@ export type {BookmarkCategory, CreateBookmarkCategoryPayload} from './bookmarkCa
 
 export type {Habit} from './habit';
 
-export type {Note} from './note';
+export type {Note, NoteDraft, NotePatch} from './note';
 
 export type {
     AppLocale,

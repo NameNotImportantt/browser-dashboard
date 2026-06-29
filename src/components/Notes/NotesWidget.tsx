@@ -1,47 +1,50 @@
-import {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import {t} from '@/app';
 import {useNotes, useSettings} from '@/dashboard';
+import {NotesEditor} from './components/NotesEditor/NotesEditor';
+import {NotesSidebar} from './components/NotesSidebar/NotesSidebar';
 import styles from './NotesWidget.module.scss';
 
 export function NotesWidget() {
-    const {noteText, saveNote} = useNotes();
+    const {
+        activeNote,
+        createNote,
+        deleteNote,
+        draftText,
+        draftTitle,
+        flushNoteDraft,
+        notes,
+        saveStatus,
+        selectNote,
+        setDraftText,
+        setDraftTitle,
+    } = useNotes();
+
     const {locale} = useSettings();
-    const [draft, setDraft] = useState(noteText);
-    const [isSaving, setIsSaving] = useState(false);
     const notesWidgetClassName = clsx('card', styles.notesWidget);
-
-    useEffect(() => {
-        setDraft(noteText);
-    }, [noteText]);
-
-    const save = async () => {
-        if (draft === noteText) {return;}
-
-        setIsSaving(true);
-
-        try {
-            await saveNote(draft);
-        } finally {
-            setIsSaving(false);
-        }
-    };
 
     return (
         <section className={notesWidgetClassName}>
-            <header className={styles.widgetHeader}>
-                <h2>{t(locale, 'navNotes')}</h2>
-                {isSaving ? <span className={styles.status}>{t(locale, 'notesSaving')}</span> : null}
-            </header>
-
-            <textarea
-                className={styles.noteField}
-                value={draft}
-                onChange={event => setDraft(event.target.value)}
-                onBlur={() => void save()}
-                placeholder={t(locale, 'notesPlaceholder')}
-                aria-label={t(locale, 'notesAriaLabel')}
-            />
+            <div className={styles.layout}>
+                <NotesSidebar
+                    locale={locale}
+                    notes={notes}
+                    activeNoteId={activeNote?.id ?? null}
+                    onCreateNote={createNote}
+                    onSelectNote={selectNote}
+                    onDeleteNote={deleteNote}
+                />
+                <NotesEditor
+                    locale={locale}
+                    activeNote={activeNote}
+                    draftTitle={draftTitle}
+                    draftText={draftText}
+                    saveStatus={saveStatus}
+                    onTitleChange={setDraftTitle}
+                    onTextChange={setDraftText}
+                    onFlushDraft={flushNoteDraft}
+                    onCreateNote={createNote}
+                />
+            </div>
         </section>
     );
 }

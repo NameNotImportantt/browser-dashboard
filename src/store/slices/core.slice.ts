@@ -12,9 +12,9 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
             set({loading: true, error: null});
             await ensureSeedData();
             await get().refresh();
-        } catch (unknownError) {
+        } catch (error) {
             set({
-                error: unknownError instanceof Error ? unknownError.message : 'Не удалось инициализировать данные',
+                error: error instanceof Error ? error.message : 'Не удалось инициализировать данные',
             });
         } finally {
             set({loading: false});

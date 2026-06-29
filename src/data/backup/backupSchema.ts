@@ -10,6 +10,12 @@ import type {
     Workspace,
 } from '@/db';
 
+export interface DashboardBackupNote extends Omit<Note, 'title' | 'createdAt' | 'position'> {
+  title?: string;
+  createdAt?: number;
+  position?: number;
+}
+
 export const BACKUP_SCHEMA_VERSION = 1;
 
 export const BACKUP_APP_NAME = 'Browser Dashboard';
@@ -22,7 +28,7 @@ export interface DashboardBackupData {
   habits: Habit[];
   bookmarks: Bookmark[];
   bookmarkCategories: BookmarkCategory[];
-  notes: Note[];
+  notes: DashboardBackupNote[];
   settings: AppSettings;
   weatherCache: WeatherCache | null;
   searchHistory: SearchHistoryEntry[];

@@ -1,0 +1,11 @@
+export declare const actions: string;
+export declare const content: string;
+export declare const deleteButton: string;
+export declare const deleteIcon: string;
+export declare const itemSelected: string;
+export declare const leadingIcon: string;
+export declare const listItem: string;
+export declare const preview: string;
+export declare const selectButton: string;
+export declare const titleContainer: string;
+export declare const title: string;

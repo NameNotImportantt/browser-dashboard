@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
 import {isBackupReminderOverdue, t} from '@/app';
 import {
+    Loader,
     QuickLinks,
     ScreenMenu,
     screenMenuStyles,
@@ -41,6 +42,7 @@ export const HomePage = memo(function HomePage() {
 
     const homeLayoutClassName = clsx(styles.contentPane, styles.homeLayout);
     const screenPanelClassName = clsx(styles.contentPane, styles.screenPanel);
+    const notesScreenPanelClassName = clsx(styles.contentPane, styles.screenPanel, styles.screenPanelWide);
 
     const widgetFallbackClassName = clsx('card', styles.widgetFallback);
 
@@ -114,15 +116,27 @@ export const HomePage = memo(function HomePage() {
 
                 {activeScreen === 'habits' ? (
                     <div className={screenPanelClassName}>
-                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingHabits')}</section>}>
+                        <Suspense
+                            fallback={(
+                                <section className={widgetFallbackClassName}>
+                                    <Loader label={t(locale, 'loadingHabits')} />
+                                </section>
+                            )}
+                        >
                             <HabitsWidget />
                         </Suspense>
                     </div>
                 ) : null}
 
                 {activeScreen === 'notes' ? (
-                    <div className={screenPanelClassName}>
-                        <Suspense fallback={<section className={widgetFallbackClassName}>{t(locale, 'loadingNotes')}</section>}>
+                    <div className={notesScreenPanelClassName}>
+                        <Suspense
+                            fallback={(
+                                <section className={widgetFallbackClassName}>
+                                    <Loader label={t(locale, 'loadingNotes')} />
+                                </section>
+                            )}
+                        >
                             <NotesWidget />
                         </Suspense>
                     </div>
