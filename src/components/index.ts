@@ -23,3 +23,5 @@ export {WorkspaceBar} from './WorkspaceBar';
 export {HabitsWidget} from './Habits';
 
 export {NotesWidget} from './Notes';
+
+export {Loader} from './Loader/Loader';
