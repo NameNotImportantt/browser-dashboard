@@ -1,11 +1,13 @@
 import {useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {reorderIds, t} from '@/app';
-import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import {useSettings, useTodos} from '@/dashboard';
+import {TodoFilters} from './components/TodoFilters/TodoFilters';
+import {TodoListItem} from './components/TodoListItem/TodoListItem';
+import {useTodoFilters} from './hooks/useTodoFilters';
 import styles from './TodoWidget.module.scss';
-import type {AppLocale, TodoPriority} from '@/db';
+import type {TodoPriority} from '@/db';
 
 export function TodoWidget() {
     const {todos, addTodo, toggleTodo, deleteTodo, reorderTodos} = useTodos();
@@ -14,8 +16,6 @@ export function TodoWidget() {
     const [priority, setPriority] = useState<TodoPriority>('medium');
     const [dueDate, setDueDate] = useState('');
     const [draggedId, setDraggedId] = useState<string | null>(null);
-
-    const todoIds = useMemo(() => todos.map(item => item.id), [todos]);
 
     const priorityOptions = useMemo(
         () => [
@@ -26,11 +26,29 @@ export function TodoWidget() {
         [locale],
     );
 
+    const {
+        dateFilter,
+        setDateFilter,
+        dateFilterOptions,
+        statusFilter,
+        setStatusFilter,
+        statusFilterOptions,
+        priorityFilter,
+        setPriorityFilter,
+        priorityFilterOptions,
+        filteredTodos,
+    } = useTodoFilters(todos, locale);
+
+    const filteredTodoIds = useMemo(() => filteredTodos.map(todo => todo.id), [filteredTodos]);
+
     const todoWidgetClassName = clsx('card', styles.todoWidget);
     const todoListClassName = clsx(styles.widgetList, styles.todoList);
+    const isEmptyTodoList = todos.length === 0;
+    const emptyMessage = isEmptyTodoList ? t(locale, 'todoEmpty') : t(locale, 'todoFilteredEmpty');
 
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         await addTodo({
             title,
             priority,
@@ -43,10 +61,16 @@ export function TodoWidget() {
     const dropOn = async (targetId: string) => {
         if (!draggedId || draggedId === targetId) {return;}
 
-        const ordered = reorderIds(todoIds, draggedId, targetId);
+        const reorderedVisibleTodoIds = reorderIds(filteredTodoIds, draggedId, targetId);
+
+        const orderedTodoIds = mergeFilteredTodoOrder(
+            todos.map(todo => todo.id),
+            filteredTodoIds,
+            reorderedVisibleTodoIds,
+        );
 
         setDraggedId(null);
-        await reorderTodos(ordered);
+        await reorderTodos(orderedTodoIds);
     };
 
     return (
@@ -84,65 +108,53 @@ export function TodoWidget() {
                 </button>
             </form>
 
+            <TodoFilters
+                locale={locale}
+                dateFilter={dateFilter}
+                onDateFilterChange={setDateFilter}
+                dateFilterOptions={dateFilterOptions}
+                priorityFilter={priorityFilter}
+                onPriorityFilterChange={setPriorityFilter}
+                priorityFilterOptions={priorityFilterOptions}
+                statusFilter={statusFilter}
+                onStatusFilterChange={setStatusFilter}
+                statusFilterOptions={statusFilterOptions}
+            />
+
             <ul className={todoListClassName}>
-                {todos.map(todo => {
-                    const todoItemClassName = clsx(styles.todoItem, priorityItemClass(todo.priority));
-                    const todoTitleClassName = clsx({[styles.isCompleted]: todo.completed});
-                    const todoPriorityBadgeClassName = clsx(styles.todoBadge, priorityBadgeClass(todo.priority));
-
-                    return (
-                        <li
-                            className={todoItemClassName}
-                            key={todo.id}
-                            draggable
-                            onDragStart={() => setDraggedId(todo.id)}
-                            onDragOver={event => event.preventDefault()}
-                            onDrop={() => {
-                                void dropOn(todo.id);
-                            }}
-                        >
-                            <Checkbox
-                                className={styles.todoLabel}
-                                checked={todo.completed}
-                                onChange={() => void toggleTodo(todo.id)}
-                                label={<span className={todoTitleClassName}>{todo.title}</span>}
-                            />
-
-                            <div className={styles.todoMeta}>
-                                <small className={todoPriorityBadgeClassName}>{priorityLabel(todo.priority, locale)}</small>
-                                {todo.dueDate ? <small className={styles.todoBadge}>{todo.dueDate}</small> : null}
-                                <button type="button" className={styles.dangerButton} onClick={() => void deleteTodo(todo.id)}>
-                                    {t(locale, 'remove')}
-                                </button>
-                            </div>
-                        </li>
-                    );
-                })}
+                {filteredTodos.length > 0 ? filteredTodos.map(todo => (
+                    <TodoListItem
+                        key={todo.id}
+                        todo={todo}
+                        locale={locale}
+                        onToggle={todoId => {
+                            void toggleTodo(todoId);
+                        }}
+                        onDelete={todoId => {
+                            void deleteTodo(todoId);
+                        }}
+                        onDragStart={todoId => setDraggedId(todoId)}
+                        onDrop={todoId => {
+                            void dropOn(todoId);
+                        }}
+                    />
+                )) : <li className={styles.emptyState}>{emptyMessage}</li>}
             </ul>
         </section>
     );
 }
 
-function priorityItemClass(priority: TodoPriority) {
-    if (priority === 'high') {return styles.priorityHigh;}
+function mergeFilteredTodoOrder(allTodoIds: string[], visibleTodoIds: string[], reorderedVisibleTodoIds: string[]) {
+    const visibleTodoIdSet = new Set(visibleTodoIds);
+    const reorderedVisibleTodoQueue = [...reorderedVisibleTodoIds];
 
-    if (priority === 'low') {return styles.priorityLow;}
+    return allTodoIds.map(todoId => {
+        if (!visibleTodoIdSet.has(todoId)) {
+            return todoId;
+        }
 
-    return styles.priorityMedium;
-}
+        const nextVisibleTodoId = reorderedVisibleTodoQueue.shift();
 
-function priorityBadgeClass(priority: TodoPriority) {
-    if (priority === 'high') {return styles.badgeHigh;}
-
-    if (priority === 'low') {return styles.badgeLow;}
-
-    return styles.badgeMedium;
-}
-
-function priorityLabel(priority: TodoPriority, locale: AppLocale) {
-    if (priority === 'high') {return t(locale, 'priorityHigh');}
-
-    if (priority === 'low') {return t(locale, 'priorityLow');}
-
-    return t(locale, 'priorityMedium');
+        return nextVisibleTodoId ?? todoId;
+    });
 }

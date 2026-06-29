@@ -1,0 +1,81 @@
+.todoItem {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  padding: 0.56rem 0.68rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  border-left-width: 3px;
+}
+
+.priorityHigh {
+  border-left-color: var(--danger);
+}
+
+.priorityMedium {
+  border-left-color: var(--warning);
+}
+
+.priorityLow {
+  border-left-color: var(--success);
+}
+
+.todoLabel {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.todoMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  flex-wrap: wrap;
+}
+
+.todoBadge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.badgeHigh {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: color-mix(in srgb, var(--danger) 85%, var(--text));
+}
+
+.badgeMedium {
+  border-color: color-mix(in srgb, var(--warning) 50%, var(--border));
+  background: color-mix(in srgb, var(--warning) 14%, transparent);
+  color: color-mix(in srgb, var(--warning) 85%, var(--text));
+}
+
+.badgeLow {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border));
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: color-mix(in srgb, var(--success) 80%, var(--text));
+}
+
+.isCompleted {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.dangerButton {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+  padding: 0.3rem 0.55rem;
+  font-size: 0.9rem;
+
+  &:hover {
+    border-color: var(--danger);
+  }
+}

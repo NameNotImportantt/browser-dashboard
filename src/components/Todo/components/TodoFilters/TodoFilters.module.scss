@@ -1,0 +1,27 @@
+.filters {
+  margin-top: 0.82rem;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.filterControl {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.filterField {
+  width: 100%;
+}
+
+.filterLabel {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 640px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
