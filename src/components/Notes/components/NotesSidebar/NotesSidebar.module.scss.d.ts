@@ -1,0 +1,11 @@
+export declare const createButton: string;
+export declare const emptyBody: string;
+export declare const emptyState: string;
+export declare const emptyTitle: string;
+export declare const header: string;
+export declare const list: string;
+export declare const modalBody: string;
+export declare const modalCopy: string;
+export declare const modalWarning: string;
+export declare const noteName: string;
+export declare const sidebar: string;

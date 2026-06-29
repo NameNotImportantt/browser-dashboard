@@ -107,7 +107,11 @@ export function SearchHistoryControls({
                     title={t(locale, 'searchHistory')}
                     onClose={closeHistoryModal}
                     closeLabel={t(locale, 'close')}
-                    actions={(
+                    confirmLabel={t(locale, 'deleteSelected')}
+                    onConfirm={() => void removeSelectedHistory()}
+                    confirmDisabled={selectedCount === 0}
+                    confirmButtonClassName={deleteSelectedButtonClassName}
+                    footerContent={(
                         <>
                             <button type="button" className={styles.compactButton} onClick={selectAllHistory}>
                                 {t(locale, 'selectAll')}
@@ -115,19 +119,12 @@ export function SearchHistoryControls({
                             <button type="button" className={styles.compactButton} onClick={clearSelection}>
                                 {t(locale, 'clearSelection')}
                             </button>
-                            <button
-                                type="button"
-                                className={deleteSelectedButtonClassName}
-                                onClick={() => void removeSelectedHistory()}
-                                disabled={selectedCount === 0}
-                            >
-                                {t(locale, 'deleteSelected')}
-                            </button>
                             {selectedCount === 0 ? (
                                 <small className={settingsStyles.hint}>{t(locale, 'searchHistorySelectionEmpty')}</small>
                             ) : null}
                         </>
                     )}
+                    showCloseIcon
                 >
                     {searchHistory.length > 0 ? (
                         <ul className={styles.historyList}>

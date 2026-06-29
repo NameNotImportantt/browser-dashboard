@@ -1,0 +1,14 @@
+export declare const bodyField: string;
+export declare const editor: string;
+export declare const emptyBody: string;
+export declare const emptyEditor: string;
+export declare const emptyIcon: string;
+export declare const emptyTitle: string;
+export declare const field: string;
+export declare const fieldLabel: string;
+export declare const fieldLabelContainer: string;
+export declare const noteField: string;
+export declare const savedStatus: string;
+export declare const statusPlaceholder: string;
+export declare const statusRow: string;
+export declare const titleField: string;

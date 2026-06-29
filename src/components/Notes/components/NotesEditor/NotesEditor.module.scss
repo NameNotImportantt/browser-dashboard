@@ -1,0 +1,143 @@
+.editor {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: transparent;
+
+  .field {
+    min-width: 0;
+    display: grid;
+    gap: 0.32rem;
+
+    .fieldLabelContainer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+
+      .statusRow {
+        min-width: 6.5rem;
+        min-height: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .savedStatus {
+          color: var(--text-muted);
+          font-size: 0.82rem;
+        }
+
+        .statusPlaceholder {
+          visibility: hidden;
+          font-size: 0.82rem;
+        }
+      }
+    }
+
+    .titleField {
+      width: 100%;
+      min-height: 2.8rem;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
+      color: var(--text);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.8rem;
+      outline: none;
+      transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+
+      &:focus {
+        border-color: color-mix(in srgb, var(--accent) 44%, var(--border));
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+          0 8px 20px color-mix(in srgb, var(--accent-glow) 16%, transparent);
+      }
+
+      &::placeholder {
+        color: var(--text-muted);
+      }
+    }
+  }
+
+  .bodyField {
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .noteField {
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.8rem;
+      outline: none;
+      resize: vertical;
+      line-height: 1.5;
+      transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+
+      &:focus {
+        border-color: color-mix(in srgb, var(--accent) 44%, var(--border));
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+          0 8px 20px color-mix(in srgb, var(--accent-glow) 16%, transparent);
+      }
+
+      &::placeholder {
+        color: var(--text-muted);
+      }
+    }
+  }
+
+  .fieldLabel {
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+}
+
+.emptyEditor {
+  min-height: 100%;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, var(--accent) 26%, var(--border));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 24%, transparent), transparent 62%),
+    color-mix(in srgb, var(--surface) 88%, transparent);
+
+  .emptyIcon {
+    width: 2.6rem;
+    height: 2.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+    border-radius: 999px;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent-soft) 34%, transparent);
+  }
+
+  .emptyTitle {
+    font-size: 1rem;
+  }
+
+  .emptyBody {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+}

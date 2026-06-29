@@ -42,6 +42,7 @@ export const HomePage = memo(function HomePage() {
 
     const homeLayoutClassName = clsx(styles.contentPane, styles.homeLayout);
     const screenPanelClassName = clsx(styles.contentPane, styles.screenPanel);
+    const notesScreenPanelClassName = clsx(styles.contentPane, styles.screenPanel, styles.screenPanelWide);
 
     const widgetFallbackClassName = clsx('card', styles.widgetFallback);
 
@@ -128,7 +129,7 @@ export const HomePage = memo(function HomePage() {
                 ) : null}
 
                 {activeScreen === 'notes' ? (
-                    <div className={screenPanelClassName}>
+                    <div className={notesScreenPanelClassName}>
                         <Suspense
                             fallback={(
                                 <section className={widgetFallbackClassName}>

@@ -1,3 +1,4 @@
+export declare const closeIconButton: string;
 export declare const compactButton: string;
 export declare const modalActions: string;
 export declare const modalBody: string;
@@ -5,6 +6,8 @@ export declare const modalCard: string;
 export declare const modalCardLg: string;
 export declare const modalCardMd: string;
 export declare const modalCardSm: string;
+export declare const modalFooter: string;
+export declare const modalFooterSide: string;
 export declare const modalHeader: string;
 export declare const modalOverlay: string;
 export declare const modalTitle: string;

@@ -272,16 +272,11 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         }
                     }}
                     closeLabel={t(locale, 'cancel')}
-                    actions={(
-                        <button
-                            type="button"
-                            className={dangerButtonClassName}
-                            onClick={() => void handleImport()}
-                            disabled={isImporting}
-                        >
-                            {t(locale, 'confirmImport')}
-                        </button>
-                    )}
+                    confirmLabel={t(locale, 'confirmImport')}
+                    onConfirm={() => void handleImport()}
+                    confirmDisabled={isImporting}
+                    confirmButtonClassName={dangerButtonClassName}
+                    showCloseIcon
                 >
                     <div className={styles.modalCopy}>
                         <p>{t(locale, 'backupImportConfirmMessage')}</p>

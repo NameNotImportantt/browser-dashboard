@@ -18,8 +18,9 @@
 }
 
 .loaderInline {
-  justify-items: start;
-  justify-content: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
   min-height: auto;
   padding: 0;
   gap: 0.45rem;
@@ -51,6 +52,7 @@
 }
 
 .spinnerInline {
+  flex-shrink: 0;
   width: 1rem;
   height: 1rem;
   border-width: 2px;
@@ -70,6 +72,7 @@
 }
 
 .labelInline {
+  line-height: 1;
   font-size: 0.82rem;
 }
 
