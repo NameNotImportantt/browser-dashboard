@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {UndoSnackbar} from '@/components';
+import {Loader, UndoSnackbar} from '@/components';
 import {useDashboardCore, useDashboardShellEffects, useSettings} from '@/dashboard';
 import {HomePage} from '@/pages';
 import styles from './AppShell.module.scss';
@@ -16,7 +16,11 @@ export function AppShell() {
     useDashboardShellEffects();
 
     if (loading) {
-        return <main className={styles.statusView}>{t(locale, 'appLoading')}</main>;
+        return (
+            <main>
+                <Loader variant="fullscreen" label={t(locale, 'appLoading')} />
+            </main>
+        );
     }
 
     if (error) {
