@@ -7,6 +7,7 @@ import {
     type DashboardBackupEnvelope,
 } from './backupSchema';
 import {isDashboardBackupEnvelope} from './backupValidators';
+import type {BackupJsonValue} from './backupJsonValue';
 
 function normalizeImportedNotes(notes: DashboardBackupNote[]): Note[] {
     const positionsByWorkspaceId = new Map<string, number>();
@@ -38,10 +39,10 @@ function normalizeImportedNotes(notes: DashboardBackupNote[]): Note[] {
 }
 
 export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope {
-    let parsed: unknown;
+    let parsed: BackupJsonValue;
 
     try {
-        parsed = JSON.parse(json);
+        parsed = JSON.parse(json) as BackupJsonValue;
     } catch {
         throw new DashboardBackupError('invalidJson', 'Backup JSON could not be parsed.');
     }

@@ -11,6 +11,30 @@ interface LegacyNoteRecord {
     position?: number;
 }
 
+interface LegacySettingsRecord {
+    searchEngine?: string;
+    activeSearchEngineId?: string;
+    customSearchEngines?: AppSettings['customSearchEngines'];
+    onlineSearchSuggestionsEnabled?: boolean;
+    timeFormat?: AppSettings['timeFormat'];
+    timezone?: string;
+    locale?: AppSettings['locale'];
+    dateFormat?: AppSettings['dateFormat'];
+    tabTitle?: string;
+    backgroundScrimOpacity?: number;
+    searchHistoryEnabled?: boolean;
+    bookmarkFaviconsEnabled?: boolean;
+    backupReminderEnabled?: boolean;
+    backupReminderIntervalDays?: number;
+    lastBackupExportedAt?: number | null;
+}
+
+interface LegacyBookmarkRecord {
+    categoryId?: string | null;
+    faviconUrl?: string | null;
+    faviconDataUrl?: string | null;
+}
+
 export class DashboardDatabase extends Dexie {
     public workspaces!: Table<Workspace, string>;
     public todos!: Table<TodoItem, string>;
@@ -49,8 +73,8 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
-                        const legacySearchEngine = settings.searchEngine as string | undefined;
+                    .modify((settings: LegacySettingsRecord) => {
+                        const legacySearchEngine = settings.searchEngine;
 
                         settings.activeSearchEngineId = settings.activeSearchEngineId ?? legacySearchEngine ?? 'duckduckgo';
                         settings.customSearchEngines = settings.customSearchEngines ?? [];
@@ -80,7 +104,7 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('bookmarks')
                     .toCollection()
-                    .modify((bookmark: Record<string, unknown>) => {
+                    .modify((bookmark: LegacyBookmarkRecord) => {
                         bookmark.categoryId = bookmark.categoryId ?? null;
                     });
             });
@@ -100,7 +124,7 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
+                    .modify((settings: LegacySettingsRecord) => {
                         settings.backgroundScrimOpacity = settings.backgroundScrimOpacity ?? 65;
                     });
             });
@@ -133,7 +157,7 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
+                    .modify((settings: LegacySettingsRecord) => {
                         settings.searchHistoryEnabled = settings.searchHistoryEnabled ?? true;
                     });
             });
@@ -154,7 +178,7 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
+                    .modify((settings: LegacySettingsRecord) => {
                         settings.onlineSearchSuggestionsEnabled = settings.onlineSearchSuggestionsEnabled ?? true;
                     });
             });
@@ -175,14 +199,14 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('bookmarks')
                     .toCollection()
-                    .modify((bookmark: Record<string, unknown>) => {
+                    .modify((bookmark: LegacyBookmarkRecord) => {
                         bookmark.faviconUrl = bookmark.faviconUrl ?? bookmark.faviconDataUrl ?? null;
                         delete bookmark.faviconDataUrl;
                     });
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
+                    .modify((settings: LegacySettingsRecord) => {
                         settings.bookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled ?? true;
                     });
             });
@@ -203,7 +227,7 @@ export class DashboardDatabase extends Dexie {
                 await transaction
                     .table('settings')
                     .toCollection()
-                    .modify((settings: Record<string, unknown>) => {
+                    .modify((settings: LegacySettingsRecord) => {
                         settings.backupReminderEnabled = settings.backupReminderEnabled ?? true;
                         settings.backupReminderIntervalDays = settings.backupReminderIntervalDays ?? 7;
                         settings.lastBackupExportedAt = settings.lastBackupExportedAt ?? null;

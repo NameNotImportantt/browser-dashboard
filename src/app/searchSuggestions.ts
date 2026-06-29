@@ -12,7 +12,16 @@ const MAX_SUGGESTIONS = 8;
 const SEARCH_HISTORY_LIMIT = 50;
 const JSONP_TIMEOUT_MS = 5000;
 
-type JsonpCallback = (data: unknown) => void;
+type SearchSuggestionsJsonPrimitive = string | number | boolean | null;
+
+interface SearchSuggestionsJsonObject {
+  [key: string]: SearchSuggestionsJsonValue | undefined;
+}
+
+type SearchSuggestionsJsonValue =
+    | SearchSuggestionsJsonPrimitive
+    | SearchSuggestionsJsonObject
+    | SearchSuggestionsJsonValue[];
 
 function normalizeQuery(query: string) {
     return query.trim().toLowerCase();
@@ -77,12 +86,11 @@ export function fetchGoogleSuggestionsJsonp(query: string, signal: AbortSignal):
 
     return new Promise((resolve, reject) => {
         const callbackName = `googleAc_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-        const jsonpWindow = window as unknown as Record<string, JsonpCallback | undefined>;
         const script = document.createElement('script');
         let timeoutId: number | null = null;
 
         const cleanup = () => {
-            delete jsonpWindow[callbackName];
+            Reflect.deleteProperty(window, callbackName);
             script.remove();
             signal.removeEventListener('abort', onAbort);
 
@@ -101,7 +109,7 @@ export function fetchGoogleSuggestionsJsonp(query: string, signal: AbortSignal):
             resolve([]);
         }, JSONP_TIMEOUT_MS);
 
-        jsonpWindow[callbackName] = (data: unknown) => {
+        Reflect.set(window, callbackName, (data: SearchSuggestionsJsonValue | undefined) => {
             cleanup();
 
             if (!Array.isArray(data) || !Array.isArray(data[1])) {
@@ -110,7 +118,7 @@ export function fetchGoogleSuggestionsJsonp(query: string, signal: AbortSignal):
             }
 
             resolve(data[1].filter((item): item is string => typeof item === 'string'));
-        };
+        });
 
         script.async = true;
 

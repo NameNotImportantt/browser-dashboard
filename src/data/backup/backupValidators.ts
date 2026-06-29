@@ -1,31 +1,34 @@
+import type {BackupJsonObject, BackupJsonValue} from './backupJsonValue';
 import type {DashboardBackupData, DashboardBackupEnvelope, DashboardBackupNote} from './backupSchema';
 import type {AppSettings, Bookmark, BookmarkCategory, Habit, SearchHistoryEntry, TodoItem, WeatherCache, Workspace} from '@/db';
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+type BackupInspectableValue = BackupJsonValue | object | undefined;
+
+function isRecord(value: BackupInspectableValue): value is BackupJsonObject {
     return typeof value === 'object' && value !== null;
 }
 
-function isString(value: unknown): value is string {
+function isString(value: BackupInspectableValue): value is string {
     return typeof value === 'string';
 }
 
-function isNumber(value: unknown): value is number {
+function isNumber(value: BackupInspectableValue): value is number {
     return typeof value === 'number' && Number.isFinite(value);
 }
 
-function isNullableString(value: unknown): value is string | null {
+function isNullableString(value: BackupInspectableValue): value is string | null {
     return value === null || isString(value);
 }
 
-function isBoolean(value: unknown): value is boolean {
+function isBoolean(value: BackupInspectableValue): value is boolean {
     return typeof value === 'boolean';
 }
 
-function isStringArray(value: unknown): value is string[] {
+function isStringArray(value: BackupInspectableValue): value is string[] {
     return Array.isArray(value) && value.every(isString);
 }
 
-function isWorkspace(value: unknown): value is Workspace {
+function isWorkspace(value: BackupInspectableValue): value is Workspace {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.name) &&
@@ -33,11 +36,11 @@ function isWorkspace(value: unknown): value is Workspace {
         isNumber(value.createdAt);
 }
 
-function isTodoPriority(value: unknown): value is TodoItem['priority'] {
+function isTodoPriority(value: BackupInspectableValue): value is TodoItem['priority'] {
     return value === 'low' || value === 'medium' || value === 'high';
 }
 
-function isTodoItem(value: unknown): value is TodoItem {
+function isTodoItem(value: BackupInspectableValue): value is TodoItem {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
@@ -50,7 +53,7 @@ function isTodoItem(value: unknown): value is TodoItem {
         isNumber(value.updatedAt);
 }
 
-function isHabit(value: unknown): value is Habit {
+function isHabit(value: BackupInspectableValue): value is Habit {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
@@ -60,7 +63,7 @@ function isHabit(value: unknown): value is Habit {
         isNumber(value.createdAt);
 }
 
-function isBookmark(value: unknown): value is Bookmark {
+function isBookmark(value: BackupInspectableValue): value is Bookmark {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
@@ -72,7 +75,7 @@ function isBookmark(value: unknown): value is Bookmark {
         isNumber(value.createdAt);
 }
 
-function isBookmarkCategory(value: unknown): value is BookmarkCategory {
+function isBookmarkCategory(value: BackupInspectableValue): value is BookmarkCategory {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
@@ -81,7 +84,7 @@ function isBookmarkCategory(value: unknown): value is BookmarkCategory {
         isNumber(value.createdAt);
 }
 
-function isNote(value: unknown): value is DashboardBackupNote {
+function isNote(value: BackupInspectableValue): value is DashboardBackupNote {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
@@ -92,28 +95,28 @@ function isNote(value: unknown): value is DashboardBackupNote {
         (value.position === undefined || isNumber(value.position));
 }
 
-function isWeatherLocation(value: unknown): value is NonNullable<AppSettings['weatherLocation']> {
+function isWeatherLocation(value: BackupInspectableValue): value is NonNullable<AppSettings['weatherLocation']> {
     return isRecord(value) &&
         isNumber(value.lat) &&
         isNumber(value.lon) &&
         isString(value.label);
 }
 
-function isCustomSearchEngine(value: unknown): value is AppSettings['customSearchEngines'][number] {
+function isCustomSearchEngine(value: BackupInspectableValue): value is AppSettings['customSearchEngines'][number] {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.name) &&
         isString(value.urlTemplate);
 }
 
-function isCustomTextColors(value: unknown): value is NonNullable<AppSettings['customTextColors']> {
+function isCustomTextColors(value: BackupInspectableValue): value is NonNullable<AppSettings['customTextColors']> {
     return isRecord(value) &&
         isNullableString(value.text) &&
         isNullableString(value.textSoft) &&
         isNullableString(value.textMuted);
 }
 
-function isAppSettings(value: unknown): value is AppSettings {
+function isAppSettings(value: BackupInspectableValue): value is AppSettings {
     return isRecord(value) &&
         value.key === 'app' &&
         (value.theme === 'light' || value.theme === 'dark') &&
@@ -139,7 +142,7 @@ function isAppSettings(value: unknown): value is AppSettings {
         isNumber(value.updatedAt);
 }
 
-function isWeatherCache(value: unknown): value is WeatherCache {
+function isWeatherCache(value: BackupInspectableValue): value is WeatherCache {
     return isRecord(value) &&
         value.id === 'current' &&
         isString(value.locationLabel) &&
@@ -148,14 +151,14 @@ function isWeatherCache(value: unknown): value is WeatherCache {
         isNumber(value.fetchedAt);
 }
 
-function isSearchHistoryEntry(value: unknown): value is SearchHistoryEntry {
+function isSearchHistoryEntry(value: BackupInspectableValue): value is SearchHistoryEntry {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.query) &&
         isNumber(value.usedAt);
 }
 
-function isDashboardBackupData(value: unknown): value is DashboardBackupData {
+function isDashboardBackupData(value: BackupInspectableValue): value is DashboardBackupData {
     return isRecord(value) &&
         Array.isArray(value.workspaces) &&
         value.workspaces.every(isWorkspace) &&
@@ -175,7 +178,7 @@ function isDashboardBackupData(value: unknown): value is DashboardBackupData {
         value.searchHistory.every(isSearchHistoryEntry);
 }
 
-export function isDashboardBackupEnvelope(value: unknown): value is DashboardBackupEnvelope {
+export function isDashboardBackupEnvelope(value: BackupInspectableValue): value is DashboardBackupEnvelope {
     return isRecord(value) &&
         isNumber(value.schemaVersion) &&
         isNumber(value.exportedAt) &&
