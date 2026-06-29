@@ -76,7 +76,7 @@ export async function loadSnapshot(): Promise<Snapshot> {
         habits: sortByPosition(habits),
         bookmarks: sortByPosition(bookmarks),
         bookmarkCategories: sortByPosition(bookmarkCategories),
-        notes,
+        notes: sortByPosition(notes),
         settings: mergeSettings(settings),
         weatherCache: weatherCache ?? null,
         searchHistory,

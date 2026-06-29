@@ -1,5 +1,5 @@
-import type {DashboardBackupData, DashboardBackupEnvelope} from './backupSchema';
-import type {AppSettings, Bookmark, BookmarkCategory, Habit, Note, SearchHistoryEntry, TodoItem, WeatherCache, Workspace} from '@/db';
+import type {DashboardBackupData, DashboardBackupEnvelope, DashboardBackupNote} from './backupSchema';
+import type {AppSettings, Bookmark, BookmarkCategory, Habit, SearchHistoryEntry, TodoItem, WeatherCache, Workspace} from '@/db';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
@@ -81,12 +81,15 @@ function isBookmarkCategory(value: unknown): value is BookmarkCategory {
         isNumber(value.createdAt);
 }
 
-function isNote(value: unknown): value is Note {
+function isNote(value: unknown): value is DashboardBackupNote {
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.workspaceId) &&
+        (value.title === undefined || isString(value.title)) &&
         isString(value.text) &&
-        isNumber(value.updatedAt);
+        isNumber(value.updatedAt) &&
+        (value.createdAt === undefined || isNumber(value.createdAt)) &&
+        (value.position === undefined || isNumber(value.position));
 }
 
 function isWeatherLocation(value: unknown): value is NonNullable<AppSettings['weatherLocation']> {

@@ -12,4 +12,5 @@ export type {
     DashboardBackupDownloadPayload,
     DashboardBackupEnvelope,
     DashboardBackupErrorCode,
+    DashboardBackupNote,
 } from './backup';
