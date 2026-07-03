@@ -92,168 +92,32 @@
       align-content: start;
     }
 
-    .taskItem,
-    .habitItem {
-      min-width: 0;
-    }
-
-    .rowSurface {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      min-width: 0;
-      padding: 0.68rem 0.72rem;
-      border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
-      border-radius: var(--radius-md);
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-elevated) 80%, transparent));
-      box-shadow: 0 12px 26px rgba(7, 10, 17, 0.16);
-    }
-
-    .rowSurfaceCompleted {
-      border-color: color-mix(in srgb, var(--border) 72%, transparent);
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, transparent), color-mix(in srgb, var(--surface-elevated) 72%, transparent));
-      opacity: 0.84;
-    }
-
-    .taskCheckbox {
-      flex-shrink: 0;
-      gap: 0;
-    }
-
-    .habitCheckbox {
-      flex-shrink: 0;
-      gap: 0;
-    }
-
-    .rowBody {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.18rem;
-    }
-
-    .rowTitle {
-      min-width: 0;
-      color: var(--text-soft);
-      font-size: 0.94rem;
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .rowTitleCompleted {
-      color: var(--text-muted);
-      text-decoration: line-through;
-    }
-
-    .rowSubtitle {
-      color: var(--text-muted);
-      font-size: 0.76rem;
-      line-height: 1.1;
-    }
-
-    .rowSubtitleCompleted {
-      text-decoration: line-through;
-    }
-
-    .rowSubtitleOverdue {
-      color: color-mix(in srgb, var(--danger) 72%, var(--text-soft));
-    }
-
-    .rowMeta {
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0.45rem;
-      flex-shrink: 0;
-    }
-
-    .rowBadge,
-    .streakBadge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      flex-shrink: 0;
-      padding: 0.22rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.77rem;
-      line-height: 1;
-      color: var(--text-muted);
-      border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
-      background: color-mix(in srgb, var(--surface-elevated) 84%, transparent);
-    }
-
-    .rowBadgeHigh {
-      border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
-      background: color-mix(in srgb, var(--danger) 12%, transparent);
-      color: color-mix(in srgb, var(--danger) 78%, var(--text));
-    }
-
-    .rowBadgeMedium {
-      border-color: color-mix(in srgb, var(--warning) 45%, var(--border));
-      background: color-mix(in srgb, var(--warning) 12%, transparent);
-      color: color-mix(in srgb, var(--warning) 78%, var(--text));
-    }
-
-    .rowBadgeLow {
-      border-color: color-mix(in srgb, var(--success) 42%, var(--border));
-      background: color-mix(in srgb, var(--success) 10%, transparent);
-      color: color-mix(in srgb, var(--success) 76%, var(--text));
-    }
-
-    .streakBadge {
-      border-color: color-mix(in srgb, var(--accent) 34%, var(--border));
-      color: color-mix(in srgb, var(--accent-soft) 74%, var(--text));
-    }
-
-    .rowSurfaceHabitCompleted {
-      border-color: color-mix(in srgb, var(--success) 28%, var(--border));
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--success) 10%, var(--surface-elevated)));
-    }
-
-    .priorityIcon {
-      display: inline-flex;
-      flex-shrink: 0;
-    }
-
-    .priorityHigh {
-      color: var(--danger);
-    }
-
-    .priorityMedium {
-      color: var(--warning);
-    }
-
-    .priorityLow {
-      color: var(--success);
-    }
-
     .emptyItem {
       padding: 0.2rem 0;
       color: var(--text-muted);
       font-size: 0.86rem;
-    }
-
-    .visuallyHidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
     }
   }
 
   .sectionSeparated {
     padding-top: 0.9rem;
     border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .section {
+      .sectionHeader {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .sectionToggle {
+        width: 100%;
+      }
+
+      .sectionToggleLabel {
+        white-space: normal;
+      }
+    }
   }
 }
