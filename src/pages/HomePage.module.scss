@@ -120,6 +120,10 @@
   box-sizing: border-box;
 }
 
+.screenPanelHabits {
+  width: min(980px, 100%);
+}
+
 .screenPanelWide {
   width: 100%;
   align-self: stretch;

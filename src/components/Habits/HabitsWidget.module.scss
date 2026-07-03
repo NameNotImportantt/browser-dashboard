@@ -1,76 +1,185 @@
 .habitsWidget {
   padding: 0.95rem;
-}
 
-.widgetHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
+  .widgetHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
 
-.inlineForm {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.5rem;
-}
+  .inlineForm {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
 
-.inputField {
-  width: 100%;
-}
+    .inputField {
+      width: 100%;
+    }
+  }
 
-.widgetList {
-  list-style: none;
-  margin: 0.82rem 0 0;
-  padding: 0;
-  display: grid;
-  gap: 0.5rem;
-}
+  .emptyState {
+    margin: 0.82rem 0 0;
+    color: var(--text-muted);
+  }
 
-.habitItem {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface) 90%, transparent);
-  padding: 0.56rem 0.68rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.55rem;
-}
+  .contentLayout {
+    margin-top: 0.82rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.95fr);
+    align-items: start;
+    gap: 0.85rem;
 
-.habitInfo {
-  display: grid;
-  gap: 0.2rem;
-}
+    .widgetList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.5rem;
 
-.habitMeta {
-  color: var(--text-muted);
-}
+      .habitItem {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: color-mix(in srgb, var(--surface) 90%, transparent);
+        padding: 0.56rem 0.68rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.45rem;
 
-.inlineRow {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-wrap: wrap;
-}
+        &.habitItemSelected {
+          border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+          box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+        }
 
-.dangerButton {
-  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
-  background: color-mix(in srgb, var(--danger) 12%, transparent);
-  color: color-mix(in srgb, var(--danger) 80%, var(--text));
-  padding: 0.3rem 0.55rem;
-  font-size: 0.9rem;
+        .habitSelectButton {
+          flex: 1;
+          display: block;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          text-align: left;
+          color: inherit;
+          cursor: pointer;
 
-  &:hover {
-    border-color: var(--danger);
+          .habitInfo {
+            display: flex;
+            padding: 10px 15px;
+            gap: 0.18rem;
+            min-width: 0;
+
+            .habitMeta {
+              color: var(--text-muted);
+              font-size: 0.88rem;
+              padding-left: 15px;
+            }
+          }
+        }
+
+        .inlineRow {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: nowrap;
+          flex-shrink: 0;
+
+          .actionButton {
+            padding: 0.36rem 0.58rem;
+            font-size: 0.84rem;
+          }
+
+          .dangerButton {
+            border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+            background: color-mix(in srgb, var(--danger) 12%, transparent);
+            color: color-mix(in srgb, var(--danger) 80%, var(--text));
+            padding: 0.36rem 0.58rem;
+            font-size: 0.84rem;
+
+            &:hover {
+              border-color: var(--danger);
+            }
+          }
+        }
+      }
+    }
+
+    .detailPanel {
+      border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      padding: 0.78rem;
+      position: sticky;
+      top: 0;
+
+      .detailHeader {
+        display: grid;
+        gap: 0.28rem;
+
+        .detailTitle {
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        .detailEmpty {
+          margin: 0;
+          color: var(--text-muted);
+          font-size: 0.9rem;
+        }
+      }
+
+      .statsGrid {
+        margin: 0.82rem 0 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.55rem;
+
+        .statCard {
+          margin: 0;
+          border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+          border-radius: var(--radius-sm);
+          background: color-mix(in srgb, var(--background-elevated) 72%, transparent);
+          padding: 0.62rem 0.7rem;
+
+          .statLabel {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+          }
+
+          .statValue {
+            margin: 0.26rem 0 0;
+            font-size: 1rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
   }
 }
 
 @media (max-width: 740px) {
-  .inlineForm {
-    grid-template-columns: 1fr;
-  }
+  .habitsWidget {
+    .inlineForm {
+      grid-template-columns: 1fr;
+    }
 
-  .habitItem {
-    flex-direction: column;
+    .contentLayout {
+      grid-template-columns: 1fr;
+
+      .widgetList {
+        .habitItem {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      .detailPanel {
+        position: static;
+
+        .statsGrid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
   }
 }
