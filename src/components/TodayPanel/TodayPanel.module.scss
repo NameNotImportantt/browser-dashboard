@@ -5,7 +5,7 @@
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0.7rem 0.8rem;
+  padding: 0.85rem 0.95rem;
   transform: none;
   display: flex;
   flex-direction: column;
@@ -27,80 +27,191 @@
       0 26px 64px color-mix(in srgb, var(--accent-glow) 62%, transparent),
       0 10px 32px rgba(7, 10, 17, 0.32);
   }
-}
 
-.columns {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: stretch;
-}
+  .panelContent {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    align-items: stretch;
+  }
 
-.section {
-  display: grid;
-  gap: 0.4rem;
-  min-width: 0;
-  align-content: start;
-}
+  .section {
+    display: grid;
+    gap: 0.55rem;
+    min-width: 0;
+    align-content: start;
 
-.sectionTitle {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
 
-.taskList,
-.habitList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.3rem;
-  align-content: start;
-}
+    .sectionTitleWrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
 
-.taskItem {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--text-soft);
-}
+    .sectionIcon {
+      flex-shrink: 0;
+      color: color-mix(in srgb, var(--accent) 70%, var(--text-soft));
+    }
 
-.priorityIcon {
-  display: inline-flex;
-  flex-shrink: 0;
-}
+    .sectionTitle {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
 
-.priorityHigh {
-  color: var(--danger);
-}
+    .taskList,
+    .habitList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.42rem;
+      align-content: start;
+    }
 
-.priorityMedium {
-  color: var(--warning);
-}
+    .taskItem,
+    .habitItem {
+      min-width: 0;
+    }
 
-.priorityLow {
-  color: var(--success);
-}
+    .rowSurface {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+      padding: 0.68rem 0.72rem;
+      border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
+      border-radius: var(--radius-md);
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-elevated) 80%, transparent));
+      box-shadow: 0 12px 26px rgba(7, 10, 17, 0.16);
+    }
 
-.habitItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4rem;
-  color: var(--text-soft);
-}
+    .rowControl {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--border-strong) 90%, transparent);
+      background: color-mix(in srgb, var(--surface-elevated) 90%, transparent);
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
 
-.emptyItem {
-  color: var(--text-muted);
-  font-size: 0.86rem;
-}
+    .rowControlTask {
+      border-color: color-mix(in srgb, var(--text-muted) 55%, var(--border));
+    }
 
-.sectionSeparated {
-  padding-top: 0.7rem;
-  border-top: 1px solid var(--border);
+    .rowControlHabit {
+      border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--success) 16%, transparent),
+        0 0 14px color-mix(in srgb, var(--success) 10%, transparent);
+    }
+
+    .rowBody {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .rowTitle {
+      min-width: 0;
+      color: var(--text-soft);
+      font-size: 0.94rem;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rowMeta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .rowBadge,
+    .streakBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      padding: 0.22rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.77rem;
+      line-height: 1;
+      color: var(--text-muted);
+      border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+      background: color-mix(in srgb, var(--surface-elevated) 84%, transparent);
+    }
+
+    .rowBadgeHigh {
+      border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+      background: color-mix(in srgb, var(--danger) 12%, transparent);
+      color: color-mix(in srgb, var(--danger) 78%, var(--text));
+    }
+
+    .rowBadgeMedium {
+      border-color: color-mix(in srgb, var(--warning) 45%, var(--border));
+      background: color-mix(in srgb, var(--warning) 12%, transparent);
+      color: color-mix(in srgb, var(--warning) 78%, var(--text));
+    }
+
+    .rowBadgeLow {
+      border-color: color-mix(in srgb, var(--success) 42%, var(--border));
+      background: color-mix(in srgb, var(--success) 10%, transparent);
+      color: color-mix(in srgb, var(--success) 76%, var(--text));
+    }
+
+    .streakBadge {
+      border-color: color-mix(in srgb, var(--accent) 34%, var(--border));
+      color: color-mix(in srgb, var(--accent-soft) 74%, var(--text));
+    }
+
+    .priorityIcon {
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+
+    .priorityHigh {
+      color: var(--danger);
+    }
+
+    .priorityMedium {
+      color: var(--warning);
+    }
+
+    .priorityLow {
+      color: var(--success);
+    }
+
+    .emptyItem {
+      padding: 0.2rem 0;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+  }
+
+  .sectionSeparated {
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
+  }
 }

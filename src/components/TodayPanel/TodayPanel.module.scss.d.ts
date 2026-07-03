@@ -1,16 +1,29 @@
-export declare const columns: string;
 export declare const emptyItem: string;
 export declare const habitItem: string;
 export declare const habitList: string;
+export declare const panelContent: string;
 export declare const priorityHigh: string;
 export declare const priorityIcon: string;
 export declare const priorityLow: string;
 export declare const priorityMedium: string;
+export declare const rowBadge: string;
+export declare const rowBadgeHigh: string;
+export declare const rowBadgeLow: string;
+export declare const rowBadgeMedium: string;
+export declare const rowBody: string;
+export declare const rowControl: string;
+export declare const rowControlHabit: string;
+export declare const rowControlTask: string;
+export declare const rowMeta: string;
+export declare const rowSurface: string;
+export declare const rowTitle: string;
 export declare const section: string;
-
+export declare const sectionHeader: string;
+export declare const sectionIcon: string;
 export declare const sectionSeparated: string;
-
 export declare const sectionTitle: string;
+export declare const sectionTitleWrap: string;
+export declare const streakBadge: string;
 export declare const taskItem: string;
 export declare const taskList: string;
 export declare const todayPanel: string;
