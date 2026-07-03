@@ -15,6 +15,7 @@ export function HabitsWidget() {
     const habitsWidgetClassName = clsx('card', styles.habitsWidget);
     const enrichedHabits = useHabitAnalytics(habits, today);
     const selectedHabit = enrichedHabits.find(habit => habit.id === selectedHabitId) ?? enrichedHabits[0] ?? null;
+    const hasSelectedHabitCompletionData = selectedHabit !== null && selectedHabit.completionDates.length > 0;
 
     useEffect(() => {
         if (enrichedHabits.length === 0) {
@@ -110,9 +111,15 @@ export function HabitsWidget() {
                             <div className={styles.detailHeader}>
                                 <h3 className={styles.detailTitle}>{selectedHabit.title}</h3>
 
-                                {selectedHabit.completionDates.length === 0 ? (
-                                    <p className={styles.detailEmpty}>{t(locale, 'habitNoCompletionData')}</p>
-                                ) : null}
+                                <p
+                                    className={clsx(
+                                        styles.detailEmpty,
+                                        hasSelectedHabitCompletionData && styles.detailEmptyHidden,
+                                    )}
+                                    aria-hidden={hasSelectedHabitCompletionData}
+                                >
+                                    {t(locale, 'habitNoCompletionData')}
+                                </p>
                             </div>
 
                             <dl className={styles.statsGrid}>

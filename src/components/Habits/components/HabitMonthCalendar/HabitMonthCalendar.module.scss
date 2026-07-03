@@ -69,18 +69,7 @@
         inset 0 0 0 1px color-mix(in srgb, white 32%, transparent),
         0 0 0 1px color-mix(in srgb, var(--accent-soft) 38%, transparent),
         0 0 24px color-mix(in srgb, var(--accent-soft) 22%, transparent);
-    }
 
-    .dayCellFuture {
-      opacity: 0.55;
-    }
-
-    .dayNumber {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .dayCellToday {
       .dayNumber {
         color: #f8f8ff;
         text-shadow: 0 0 10px color-mix(in srgb, var(--accent-soft) 28%, transparent);
@@ -94,6 +83,15 @@
           0 0 0 1px color-mix(in srgb, var(--accent-soft) 32%, transparent),
           0 0 10px color-mix(in srgb, var(--accent-soft) 20%, transparent);
       }
+    }
+
+    .dayCellFuture {
+      opacity: 0.55;
+    }
+
+    .dayNumber {
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .completionMark {

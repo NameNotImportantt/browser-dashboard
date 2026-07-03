@@ -2,6 +2,7 @@ export declare const actionButton: string;
 export declare const contentLayout: string;
 export declare const dangerButton: string;
 export declare const detailEmpty: string;
+export declare const detailEmptyHidden: string;
 export declare const detailHeader: string;
 export declare const detailPanel: string;
 export declare const detailTitle: string;
