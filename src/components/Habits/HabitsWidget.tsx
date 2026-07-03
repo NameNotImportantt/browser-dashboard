@@ -2,6 +2,7 @@ import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {t, todayKey} from '@/app';
 import {useHabits, useSettings} from '@/dashboard';
+import {HabitMonthCalendar} from './components/HabitMonthCalendar';
 import styles from './HabitsWidget.module.scss';
 import {useHabitAnalytics} from './hooks/useHabitAnalytics';
 
@@ -134,6 +135,11 @@ export function HabitsWidget() {
                                     <dd className={styles.statValue}>{selectedHabit.analytics.completionRate30d}%</dd>
                                 </div>
                             </dl>
+
+                            <HabitMonthCalendar
+                                locale={locale}
+                                monthDays={selectedHabit.analytics.monthDays}
+                            />
                         </section>
                     ) : null}
                 </div>
