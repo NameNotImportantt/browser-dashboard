@@ -7,11 +7,11 @@ import {getHabitStreak} from '@/data/habits';
 import {t} from '@/i18n';
 import {todayKey} from '@/lib';
 import styles from './TodayPanel.module.scss';
-import type {AppLocale, TodoItem, TodoPriority} from '@/db';
+import type {AppLocale, Habit, TodoItem, TodoPriority} from '@/db';
 
 export function TodayPanel() {
     const {todos, toggleTodo} = useTodos();
-    const {habits} = useHabits();
+    const {habits, toggleHabitToday} = useHabits();
     const {locale} = useSettings();
     const [showCompleted, setShowCompleted] = useState(false);
     const today = todayKey();
@@ -24,13 +24,9 @@ export function TodayPanel() {
         [showCompleted, today, todos],
     );
 
-    const habitStreaks = useMemo(
+    const habitRows = useMemo(
         () =>
-            habits.map(habit => ({
-                id: habit.id,
-                title: habit.title,
-                streak: getHabitStreak(habit.completionDates, today),
-            })),
+            habits.map(habit => buildTodayPanelHabit(habit, today)),
         [habits, today],
     );
 
@@ -40,6 +36,10 @@ export function TodayPanel() {
 
     const handleTodoToggle = (todoId: string) => {
         void toggleTodo(todoId);
+    };
+
+    const handleHabitToggle = (habitId: string) => {
+        void toggleHabitToday(habitId);
     };
 
     return (
@@ -86,9 +86,14 @@ export function TodayPanel() {
                     </div>
 
                     <ul className={styles.habitList}>
-                        {habitStreaks.length > 0 ? (
-                            habitStreaks.map(habit => (
-                                <HabitRow key={habit.id} title={habit.title} streak={habit.streak} locale={locale} />
+                        {habitRows.length > 0 ? (
+                            habitRows.map(habit => (
+                                <HabitRow
+                                    key={habit.id}
+                                    habit={habit}
+                                    locale={locale}
+                                    onToggle={handleHabitToggle}
+                                />
                             ))
                         ) : (
                             <li className={styles.emptyItem}>{t(locale, 'noHabits')}</li>
@@ -153,26 +158,45 @@ function TaskRow({todo, today, locale, onToggle}: TaskRowProps) {
 }
 
 type HabitRowProps = {
-    title: string;
-    streak: number;
+    habit: TodayPanelHabit;
     locale: AppLocale;
+    onToggle: (habitId: string) => void;
 };
 
-function HabitRow({title, streak, locale}: HabitRowProps) {
+function HabitRow({habit, locale, onToggle}: HabitRowProps) {
+    const rowSurfaceClassName = clsx(
+        styles.rowSurface,
+        habit.completedToday && styles.rowSurfaceHabitCompleted,
+    );
+    const checkboxLabel = (
+        <span className={styles.visuallyHidden}>
+            {getHabitCheckboxLabel(habit.completedToday, habit.title, locale)}
+        </span>
+    );
+
+    const handleToggle = () => {
+        onToggle(habit.id);
+    };
+
     return (
         <li className={styles.habitItem}>
-            <div className={styles.rowSurface}>
-                <span className={clsx(styles.rowControl, styles.rowControlHabit)} aria-hidden />
+            <div className={rowSurfaceClassName}>
+                <Checkbox
+                    checked={habit.completedToday}
+                    onChange={handleToggle}
+                    className={styles.habitCheckbox}
+                    label={checkboxLabel}
+                />
 
                 <div className={styles.rowBody}>
-                    <span className={styles.rowTitle}>{title}</span>
+                    <span className={styles.rowTitle}>{habit.title}</span>
                 </div>
 
                 <div className={styles.rowMeta}>
                     <span className={styles.streakBadge}>
                         <Flame size={13} strokeWidth={2.2} />
                         <span>
-                            {streak} {t(locale, 'days')}
+                            {habit.streak} {t(locale, 'days')}
                         </span>
                     </span>
                 </div>
@@ -206,6 +230,28 @@ function getPriorityLabel(priority: TodoPriority, locale: AppLocale) {
     if (priority === 'low') {return t(locale, 'priorityLow');}
 
     return t(locale, 'priorityMedium');
+}
+
+type TodayPanelHabit = {
+    id: string;
+    title: string;
+    streak: number;
+    completedToday: boolean;
+};
+
+function buildTodayPanelHabit(habit: Habit, today: string): TodayPanelHabit {
+    return {
+        id: habit.id,
+        title: habit.title,
+        streak: getHabitStreak(habit.completionDates, today),
+        completedToday: habit.completionDates.includes(today),
+    };
+}
+
+function getHabitCheckboxLabel(completedToday: boolean, title: string, locale: AppLocale) {
+    const actionLabel = completedToday ? t(locale, 'habitUnmarkToday') : t(locale, 'habitMarkToday');
+
+    return `${actionLabel}: ${title}`;
 }
 
 function buildTodayPanelTodos(todos: TodoItem[], today: string, showCompleted: boolean) {
