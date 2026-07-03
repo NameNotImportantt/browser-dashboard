@@ -1,0 +1,14 @@
+export declare const isActive: string;
+export declare const isHovered: string;
+export declare const isInvalid: string;
+export declare const isVisible: string;
+export declare const removeButton: string;
+export declare const separator: string;
+export declare const separatorHidden: string;
+export declare const workspaceActionButton: string;
+export declare const workspaceActions: string;
+export declare const workspaceButton: string;
+export declare const workspaceControl: string;
+export declare const workspaceInlineError: string;
+export declare const workspaceInput: string;
+export declare const workspaceItem: string;
