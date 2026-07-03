@@ -2,52 +2,78 @@
   display: grid;
   gap: 0.35rem;
   min-width: 0;
-}
 
-.fieldLabel {
-  color: var(--text-soft);
-  font-size: 0.9rem;
-}
-
-.controlRow {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-width: 0;
-}
-
-.hexInput {
-  flex: 1;
-  min-width: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.02em;
-}
-
-.swatchRow {
-  display: flex;
-  gap: 0.55rem;
-  flex-shrink: 0;
-  min-width: 0;
-  flex-wrap: wrap;
-}
-
-.swatch {
-  width: 1.35rem;
-  height: 1.35rem;
-  padding: 0;
-  border-radius: 6px;
-  border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
-  box-shadow: var(--shadow-sm);
-  transform: none;
-
-  &:hover {
-    transform: scale(1.06);
-    border-color: var(--border-strong);
+  .fieldLabel {
+    color: var(--text-soft);
+    font-size: 0.9rem;
   }
 
-  &.swatchSelected {
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
-      var(--shadow-sm);
+  .controlRow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+
+    .colorInput {
+      width: 2.6rem;
+      min-width: 2.6rem;
+      height: 2.3rem;
+      padding: 0.16rem;
+      border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+
+      &::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      &::-webkit-color-swatch {
+        border: none;
+        border-radius: 7px;
+      }
+
+      &::-moz-color-swatch {
+        border: none;
+        border-radius: 7px;
+      }
+    }
+
+    .hexInput {
+      flex: 1;
+      min-width: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 0.02em;
+    }
+
+    .swatchRow {
+      display: flex;
+      gap: 0.55rem;
+      flex-shrink: 0;
+      min-width: 0;
+      flex-wrap: wrap;
+
+      .swatch {
+        width: 1.35rem;
+        height: 1.35rem;
+        padding: 0;
+        border-radius: 6px;
+        border: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+        box-shadow: var(--shadow-sm);
+        transform: none;
+
+        &:hover {
+          transform: scale(1.06);
+          border-color: var(--border-strong);
+        }
+
+        &.swatchSelected {
+          box-shadow:
+            0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+            var(--shadow-sm);
+        }
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type ChangeEvent} from 'react';
+import {useEffect, useMemo, useRef, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
 import {Palette} from 'lucide-react';
 import {ActionStatus} from '@/components';
@@ -41,14 +41,20 @@ export function AppearanceSettingsSection() {
 
     const locale = settings.locale;
     const theme = settings.theme;
-    const [textColorDrafts, setTextColorDrafts] = useState(() => buildTextColorDrafts(theme, settings.customTextColors));
+
+    const resolvedTextColors = useMemo(
+        () => buildTextColorDrafts(theme, settings.customTextColors),
+        [theme, settings.customTextColors],
+    );
+
+    const [textColorDrafts, setTextColorDrafts] = useState(() => resolvedTextColors);
     const backgroundStatus = useActionStatus();
     const backgroundInputRef = useRef<HTMLInputElement>(null);
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
     useEffect(() => {
-        setTextColorDrafts(buildTextColorDrafts(theme, settings.customTextColors));
-    }, [theme, settings.customTextColors]);
+        setTextColorDrafts(resolvedTextColors);
+    }, [resolvedTextColors]);
 
     const pickBackgroundImage = () => {
         backgroundInputRef.current?.click();
@@ -86,6 +92,10 @@ export function AppearanceSettingsSection() {
         }
     };
 
+    const handleBackgroundImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+        void handleBackgroundImageSelect(event);
+    };
+
     const removeBackgroundImage = async () => {
         backgroundStatus.start();
 
@@ -95,6 +105,10 @@ export function AppearanceSettingsSection() {
         } catch {
             backgroundStatus.fail(t(locale, 'backgroundImageDecodeFailed'));
         }
+    };
+
+    const handleRemoveBackgroundImageClick = () => {
+        void removeBackgroundImage();
     };
 
     const handleTextColorInput = (key: TextColorKey, value: string, commit = false) => {
@@ -107,7 +121,7 @@ export function AppearanceSettingsSection() {
         const normalized = normalizeHexColor(value);
 
         if (!normalized) {
-            setTextColorDrafts(buildTextColorDrafts(theme, settings.customTextColors));
+            setTextColorDrafts(resolvedTextColors);
             return;
         }
 
@@ -116,45 +130,89 @@ export function AppearanceSettingsSection() {
         void setTextColor(key, normalized === themeDefault ? null : normalized);
     };
 
+    const handlePrimaryTextColorChange = (value: string, commit = false) => {
+        handleTextColorInput('text', value, commit);
+    };
+
+    const handleSoftTextColorChange = (value: string, commit = false) => {
+        handleTextColorInput('textSoft', value, commit);
+    };
+
+    const handleMutedTextColorChange = (value: string, commit = false) => {
+        handleTextColorInput('textMuted', value, commit);
+    };
+
+    const textColorFieldHandlers: Record<TextColorKey, (value: string, commit?: boolean) => void> = {
+        text: handlePrimaryTextColorChange,
+        textSoft: handleSoftTextColorChange,
+        textMuted: handleMutedTextColorChange,
+    };
+
+    const textColorFields = TEXT_COLOR_FIELDS.map(field => ({
+        key: field.key,
+        label: t(locale, field.labelKey),
+        value: textColorDrafts[field.key],
+        pickerValue: resolvedTextColors[field.key],
+        placeholder: THEME_TEXT_COLORS[theme][field.key],
+        swatches: getTextColorSwatches(theme, field.key),
+        onChange: textColorFieldHandlers[field.key],
+    }));
+
     const resetTextColors = async () => {
         await resetSettingsTextColors();
+    };
+
+    const handleResetTextColorsClick = () => {
+        void resetTextColors();
+    };
+
+    const handleBackgroundScrimChange = (event: ChangeEvent<HTMLInputElement>) => {
+        void setBackgroundScrimOpacity(Number(event.target.value));
     };
 
     return (
         <section className={sectionClassName}>
             <SettingsSectionHeader title={t(locale, 'settingsAppearance')} icon={Palette} />
+
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'backgroundImage')}</span>
+
                     <input
                         ref={backgroundInputRef}
                         type="file"
                         accept="image/*"
                         className={styles.hiddenInput}
-                        onChange={event => void handleBackgroundImageSelect(event)}
+                        onChange={handleBackgroundImageChange}
                     />
+
                     <div className={styles.inlineRow}>
                         <button type="button" onClick={pickBackgroundImage}>
                             {t(locale, 'chooseBackgroundImage')}
                         </button>
+
                         {settings.customBackgroundImage ? (
-                            <button type="button" className={styles.dangerButton} onClick={() => void removeBackgroundImage()}>
+                            <button type="button" className={styles.dangerButton} onClick={handleRemoveBackgroundImageClick}>
                                 {t(locale, 'removeBackgroundImage')}
                             </button>
                         ) : null}
                     </div>
+
                     <small className={styles.hint}>{t(locale, 'backgroundImageHint')}</small>
+
                     {settings.customBackgroundImage ? (
                         <div className={styles.backgroundPreview} role="img" aria-label={t(locale, 'backgroundImage')}>
                             <img src={settings.customBackgroundImage} alt="" />
                         </div>
                     ) : null}
+
                     {settings.customBackgroundImage ? (
                         <div className={styles.field}>
                             <label className={styles.scrimField} htmlFor="background-scrim">
                                 <span className={styles.scrimLabel}>
                                     {t(locale, 'backgroundScrim')}: {settings.backgroundScrimOpacity}%
                                 </span>
+
                                 <input
                                     id="background-scrim"
                                     className={styles.scrimRange}
@@ -163,15 +221,17 @@ export function AppearanceSettingsSection() {
                                     max={100}
                                     step={1}
                                     value={settings.backgroundScrimOpacity}
-                                    onChange={event => void setBackgroundScrimOpacity(Number(event.target.value))}
+                                    onChange={handleBackgroundScrimChange}
                                     aria-valuemin={0}
                                     aria-valuemax={100}
                                     aria-valuenow={settings.backgroundScrimOpacity}
                                 />
                             </label>
+
                             <small className={styles.hint}>{t(locale, 'backgroundScrimHint')}</small>
                         </div>
                     ) : null}
+
                     <ActionStatus
                         status={backgroundStatus.status}
                         message={backgroundStatus.message}
@@ -179,19 +239,20 @@ export function AppearanceSettingsSection() {
                     />
                 </div>
 
-                {TEXT_COLOR_FIELDS.map(field => (
+                {textColorFields.map(field => (
                     <TextColorField
                         key={field.key}
-                        label={t(locale, field.labelKey)}
-                        value={textColorDrafts[field.key]}
-                        placeholder={THEME_TEXT_COLORS[theme][field.key]}
-                        swatches={getTextColorSwatches(theme, field.key)}
-                        onChange={(value, commit) => handleTextColorInput(field.key, value, commit)}
+                        label={field.label}
+                        value={field.value}
+                        pickerValue={field.pickerValue}
+                        placeholder={field.placeholder}
+                        swatches={field.swatches}
+                        onChange={field.onChange}
                     />
                 ))}
 
                 <div className={styles.field}>
-                    <button type="button" onClick={() => void resetTextColors()}>
+                    <button type="button" onClick={handleResetTextColorsClick}>
                         {t(locale, 'resetTextColors')}
                     </button>
                 </div>
