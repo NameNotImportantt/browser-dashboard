@@ -1,0 +1,114 @@
+.workspaceItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover,
+  &.isHovered {
+    z-index: 3;
+  }
+
+  .separator {
+    color: var(--text-muted);
+    margin: 0 0.15rem;
+    font-size: 0.75rem;
+    transition: opacity 0.18s ease;
+
+    &.separatorHidden {
+      opacity: 0;
+    }
+  }
+
+  .workspaceControl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.18rem;
+
+    .workspaceButton {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.1rem 0.35rem;
+      line-height: 1.2;
+      box-shadow: none;
+
+      &:hover {
+        color: var(--text-soft);
+        transform: none;
+        box-shadow: none;
+      }
+
+      &.isActive {
+        color: var(--text);
+      }
+    }
+
+    .workspaceInput {
+      width: 8rem;
+      padding: 0.22rem 0.45rem;
+      font-size: 0.78rem;
+      line-height: 1.2;
+
+      &.isInvalid {
+        border-color: var(--danger);
+      }
+    }
+
+    .workspaceActions {
+      display: inline-flex;
+      gap: 0.22rem;
+      opacity: 0;
+      pointer-events: none;
+      max-width: 0;
+      overflow: hidden;
+      transform: translateX(-0.18rem);
+      transition: opacity 0.18s ease, max-width 0.18s ease, transform 0.18s ease;
+
+      &.isVisible {
+        opacity: 1;
+        max-width: 2.4rem;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .workspaceActionButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1rem;
+        height: 1rem;
+        border: none;
+        border-radius: 999px;
+        background: var(--surface-strong);
+        color: var(--text-muted);
+        padding: 0;
+        box-shadow: none;
+
+        &:hover {
+          transform: none;
+          box-shadow: none;
+          color: var(--text);
+        }
+      }
+
+      .removeButton {
+        &:hover {
+          color: var(--danger);
+        }
+      }
+    }
+  }
+
+  .workspaceInlineError {
+    position: absolute;
+    top: calc(100% + 0.16rem);
+    right: 0;
+    color: var(--danger);
+    font-size: 0.74rem;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+}

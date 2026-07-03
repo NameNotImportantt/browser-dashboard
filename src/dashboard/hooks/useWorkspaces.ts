@@ -11,6 +11,7 @@ export function useWorkspaces() {
         useShallow(dashboardStore => ({
             selectWorkspace: dashboardStore.selectWorkspace,
             addWorkspace: dashboardStore.addWorkspace,
+            renameWorkspace: dashboardStore.renameWorkspace,
             deleteWorkspace: dashboardStore.deleteWorkspace,
         })),
     );

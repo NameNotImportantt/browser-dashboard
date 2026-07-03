@@ -14,6 +14,10 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
         await repository.addWorkspace(name, getWorkspaces(get()));
         await get().refresh();
     },
+    renameWorkspace: async (workspaceId, name) => {
+        await repository.renameWorkspace(workspaceId, name);
+        await get().refresh();
+    },
     deleteWorkspace: async workspaceId => {
         const dashboardStore = get();
         const snapshot = dashboardStore.snapshot;

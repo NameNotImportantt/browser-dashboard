@@ -26,6 +26,18 @@ export async function addWorkspace(name: string, workspaces: Workspace[]) {
     await patchSettings({lastWorkspaceId: id});
 }
 
+export async function renameWorkspace(workspaceId: string, name: string) {
+    const value = name.trim();
+
+    if (!value) {return;}
+
+    const workspace = await db.workspaces.get(workspaceId);
+
+    if (!workspace) {return;}
+
+    await db.workspaces.update(workspaceId, {name: value});
+}
+
 export async function deleteWorkspace(workspaceId: string, workspaces: Workspace[]) {
     if (workspaces.length <= 1) {return;}
 
