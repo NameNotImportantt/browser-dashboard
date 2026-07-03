@@ -1,4 +1,5 @@
 import {createContext, useContext} from 'react';
+import type {FieldValidationAriaProps} from '@/components';
 import type {AppLocale, Workspace} from '@/db';
 
 interface WorkspaceBarContextValue {
@@ -6,9 +7,12 @@ interface WorkspaceBarContextValue {
     canDeleteWorkspaces: boolean;
     editingWorkspaceId: string | null;
     hoveredWorkspaceId: string | null;
+    isRenameInvalid: boolean;
     locale: AppLocale;
+    renameErrorMessage: string | null;
+    renameInputAriaProps: FieldValidationAriaProps;
+    renameMessageId: string;
     renameName: string;
-    workspaceError: string | null;
     onDeleteRequest: (workspaceId: string) => void;
     onHoverChange: (workspaceId: string | null) => void;
     onRenameCancel: () => void;

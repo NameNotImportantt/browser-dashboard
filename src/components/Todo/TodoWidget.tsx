@@ -1,5 +1,6 @@
-import {useMemo, useState, type FormEvent} from 'react';
+import {useMemo, useState, type ChangeEvent, type FormEvent} from 'react';
 import clsx from 'clsx';
+import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useTodos} from '@/dashboard';
 import {t} from '@/i18n';
@@ -14,10 +15,10 @@ export function TodoWidget() {
     const {todos, addTodo, toggleTodo, deleteTodo, reorderTodos} = useTodos();
     const {locale} = useSettings();
     const [title, setTitle] = useState('');
-    const [todoError, setTodoError] = useState<string | null>(null);
     const [priority, setPriority] = useState<TodoPriority>('medium');
     const [dueDate, setDueDate] = useState('');
     const [draggedId, setDraggedId] = useState<string | null>(null);
+    const titleValidation = useFieldValidation();
 
     const priorityOptions = useMemo(
         () => [
@@ -45,26 +46,9 @@ export function TodoWidget() {
 
     const todoWidgetClassName = clsx('card', styles.todoWidget);
     const todoListClassName = clsx(styles.widgetList, styles.todoList);
+    const titleInputClassName = clsx(styles.inputField, titleValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
     const isEmptyTodoList = todos.length === 0;
     const emptyMessage = isEmptyTodoList ? t(locale, 'todoEmpty') : t(locale, 'todoFilteredEmpty');
-
-    const submit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        if (!title.trim()) {
-            setTodoError(t(locale, 'todoTitleRequired'));
-            return;
-        }
-
-        await addTodo({
-            title,
-            priority,
-            dueDate: dueDate || null,
-        });
-        setTitle('');
-        setDueDate('');
-        setTodoError(null);
-    };
 
     const dropOn = async (targetId: string) => {
         if (!draggedId || draggedId === targetId) {return;}
@@ -81,6 +65,54 @@ export function TodoWidget() {
         await reorderTodos(orderedTodoIds);
     };
 
+    const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.target.value);
+        titleValidation.clearError();
+    };
+
+    const handlePriorityChange = (value: string) => {
+        setPriority(value as TodoPriority);
+    };
+
+    const handleDueDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setDueDate(event.target.value);
+    };
+
+    const handleTodoToggle = (todoId: string) => {
+        void toggleTodo(todoId);
+    };
+
+    const handleTodoDelete = (todoId: string) => {
+        void deleteTodo(todoId);
+    };
+
+    const handleTodoDragStart = (todoId: string) => {
+        setDraggedId(todoId);
+    };
+
+    const handleTodoDrop = (todoId: string) => {
+        void dropOn(todoId);
+    };
+
+    const submit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (!title.trim()) {
+            titleValidation.markSubmitted();
+            titleValidation.setError(t(locale, 'todoTitleRequired'));
+            return;
+        }
+
+        await addTodo({
+            title,
+            priority,
+            dueDate: dueDate || null,
+        });
+        setTitle('');
+        setDueDate('');
+        titleValidation.reset();
+    };
+
     return (
         <section className={todoWidgetClassName}>
             <header className={styles.widgetHeader}>
@@ -89,34 +121,41 @@ export function TodoWidget() {
 
             <form className={styles.stackForm} onSubmit={submit}>
                 <input
-                    className={styles.inputField}
+                    className={titleInputClassName}
                     value={title}
-                    onChange={event => {
-                        setTitle(event.target.value);
-                        setTodoError(null);
-                    }}
+                    onChange={handleTitleChange}
                     placeholder={t(locale, 'todoNewPlaceholder')}
+                    aria-label={t(locale, 'todoNewPlaceholder')}
+                    {...titleValidation.getAriaProps()}
                 />
+
                 <div className={styles.inlineRow}>
                     <Select
                         className={styles.inlineRowField}
                         value={priority}
                         options={priorityOptions}
-                        onChange={value => setPriority(value as TodoPriority)}
+                        onChange={handlePriorityChange}
                         ariaLabel={t(locale, 'todoPriority')}
                     />
+
                     <input
                         className={styles.inlineRowField}
                         type="date"
                         value={dueDate}
-                        onChange={event => setDueDate(event.target.value)}
+                        onChange={handleDueDateChange}
                         aria-label={t(locale, 'todoDueDateAriaLabel')}
                     />
                 </div>
+
                 <button className="primary" type="submit">
                     {t(locale, 'todoAdd')}
                 </button>
-                {todoError ? <small className={styles.formError}>{todoError}</small> : null}
+
+                <FieldValidationMessage
+                    className={styles.formError}
+                    id={titleValidation.messageId}
+                    message={titleValidation.showError ? titleValidation.validation.error : null}
+                />
             </form>
 
             <TodoFilters
@@ -138,16 +177,10 @@ export function TodoWidget() {
                         key={todo.id}
                         todo={todo}
                         locale={locale}
-                        onToggle={todoId => {
-                            void toggleTodo(todoId);
-                        }}
-                        onDelete={todoId => {
-                            void deleteTodo(todoId);
-                        }}
-                        onDragStart={todoId => setDraggedId(todoId)}
-                        onDrop={todoId => {
-                            void dropOn(todoId);
-                        }}
+                        onToggle={handleTodoToggle}
+                        onDelete={handleTodoDelete}
+                        onDragStart={handleTodoDragStart}
+                        onDrop={handleTodoDrop}
                     />
                 )) : <li className={styles.emptyState}>{emptyMessage}</li>}
             </ul>

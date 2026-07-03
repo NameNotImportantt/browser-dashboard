@@ -1,5 +1,6 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
+import {useFieldValidation} from '@/components';
 import {Modal} from '@/components/Modal';
 import {useSettings, useWorkspaces} from '@/dashboard';
 import {t} from '@/i18n';
@@ -22,7 +23,8 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
     const [name, setName] = useState('');
     const [pendingDeleteWorkspaceId, setPendingDeleteWorkspaceId] = useState<string | null>(null);
     const [renameName, setRenameName] = useState('');
-    const [workspaceError, setWorkspaceError] = useState<string | null>(null);
+    const addWorkspaceValidation = useFieldValidation();
+    const renameWorkspaceValidation = useFieldValidation();
 
     const trailingSeparatorClassName = clsx(styles.separator, {
         [styles.separatorHidden]: hoveredWorkspaceId === workspaces[workspaces.length - 1]?.id,
@@ -31,24 +33,25 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
     const canDeleteWorkspaces = workspaces.length > 1;
     const pendingDeleteWorkspace = workspaces.find(workspace => workspace.id === pendingDeleteWorkspaceId) ?? null;
 
-    const resetWorkspaceError = () => {
-        setWorkspaceError(null);
+    const resetAllWorkspaceValidation = () => {
+        addWorkspaceValidation.reset();
+        renameWorkspaceValidation.reset();
     };
 
     const cancelRenameWorkspace = () => {
         setEditingWorkspaceId(null);
         setRenameName('');
-        setWorkspaceError(null);
+        renameWorkspaceValidation.reset();
     };
 
     const handleAddWorkspaceNameChange = (value: string) => {
         setName(value);
-        resetWorkspaceError();
+        addWorkspaceValidation.clearError();
     };
 
     const handleAddWorkspaceCancel = () => {
         setIsAdding(false);
-        resetWorkspaceError();
+        addWorkspaceValidation.reset();
     };
 
     const handleAddWorkspaceSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -57,13 +60,14 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
         const value = name.trim();
 
         if (!value) {
-            setWorkspaceError(t(locale, 'workspaceNameRequired'));
+            addWorkspaceValidation.markSubmitted();
+            addWorkspaceValidation.setError(t(locale, 'workspaceNameRequired'));
             return;
         }
 
         await addWorkspace(value);
         setName('');
-        setWorkspaceError(null);
+        addWorkspaceValidation.reset();
         setIsAdding(false);
     };
 
@@ -78,21 +82,22 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
     const handleRenameWorkspaceStart = (workspace: Workspace) => {
         setEditingWorkspaceId(workspace.id);
         setRenameName(workspace.name);
-        setWorkspaceError(null);
+        renameWorkspaceValidation.reset();
         setIsAdding(false);
         setPendingDeleteWorkspaceId(null);
     };
 
     const handleRenameWorkspaceNameChange = (value: string) => {
         setRenameName(value);
-        resetWorkspaceError();
+        renameWorkspaceValidation.clearError();
     };
 
     const handleRenameWorkspaceCommit = async (workspace: Workspace) => {
         const value = renameName.trim();
 
         if (!value) {
-            setWorkspaceError(t(locale, 'workspaceNameRequired'));
+            renameWorkspaceValidation.markSubmitted();
+            renameWorkspaceValidation.setError(t(locale, 'workspaceNameRequired'));
             return;
         }
 
@@ -130,7 +135,8 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
         setIsAdding(true);
         setEditingWorkspaceId(null);
         setPendingDeleteWorkspaceId(null);
-        setWorkspaceError(null);
+        addWorkspaceValidation.reset();
+        renameWorkspaceValidation.reset();
     };
 
     useEffect(() => {
@@ -138,8 +144,9 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
         setHoveredWorkspaceId(null);
         setIsAdding(false);
         setPendingDeleteWorkspaceId(null);
+        setName('');
         setRenameName('');
-        setWorkspaceError(null);
+        resetAllWorkspaceValidation();
     }, [dismissRequestId]);
 
     useEffect(() => {
@@ -157,9 +164,12 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
         canDeleteWorkspaces,
         editingWorkspaceId,
         hoveredWorkspaceId,
+        isRenameInvalid: renameWorkspaceValidation.isInvalid,
         locale,
+        renameErrorMessage: renameWorkspaceValidation.showError ? renameWorkspaceValidation.validation.error : null,
+        renameInputAriaProps: renameWorkspaceValidation.getAriaProps(),
+        renameMessageId: renameWorkspaceValidation.messageId,
         renameName,
-        workspaceError,
         onDeleteRequest: handleDeleteWorkspaceRequest,
         onHoverChange: handleWorkspaceHover,
         onRenameCancel: cancelRenameWorkspace,
@@ -187,8 +197,11 @@ export function WorkspaceBar({dismissRequestId = 0}: WorkspaceBarProps) {
 
                     {isAdding ? (
                         <AddWorkspaceForm
-                            error={workspaceError}
+                            errorMessage={addWorkspaceValidation.showError ? addWorkspaceValidation.validation.error : null}
+                            inputAriaProps={addWorkspaceValidation.getAriaProps()}
+                            isInvalid={addWorkspaceValidation.isInvalid}
                             locale={locale}
+                            messageId={addWorkspaceValidation.messageId}
                             name={name}
                             onCancel={handleAddWorkspaceCancel}
                             onNameChange={handleAddWorkspaceNameChange}

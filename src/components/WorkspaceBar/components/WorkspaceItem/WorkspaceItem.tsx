@@ -1,6 +1,7 @@
 import {useRef, type ChangeEvent, type KeyboardEvent} from 'react';
 import clsx from 'clsx';
 import {Pencil} from 'lucide-react';
+import {FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {t} from '@/i18n';
 import {useWorkspaceBarContext} from '../../WorkspaceBarContext';
 import styles from './WorkspaceItem.module.scss';
@@ -17,9 +18,12 @@ export function WorkspaceItem({previousWorkspaceId, workspace}: WorkspaceItemPro
         canDeleteWorkspaces,
         editingWorkspaceId,
         hoveredWorkspaceId,
+        isRenameInvalid,
         locale,
+        renameErrorMessage,
+        renameInputAriaProps,
+        renameMessageId,
         renameName,
-        workspaceError,
         onDeleteRequest,
         onHoverChange,
         onRenameCancel,
@@ -33,15 +37,17 @@ export function WorkspaceItem({previousWorkspaceId, workspace}: WorkspaceItemPro
     const isActive = workspace.id === activeWorkspaceId;
     const isEditing = workspace.id === editingWorkspaceId;
     const isHovered = hoveredWorkspaceId === workspace.id;
-    const renameError = isEditing ? workspaceError : null;
     const showSeparator = previousWorkspaceId !== null;
     const separatorHidden = showSeparator && (isHovered || hoveredWorkspaceId === previousWorkspaceId);
-    const inlineErrorId = `${workspace.id}-rename-error`;
     const workspaceItemClassName = clsx(styles.workspaceItem, {[styles.isHovered]: isHovered});
     const separatorClassName = clsx(styles.separator, {[styles.separatorHidden]: separatorHidden});
     const workspaceButtonClassName = clsx(styles.workspaceButton, {[styles.isActive]: isActive});
     const workspaceActionsClassName = clsx(styles.workspaceActions, {[styles.isVisible]: isHovered});
-    const workspaceInputClassName = clsx(styles.workspaceInput, {[styles.isInvalid]: renameError !== null});
+
+    const workspaceInputClassName = clsx(
+        styles.workspaceInput,
+        isRenameInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
 
     const handleMouseEnter = () => {
         onHoverChange(workspace.id);
@@ -128,8 +134,7 @@ export function WorkspaceItem({previousWorkspaceId, workspace}: WorkspaceItemPro
                         onBlur={handleRenameBlurEvent}
                         onKeyDown={handleRenameKeyDownEvent}
                         aria-label={t(locale, 'workspaceNameAriaLabel')}
-                        aria-describedby={renameError ? inlineErrorId : undefined}
-                        aria-invalid={renameError ? 'true' : undefined}
+                        {...renameInputAriaProps}
                         autoFocus
                     />
                 ) : (
@@ -168,10 +173,12 @@ export function WorkspaceItem({previousWorkspaceId, workspace}: WorkspaceItemPro
                 ) : null}
             </span>
 
-            {isEditing && renameError ? (
-                <small className={styles.workspaceInlineError} id={inlineErrorId}>
-                    {renameError}
-                </small>
+            {isEditing ? (
+                <FieldValidationMessage
+                    className={styles.workspaceInlineError}
+                    id={renameMessageId}
+                    message={renameErrorMessage}
+                />
             ) : null}
         </span>
     );
