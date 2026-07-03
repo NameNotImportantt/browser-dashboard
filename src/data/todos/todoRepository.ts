@@ -1,5 +1,5 @@
-import {createId} from '@/app';
 import {db} from '@/db';
+import {createId} from '@/lib';
 import type {CreateTodoPayload, TodoItem} from '@/db';
 
 export async function addTodo(payload: CreateTodoPayload, activeWorkspaceId: string | null, position: number) {

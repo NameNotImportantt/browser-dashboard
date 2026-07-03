@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {normalizeHexColor} from '@/app';
+import {normalizeHexColor} from '@/theme';
 import styles from './TextColorField.module.scss';
 
 export interface TextColorFieldProps {

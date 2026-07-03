@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {t} from '@/app';
 import {useSettings, useUndo} from '@/dashboard';
+import {t} from '@/i18n';
 import {UndoActionKind} from '@/store/types/undoActionKind';
 import styles from './UndoSnackbar.module.scss';
 

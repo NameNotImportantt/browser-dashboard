@@ -1,5 +1,5 @@
-import {createId} from '@/app';
 import {db, type Note, type NoteDraft, type NotePatch} from '@/db';
+import {createId} from '@/lib';
 
 function getNextNotePosition(notes: Note[]) {
     if (notes.length === 0) {

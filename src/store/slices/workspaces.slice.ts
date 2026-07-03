@@ -1,4 +1,4 @@
-import * as repository from '@/data/workspaceRepository';
+import * as repository from '@/data/workspaces/workspaceRepository';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type WorkspacesSlice} from '../types';
 
 function getWorkspaces(dashboardStore: DashboardStore) {

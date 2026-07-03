@@ -1,8 +1,9 @@
 import {useEffect, useRef} from 'react';
 import clsx from 'clsx';
 import {CircleHelp} from 'lucide-react';
-import {KEYBOARD_SHORTCUTS, t} from '@/app';
+import {KEYBOARD_SHORTCUTS} from '@/app';
 import {screenMenuStyles} from '@/components';
+import {t} from '@/i18n';
 import styles from './KeyboardHelpAction.module.scss';
 import type {AppLocale} from '@/db';
 

@@ -1,8 +1,9 @@
 import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
-import {getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT, t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
+import {t} from '@/i18n';
+import {getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT} from '@/search';
 import settingsStyles from '../../../../SettingsPanel.module.scss';
 import styles from './AddSearchEngineControls.module.scss';
 import type {AppLocale, AppSettings} from '@/db';

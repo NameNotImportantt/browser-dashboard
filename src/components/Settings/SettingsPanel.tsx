@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import {t} from '@/app';
 import {useSettings} from '@/dashboard';
+import {t} from '@/i18n';
 import {AboutSettingsSection} from './components/AboutSettingsSection';
 import {AppearanceSettingsSection} from './components/AppearanceSettingsSection';
 import {DateTimeSettingsSection} from './components/DateTimeSettingsSection';

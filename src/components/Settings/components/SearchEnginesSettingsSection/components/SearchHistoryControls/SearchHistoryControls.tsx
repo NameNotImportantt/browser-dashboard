@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
 import {Modal} from '@/components/Modal';
+import {t} from '@/i18n';
 import settingsStyles from '../../../../SettingsPanel.module.scss';
 import styles from './SearchHistoryControls.module.scss';
 import type {AppLocale, SearchHistoryEntry} from '@/db';

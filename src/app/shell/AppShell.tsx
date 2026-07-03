@@ -1,9 +1,9 @@
 import {useEffect} from 'react';
 import {Loader, UndoSnackbar} from '@/components';
 import {useDashboardCore, useDashboardShellEffects, useSettings} from '@/dashboard';
+import {t} from '@/i18n';
 import {HomePage} from '@/pages';
 import styles from './AppShell.module.scss';
-import {t} from './i18n';
 
 export function AppShell() {
     const {loading, error, init, refresh} = useDashboardCore();

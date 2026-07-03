@@ -1,11 +1,8 @@
-import {
-    createId,
-    DEFAULT_SETTINGS,
-    isValidSearchUrlTemplate,
-    mergeSettings,
-    prepareBackgroundImageDataUrl,
-} from '@/app';
 import {db} from '@/db';
+import {createId} from '@/lib';
+import {isValidSearchUrlTemplate} from '@/search';
+import {prepareBackgroundImageDataUrl} from './lib/backgroundImage';
+import {DEFAULT_SETTINGS, mergeSettings} from './lib/defaultSettings';
 import type {
     AppLocale,
     AppSettings,

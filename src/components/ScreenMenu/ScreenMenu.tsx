@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {Settings} from 'lucide-react';
-import {t} from '@/app';
+import {t} from '@/i18n';
 import {SCREENS} from './constants';
 import styles from './ScreenMenu.module.scss';
 import type {AppLocale} from '@/db';

@@ -1,6 +1,6 @@
 import {Search} from 'lucide-react';
-import {t} from '@/app';
 import {useSearchHistory, useSettings} from '@/dashboard';
+import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import {AddSearchEngineControls, SearchHistoryControls} from './components';

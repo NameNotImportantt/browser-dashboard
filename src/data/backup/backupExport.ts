@@ -1,4 +1,4 @@
-import {setLastBackupExportedAt} from '../settingsRepository';
+import {setLastBackupExportedAt} from '../settings/settingsRepository';
 import {loadSnapshot} from '../snapshot';
 import {
     BACKUP_APP_NAME,

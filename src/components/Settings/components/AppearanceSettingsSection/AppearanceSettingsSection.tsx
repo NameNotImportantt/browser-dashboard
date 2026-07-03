@@ -1,17 +1,17 @@
 import {useEffect, useRef, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
 import {Palette} from 'lucide-react';
+import {ActionStatus} from '@/components';
+import {useSettings} from '@/dashboard';
+import {BackgroundImageError} from '@/data/settings';
+import {useActionStatus} from '@/hooks/useActionStatus';
+import {t} from '@/i18n';
 import {
-    BackgroundImageError,
     getTextColorSwatches,
     normalizeHexColor,
     resolveTextColor,
-    t,
     THEME_TEXT_COLORS,
-} from '@/app';
-import {ActionStatus} from '@/components';
-import {useSettings} from '@/dashboard';
-import {useActionStatus} from '@/hooks/useActionStatus';
+} from '@/theme';
 import {TEXT_COLOR_FIELDS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';

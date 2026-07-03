@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {FileText, X} from 'lucide-react';
-import {t} from '@/app';
+import {t} from '@/i18n';
 import {getNotePreview, getNoteTitle} from '../../utils/notePresentation';
 import styles from './NotesListItem.module.scss';
 import type {AppLocale, Note} from '@/db';

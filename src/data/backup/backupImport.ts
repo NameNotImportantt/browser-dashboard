@@ -1,4 +1,4 @@
-import {mergeSettings} from '@/app';
+import {mergeSettings} from '@/data/settings';
 import {db, type Note} from '@/db';
 import {
     BACKUP_SCHEMA_VERSION,

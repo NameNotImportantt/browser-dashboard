@@ -1,6 +1,7 @@
-import {createId, mergeSettings} from '@/app';
+import {mergeSettings} from '@/data/settings';
 import {db} from '@/db';
-import {patchSettings} from './settingsRepository';
+import {createId} from '@/lib';
+import {patchSettings} from '../settings/settingsRepository';
 import type {Bookmark, BookmarkCategory, Habit, Note, TodoItem, Workspace} from '@/db';
 
 export async function selectWorkspace(workspaceId: string) {

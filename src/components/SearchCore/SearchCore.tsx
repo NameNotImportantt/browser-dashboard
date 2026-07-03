@@ -10,17 +10,16 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import {Clock, Globe, Search} from 'lucide-react';
-import {
-    buildSearchUrl,
-    getLocalSearchSuggestions,
-    getSearchEngineOptions,
-    loadSearchSuggestions,
-    t,
-    type SearchSuggestion,
-} from '@/app';
 import {Select} from '@/components/Select';
 import {useSearchHistory, useSettings} from '@/dashboard';
+import {t} from '@/i18n';
+import {buildSearchUrl, getSearchEngineOptions} from '@/search';
 import {SUGGESTION_DEBOUNCE_MS} from './constants';
+import {
+    getLocalSearchSuggestions,
+    loadSearchSuggestions,
+    type SearchSuggestion,
+} from './lib/searchSuggestions';
 import styles from './SearchCore.module.scss';
 import type {AppLocale} from '@/db';
 

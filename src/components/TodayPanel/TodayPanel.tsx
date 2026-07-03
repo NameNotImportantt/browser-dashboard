@@ -1,8 +1,10 @@
 import {useMemo} from 'react';
 import clsx from 'clsx';
 import {AlertCircle, ArrowDown, Minus} from 'lucide-react';
-import {getHabitStreak, t, todayKey} from '@/app';
 import {useHabits, useSettings, useTodos} from '@/dashboard';
+import {getHabitStreak} from '@/data/habits';
+import {t} from '@/i18n';
+import {todayKey} from '@/lib';
 import styles from './TodayPanel.module.scss';
 import type {AppLocale, TodoPriority} from '@/db';
 

@@ -1,5 +1,5 @@
-import {createId, todayKey} from '@/app';
 import {db} from '@/db';
+import {createId, todayKey} from '@/lib';
 
 export async function addHabit(title: string, activeWorkspaceId: string | null, position: number) {
     if (!activeWorkspaceId) {return;}

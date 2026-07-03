@@ -1,8 +1,8 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {t} from '@/app';
 import {Modal} from '@/components/Modal';
 import {useSettings, useWorkspaces} from '@/dashboard';
+import {t} from '@/i18n';
 import {AddWorkspaceForm} from './components/AddWorkspaceForm/AddWorkspaceForm';
 import {WorkspaceItem} from './components/WorkspaceItem/WorkspaceItem';
 import styles from './WorkspaceBar.module.scss';

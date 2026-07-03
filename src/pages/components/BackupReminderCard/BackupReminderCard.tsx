@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import {t} from '@/app';
 import {useBackupActions, useSettings} from '@/dashboard';
+import {t} from '@/i18n';
 import styles from './BackupReminderCard.module.scss';
 
 interface BackupReminderCardProps {

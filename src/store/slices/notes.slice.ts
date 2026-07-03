@@ -1,4 +1,4 @@
-import * as repository from '@/data/noteRepository';
+import * as repository from '@/data/notes/noteRepository';
 import type {DashboardStore, NotesSlice, SliceCreator} from '../types';
 import type {NoteDraft} from '@/db';
 

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {t} from '@/app';
+import {t} from '@/i18n';
 import {MONDAY_FIRST_WEEKDAY_ORDER, WEEKDAY_ORDER_BY_LOCALE} from './constants';
 import styles from './HabitMonthCalendar.module.scss';
 import type {AppLocale} from '@/db';

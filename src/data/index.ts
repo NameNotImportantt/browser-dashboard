@@ -1,19 +1,19 @@
-export * from './backupRepository';
+export * from './backup/backupRepository';
 
-export * from './bookmarkRepository';
+export * from './bookmarks';
 
-export * from './habitRepository';
+export * from './habits';
 
-export * from './noteRepository';
+export * from './notes/noteRepository';
 
-export * from './searchHistoryRepository';
+export * from './searchHistory';
 
-export * from './settingsRepository';
+export * from './settings';
 
 export * from './snapshot';
 
-export * from './todoRepository';
+export * from './todos/todoRepository';
 
-export * from './weatherService';
+export * from './weather';
 
-export * from './workspaceRepository';
+export * from './workspaces/workspaceRepository';

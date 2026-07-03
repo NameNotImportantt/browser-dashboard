@@ -1,7 +1,7 @@
 import {useRef, type ChangeEvent, type KeyboardEvent} from 'react';
 import clsx from 'clsx';
 import {Pencil} from 'lucide-react';
-import {t} from '@/app';
+import {t} from '@/i18n';
 import {useWorkspaceBarContext} from '../../WorkspaceBarContext';
 import styles from './WorkspaceItem.module.scss';
 import type {Workspace} from '@/db';

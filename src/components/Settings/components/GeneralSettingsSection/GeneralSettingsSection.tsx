@@ -1,11 +1,11 @@
 import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
-import {t} from '@/app';
 import {ActionStatus} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
 import {useActionStatus} from '@/hooks/useActionStatus';
+import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 

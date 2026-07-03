@@ -1,4 +1,4 @@
-import * as repository from '@/data/weatherService';
+import * as repository from '@/data/weather/weatherService';
 import type {SliceCreator, WeatherSlice} from '../types';
 
 export const createWeatherSlice: SliceCreator<WeatherSlice> = (_set, get) => ({

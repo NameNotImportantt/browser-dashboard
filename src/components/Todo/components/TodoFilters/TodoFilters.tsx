@@ -1,5 +1,5 @@
-import {t} from '@/app';
 import {Select, type SelectOption} from '@/components/Select';
+import {t} from '@/i18n';
 import styles from './TodoFilters.module.scss';
 import type {TodoDateFilter} from '../../const/todoDateFilters';
 import type {TodoPriorityFilter} from '../../const/todoPriorityFilters';

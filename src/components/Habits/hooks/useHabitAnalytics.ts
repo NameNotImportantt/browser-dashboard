@@ -1,5 +1,6 @@
 import {useMemo} from 'react';
-import {getHabitStreak, todayKey} from '@/app';
+import {getHabitStreak} from '@/data/habits';
+import {todayKey} from '@/lib';
 import type {Habit} from '@/db';
 
 interface HabitMonthDay {

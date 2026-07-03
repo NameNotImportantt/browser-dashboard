@@ -1,5 +1,6 @@
-import {createId, DEFAULT_SETTINGS, mergeSettings} from '@/app';
+import {DEFAULT_SETTINGS, mergeSettings} from '@/data/settings';
 import {db} from '@/db';
+import {createId} from '@/lib';
 import type {
     AppSettings,
     Bookmark,

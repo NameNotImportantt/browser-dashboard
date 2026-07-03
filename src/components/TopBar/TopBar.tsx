@@ -1,6 +1,7 @@
-import {t, weatherCodeToEmoji} from '@/app';
 import {useSettings, useWeather} from '@/dashboard';
 import {useClock} from '@/hooks';
+import {t} from '@/i18n';
+import {weatherCodeToEmoji} from './lib/weatherCodeToEmoji';
 import styles from './TopBar.module.scss';
 
 export function TopBar() {

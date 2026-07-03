@@ -1,4 +1,4 @@
-import * as repository from '@/data/habitRepository';
+import * as repository from '@/data/habits/habitRepository';
 import type {DashboardStore, HabitsSlice, SliceCreator} from '../types';
 
 function getWorkspaceHabits(dashboardStore: DashboardStore) {

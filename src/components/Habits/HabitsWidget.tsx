@@ -1,7 +1,8 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {t, todayKey} from '@/app';
 import {useHabits, useSettings} from '@/dashboard';
+import {t} from '@/i18n';
+import {todayKey} from '@/lib';
 import {HabitMonthCalendar} from './components/HabitMonthCalendar';
 import styles from './HabitsWidget.module.scss';
 import {useHabitAnalytics} from './hooks/useHabitAnalytics';

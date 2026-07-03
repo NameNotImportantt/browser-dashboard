@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
-import {DEFAULT_TAB_TITLE, WEATHER_CACHE_TTL_MS} from '@/app';
-import {applyCustomTextColors} from '@/app/themeTextColors';
+import {DEFAULT_TAB_TITLE} from '@/data/settings';
+import {WEATHER_CACHE_TTL_MS} from '@/data/weather';
+import {applyCustomTextColors} from '@/theme';
 import {useDashboardCore} from './useDashboardCore';
 import {useSettings} from './useSettings';
 import {useWeather} from './useWeather';

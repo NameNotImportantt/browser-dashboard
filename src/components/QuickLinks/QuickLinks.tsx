@@ -1,10 +1,11 @@
 import {Fragment, useEffect, useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
 import {Link, RefreshCw} from 'lucide-react';
-import {normalizeUrl, t} from '@/app';
 import {ActionStatus} from '@/components';
 import {useBookmarks, useSettings} from '@/dashboard';
+import {normalizeUrl} from '@/data/bookmarks';
 import {useActionStatus} from '@/hooks/useActionStatus';
+import {t} from '@/i18n';
 import styles from './QuickLinks.module.scss';
 
 type CategoryFilter = 'all' | string;

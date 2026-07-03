@@ -1,4 +1,4 @@
-import * as repository from '@/data/settingsRepository';
+import * as repository from '@/data/settings/settingsRepository';
 import type {SettingsSlice, SliceCreator} from '../types';
 import type {AppSettings} from '@/db';
 

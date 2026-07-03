@@ -1,4 +1,4 @@
-import type {MessageKey} from '@/app/i18n';
+import type {MessageKey} from '@/i18n';
 
 interface AboutLinkDefinition {
     href: string;

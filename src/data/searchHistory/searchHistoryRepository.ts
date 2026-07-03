@@ -1,5 +1,6 @@
-import {createId, SEARCH_HISTORY_LIMIT} from '@/app';
 import {db} from '@/db';
+import {createId} from '@/lib';
+import {SEARCH_HISTORY_LIMIT} from './constants';
 import type {SearchHistoryEntry} from '@/db';
 
 export async function addSearchHistoryEntry(query: string) {

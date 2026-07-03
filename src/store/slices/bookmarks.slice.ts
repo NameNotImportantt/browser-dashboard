@@ -1,5 +1,5 @@
-import {DEFAULT_SETTINGS} from '@/app';
-import * as repository from '@/data/bookmarkRepository';
+import * as repository from '@/data/bookmarks/bookmarkRepository';
+import {DEFAULT_SETTINGS} from '@/data/settings';
 import {UndoActionKind, type BookmarksSlice, type DashboardStore, type SliceCreator} from '../types';
 
 function getWorkspaceBookmarks(dashboardStore: DashboardStore) {

@@ -1,11 +1,12 @@
 import {useMemo, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {reorderIds, t} from '@/app';
 import {Select} from '@/components/Select';
 import {useSettings, useTodos} from '@/dashboard';
+import {t} from '@/i18n';
 import {TodoFilters} from './components/TodoFilters/TodoFilters';
 import {TodoListItem} from './components/TodoListItem/TodoListItem';
 import {useTodoFilters} from './hooks/useTodoFilters';
+import {reorderIds} from './lib/reorderIds';
 import styles from './TodoWidget.module.scss';
 import type {TodoPriority} from '@/db';
 

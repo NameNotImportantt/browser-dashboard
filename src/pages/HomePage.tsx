@@ -1,7 +1,6 @@
 import {lazy, memo, Suspense, useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {Moon, Sun} from 'lucide-react';
-import {isBackupReminderOverdue, t} from '@/app';
 import {
     Loader,
     QuickLinks,
@@ -16,6 +15,8 @@ import {
     type ScreenId,
 } from '@/components';
 import {useSettings} from '@/dashboard';
+import {isBackupReminderOverdue} from '@/data/settings';
+import {t} from '@/i18n';
 import {BackupReminderCard} from './components/BackupReminderCard/BackupReminderCard';
 import {KeyboardHelpAction} from './components/KeyboardHelpAction/KeyboardHelpAction';
 import styles from './HomePage.module.scss';

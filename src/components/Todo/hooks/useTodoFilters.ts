@@ -1,5 +1,6 @@
 import {useMemo, useState} from 'react';
-import {t, todayKey} from '@/app';
+import {t} from '@/i18n';
+import {todayKey} from '@/lib';
 import {TODO_DATE_FILTERS, TodoDateFilter} from '../const/todoDateFilters';
 import {TODO_PRIORITY_FILTERS, TodoPriorityFilter} from '../const/todoPriorityFilters';
 import {TODO_STATUS_FILTERS, TodoStatusFilter} from '../const/todoStatusFilters';

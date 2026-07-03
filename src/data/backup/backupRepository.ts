@@ -1,11 +1,15 @@
 export {
     createDashboardBackupDownloadPayload,
     createDashboardBackupEnvelope,
-    DashboardBackupError,
-    importDashboardBackup,
     markDashboardBackupExported,
+} from './backupExport';
+
+export {
+    importDashboardBackup,
     parseDashboardBackupJson,
-} from './backup';
+} from './backupImport';
+
+export {DashboardBackupError} from './backupSchema';
 
 export type {
     DashboardBackupData,
@@ -13,4 +17,4 @@ export type {
     DashboardBackupEnvelope,
     DashboardBackupErrorCode,
     DashboardBackupNote,
-} from './backup';
+} from './backupSchema';

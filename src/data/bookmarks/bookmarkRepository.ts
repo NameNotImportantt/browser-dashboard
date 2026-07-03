@@ -1,5 +1,7 @@
-import {createId, normalizeUrl, resolveBookmarkFaviconUrl} from '@/app';
 import {db} from '@/db';
+import {createId} from '@/lib';
+import {normalizeUrl} from './lib/normalizeUrl';
+import {resolveBookmarkFaviconUrl} from './lib/resolveBookmarkFaviconUrl';
 import type {Bookmark, BookmarkCategory, CreateBookmarkCategoryPayload, CreateBookmarkPayload} from '@/db';
 
 export async function addBookmark(

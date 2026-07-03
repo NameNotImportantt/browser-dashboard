@@ -1,11 +1,12 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {isBackupReminderOverdue, t} from '@/app';
 import {ActionStatus, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
+import {isBackupReminderOverdue} from '@/data/settings';
 import {useActionStatus} from '@/hooks/useActionStatus';
+import {t} from '@/i18n';
 import panelStyles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './BackupSettingsSection.module.scss';

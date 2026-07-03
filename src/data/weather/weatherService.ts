@@ -1,6 +1,8 @@
-import {geocodeCity, mergeSettings, WEATHER_CACHE_TTL_MS} from '@/app';
+import {mergeSettings} from '@/data/settings';
 import {db} from '@/db';
-import {patchSettings} from './settingsRepository';
+import {patchSettings} from '../settings/settingsRepository';
+import {WEATHER_CACHE_TTL_MS} from './constants';
+import {geocodeCity} from './lib/geocodeCity';
 
 export async function refreshWeather(force = false) {
     const currentSettings = mergeSettings(await db.settings.get('app'));

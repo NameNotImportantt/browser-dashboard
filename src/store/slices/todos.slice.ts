@@ -1,4 +1,4 @@
-import * as repository from '@/data/todoRepository';
+import * as repository from '@/data/todos/todoRepository';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type TodosSlice} from '../types';
 
 function getWorkspaceTodos(dashboardStore: DashboardStore) {

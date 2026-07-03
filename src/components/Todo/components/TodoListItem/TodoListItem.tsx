@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import {t} from '@/app';
 import {Checkbox} from '@/components/Checkbox';
+import {t} from '@/i18n';
 import styles from './TodoListItem.module.scss';
 import type {AppLocale, TodoItem, TodoPriority} from '@/db';
 

@@ -1,5 +1,5 @@
 import {useShallow} from 'zustand/react/shallow';
-import {DEFAULT_SETTINGS} from '@/app';
+import {DEFAULT_SETTINGS} from '@/data/settings';
 import {useDashboardStore} from '@/store';
 
 export function useSettings() {

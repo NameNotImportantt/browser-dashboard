@@ -1,6 +1,6 @@
 import type {FormEvent,ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {t} from '@/app';
+import {t} from '@/i18n';
 import styles from './AddWorkspaceForm.module.scss';
 import type {AppLocale} from '@/db';
 

@@ -1,4 +1,4 @@
-import * as repository from '@/data/searchHistoryRepository';
+import * as repository from '@/data/searchHistory/searchHistoryRepository';
 import {UndoActionKind, type SearchHistorySlice, type SliceCreator} from '../types';
 
 export const createSearchHistorySlice: SliceCreator<SearchHistorySlice> = (_set, get) => ({

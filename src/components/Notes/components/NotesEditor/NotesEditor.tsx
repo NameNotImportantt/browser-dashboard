@@ -1,6 +1,6 @@
 import {FileText} from 'lucide-react';
-import {t} from '@/app';
 import {Loader} from '@/components/Loader/Loader';
+import {t} from '@/i18n';
 import styles from './NotesEditor.module.scss';
 import type {AppLocale, Note} from '@/db';
 

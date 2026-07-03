@@ -9,7 +9,6 @@ export interface SearchSuggestion {
 }
 
 const MAX_SUGGESTIONS = 8;
-const SEARCH_HISTORY_LIMIT = 50;
 const JSONP_TIMEOUT_MS = 5000;
 
 type SearchSuggestionsJsonPrimitive = string | number | boolean | null;
@@ -177,5 +176,3 @@ export async function loadSearchSuggestions(
 
     return result.slice(0, MAX_SUGGESTIONS);
 }
-
-export {SEARCH_HISTORY_LIMIT};

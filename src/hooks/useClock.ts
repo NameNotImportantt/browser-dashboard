@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import {formatClockLabels} from '@/app';
+import {formatClockLabels} from './lib/formatClockLabels';
 import type {AppSettings} from '@/db';
 
 type ClockSettings = Pick<AppSettings, 'locale' | 'timeFormat' | 'dateFormat' | 'timezone'>;

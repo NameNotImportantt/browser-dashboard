@@ -1,8 +1,8 @@
-import {createId} from '@/app';
-import * as bookmarkRepository from '@/data/bookmarkRepository';
-import * as searchHistoryRepository from '@/data/searchHistoryRepository';
-import * as todoRepository from '@/data/todoRepository';
-import * as workspaceRepository from '@/data/workspaceRepository';
+import * as bookmarkRepository from '@/data/bookmarks/bookmarkRepository';
+import * as searchHistoryRepository from '@/data/searchHistory/searchHistoryRepository';
+import * as todoRepository from '@/data/todos/todoRepository';
+import * as workspaceRepository from '@/data/workspaces/workspaceRepository';
+import {createId} from '@/lib';
 import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoSlice} from '../types';
 
 const UNDO_TIMEOUT_MS = 6000;
