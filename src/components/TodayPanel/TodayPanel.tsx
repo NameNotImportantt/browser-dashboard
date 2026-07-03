@@ -1,62 +1,87 @@
-import {useMemo} from 'react';
+import {useState} from 'react';
 import clsx from 'clsx';
-import {AlertCircle, ArrowDown, Minus} from 'lucide-react';
-import {useHabits, useSettings, useTodos} from '@/dashboard';
-import {getHabitStreak} from '@/data/habits';
+import {Flame, ListTodo} from 'lucide-react';
+import {Checkbox} from '@/components/Checkbox';
+import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
-import {todayKey} from '@/lib';
+import {TodayHabitRow} from './components/TodayHabitRow/TodayHabitRow';
+import {TodayTaskRow} from './components/TodayTaskRow/TodayTaskRow';
+import {useTodayPanelHabits} from './hooks/useTodayPanelHabits';
+import {useTodayPanelTodos} from './hooks/useTodayPanelTodos';
 import styles from './TodayPanel.module.scss';
-import type {AppLocale, TodoPriority} from '@/db';
 
 export function TodayPanel() {
-    const {todos} = useTodos();
-    const {habits} = useHabits();
     const {locale} = useSettings();
-    const today = todayKey();
+    const [showCompleted, setShowCompleted] = useState(false);
+    const {panelTodos, toggleTodo} = useTodayPanelTodos(showCompleted);
+    const {habitRows, toggleHabitToday} = useTodayPanelHabits();
     const todayPanelClassName = clsx('card', styles.todayPanel);
     const habitsSectionClassName = clsx(styles.section, styles.sectionSeparated);
+    const taskToggleLabel = t(locale, 'todayTasksShowCompleted');
 
-    const activeTodos = useMemo(() => todos.filter(item => !item.completed).slice(0, 5), [todos]);
+    const handleShowCompletedChange = () => {
+        setShowCompleted(currentShowCompleted => !currentShowCompleted);
+    };
 
-    const habitStreaks = useMemo(
-        () =>
-            habits.map(habit => ({
-                id: habit.id,
-                title: habit.title,
-                streak: getHabitStreak(habit.completionDates, today),
-            })),
-        [habits, today],
-    );
+    const handleTodoToggle = (todoId: string) => {
+        void toggleTodo(todoId);
+    };
+
+    const handleHabitToggle = (habitId: string) => {
+        void toggleHabitToday(habitId);
+    };
 
     return (
         <section className={todayPanelClassName} aria-label={t(locale, 'todayTasks')}>
-            <div className={styles.columns}>
+            <div className={styles.panelContent}>
                 <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>{t(locale, 'todayTasks')}</h2>
+                    <div className={styles.sectionHeader}>
+                        <div className={styles.sectionTitleWrap}>
+                            <ListTodo className={styles.sectionIcon} size={15} strokeWidth={2.2} />
+
+                            <h2 className={styles.sectionTitle}>{t(locale, 'todayTasks')}</h2>
+                        </div>
+
+                        <Checkbox
+                            checked={showCompleted}
+                            onChange={handleShowCompletedChange}
+                            className={styles.sectionToggle}
+                            label={<span className={styles.sectionToggleLabel}>{taskToggleLabel}</span>}
+                        />
+                    </div>
+
                     <ul className={styles.taskList}>
-                        {activeTodos.length > 0 ? (
-                            activeTodos.map(todo => (
-                                <li key={todo.id} className={styles.taskItem}>
-                                    <PriorityIcon priority={todo.priority} locale={locale} />
-                                    <span>{todo.title}</span>
-                                </li>
+                        {panelTodos.length > 0 ? (
+                            panelTodos.map(todo => (
+                                <TodayTaskRow
+                                    key={todo.id}
+                                    todo={todo}
+                                    onToggle={handleTodoToggle}
+                                />
                             ))
                         ) : (
-                            <li className={styles.emptyItem}>{t(locale, 'noActiveTasks')}</li>
+                            <li className={styles.emptyItem}>{t(locale, 'todayTasksEmpty')}</li>
                         )}
                     </ul>
                 </div>
 
                 <div className={habitsSectionClassName}>
-                    <h2 className={styles.sectionTitle}>{t(locale, 'habits')}</h2>
+                    <div className={styles.sectionHeader}>
+                        <div className={styles.sectionTitleWrap}>
+                            <Flame className={styles.sectionIcon} size={15} strokeWidth={2.2} />
+
+                            <h2 className={styles.sectionTitle}>{t(locale, 'habits')}</h2>
+                        </div>
+                    </div>
+
                     <ul className={styles.habitList}>
-                        {habitStreaks.length > 0 ? (
-                            habitStreaks.map(habit => (
-                                <li key={habit.id} className={styles.habitItem}>
-                                    <span>
-                                        {habit.title} — {habit.streak} {t(locale, 'days')}
-                                    </span>
-                                </li>
+                        {habitRows.length > 0 ? (
+                            habitRows.map(habit => (
+                                <TodayHabitRow
+                                    key={habit.id}
+                                    habit={habit}
+                                    onToggle={handleHabitToggle}
+                                />
                             ))
                         ) : (
                             <li className={styles.emptyItem}>{t(locale, 'noHabits')}</li>
@@ -65,36 +90,5 @@ export function TodayPanel() {
                 </div>
             </div>
         </section>
-    );
-}
-
-function PriorityIcon({priority, locale}: { priority: TodoPriority; locale: AppLocale }) {
-    const label =
-    priority === 'high' ? t(locale, 'priorityHigh') : priority === 'low' ? t(locale, 'priorityLow') : t(locale, 'priorityMedium');
-
-    const highPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityHigh);
-    const lowPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityLow);
-    const mediumPriorityIconClassName = clsx(styles.priorityIcon, styles.priorityMedium);
-
-    if (priority === 'high') {
-        return (
-            <span className={highPriorityIconClassName} aria-label={label} title={label}>
-                <AlertCircle size={14} strokeWidth={2.25} />
-            </span>
-        );
-    }
-
-    if (priority === 'low') {
-        return (
-            <span className={lowPriorityIconClassName} aria-label={label} title={label}>
-                <ArrowDown size={14} strokeWidth={2.25} />
-            </span>
-        );
-    }
-
-    return (
-        <span className={mediumPriorityIconClassName} aria-label={label} title={label}>
-            <Minus size={14} strokeWidth={2.25} />
-        </span>
     );
 }

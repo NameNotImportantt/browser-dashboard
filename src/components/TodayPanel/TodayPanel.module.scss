@@ -5,7 +5,7 @@
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0.7rem 0.8rem;
+  padding: 0.85rem 0.95rem;
   transform: none;
   display: flex;
   flex-direction: column;
@@ -27,80 +27,97 @@
       0 26px 64px color-mix(in srgb, var(--accent-glow) 62%, transparent),
       0 10px 32px rgba(7, 10, 17, 0.32);
   }
-}
 
-.columns {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: stretch;
-}
+  .panelContent {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    align-items: stretch;
+  }
 
-.section {
-  display: grid;
-  gap: 0.4rem;
-  min-width: 0;
-  align-content: start;
-}
+  .section {
+    display: grid;
+    gap: 0.55rem;
+    min-width: 0;
+    align-content: start;
 
-.sectionTitle {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
 
-.taskList,
-.habitList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.3rem;
-  align-content: start;
-}
+      .sectionToggle {
+        flex-shrink: 0;
+        align-items: center;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+      }
 
-.taskItem {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--text-soft);
-}
+      .sectionToggleLabel {
+        white-space: nowrap;
+      }
+    }
 
-.priorityIcon {
-  display: inline-flex;
-  flex-shrink: 0;
-}
+    .sectionTitleWrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
 
-.priorityHigh {
-  color: var(--danger);
-}
+    .sectionIcon {
+      flex-shrink: 0;
+      color: color-mix(in srgb, var(--accent) 70%, var(--text-soft));
+    }
 
-.priorityMedium {
-  color: var(--warning);
-}
+    .sectionTitle {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
 
-.priorityLow {
-  color: var(--success);
-}
+    .taskList,
+    .habitList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.42rem;
+      align-content: start;
+    }
 
-.habitItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4rem;
-  color: var(--text-soft);
-}
+    .emptyItem {
+      padding: 0.2rem 0;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+  }
 
-.emptyItem {
-  color: var(--text-muted);
-  font-size: 0.86rem;
-}
+  .sectionSeparated {
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
+  }
 
-.sectionSeparated {
-  padding-top: 0.7rem;
-  border-top: 1px solid var(--border);
+  @media (max-width: 640px) {
+    .section {
+      .sectionHeader {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .sectionToggle {
+        width: 100%;
+      }
+
+      .sectionToggleLabel {
+        white-space: normal;
+      }
+    }
+  }
 }
