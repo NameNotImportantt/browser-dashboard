@@ -1,8 +1,9 @@
-import {useMemo, useState, type FormEvent} from 'react';
+import {useState, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {getHabitStreak, t, todayKey} from '@/app';
+import {t, todayKey} from '@/app';
 import {useHabits, useSettings} from '@/dashboard';
 import styles from './HabitsWidget.module.scss';
+import {useHabitAnalytics} from './hooks/useHabitAnalytics';
 
 export function HabitsWidget() {
     const {habits, addHabit, toggleHabitToday, deleteHabit} = useHabits();
@@ -10,16 +11,7 @@ export function HabitsWidget() {
     const [title, setTitle] = useState('');
     const today = todayKey();
     const habitsWidgetClassName = clsx('card', styles.habitsWidget);
-
-    const enrichedHabits = useMemo(
-        () =>
-            habits.map(habit => ({
-                ...habit,
-                completedToday: habit.completionDates.includes(today),
-                streak: getHabitStreak(habit.completionDates, today),
-            })),
-        [habits, today],
-    );
+    const enrichedHabits = useHabitAnalytics(habits, today);
 
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -51,14 +43,17 @@ export function HabitsWidget() {
                     <li className={styles.habitItem} key={habit.id}>
                         <div className={styles.habitInfo}>
                             <strong>{habit.title}</strong>
+
                             <small className={styles.habitMeta}>
-                                {t(locale, 'habitStreakLabel')} {habit.streak} {t(locale, 'days')}
+                                {t(locale, 'habitStreakLabel')} {habit.analytics.currentStreak} {t(locale, 'days')}
                             </small>
                         </div>
+
                         <div className={styles.inlineRow}>
                             <button type="button" onClick={() => void toggleHabitToday(habit.id)}>
-                                {habit.completedToday ? t(locale, 'habitUnmarkToday') : t(locale, 'habitMarkToday')}
+                                {habit.analytics.completedToday ? t(locale, 'habitUnmarkToday') : t(locale, 'habitMarkToday')}
                             </button>
+
                             <button type="button" className={styles.dangerButton} onClick={() => void deleteHabit(habit.id)}>
                                 {t(locale, 'remove')}
                             </button>
