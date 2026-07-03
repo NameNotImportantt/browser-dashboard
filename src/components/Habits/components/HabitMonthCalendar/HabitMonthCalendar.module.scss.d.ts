@@ -1,0 +1,13 @@
+export declare const calendarHeader: string;
+export declare const calendarMonth: string;
+export declare const calendarSection: string;
+export declare const calendarTitle: string;
+export declare const completionMark: string;
+export declare const dayCell: string;
+export declare const dayCellCompleted: string;
+export declare const dayCellFuture: string;
+export declare const dayCellToday: string;
+export declare const dayGrid: string;
+export declare const dayNumber: string;
+export declare const weekdayCell: string;
+export declare const weekdayRow: string;

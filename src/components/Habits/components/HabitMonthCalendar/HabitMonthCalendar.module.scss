@@ -1,0 +1,121 @@
+.calendarSection {
+  margin-top: 0.82rem;
+  padding-top: 0.82rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+
+  .calendarHeader {
+    display: grid;
+    gap: 0.18rem;
+    margin-bottom: 0.75rem;
+
+    .calendarTitle {
+      margin: 0;
+      font-size: 0.96rem;
+    }
+
+    .calendarMonth {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+    }
+  }
+
+  .weekdayRow {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+    margin-bottom: 0.42rem;
+
+    .weekdayCell {
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .dayGrid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+
+    .dayCell {
+      min-height: 3.1rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--border) 74%, transparent);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--background-elevated) 68%, transparent);
+      padding: 0.38rem 0.34rem;
+      display: grid;
+      align-content: space-between;
+      justify-items: start;
+    }
+
+    .dayCellCompleted {
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+      background: color-mix(in srgb, var(--accent) 16%, var(--background-elevated));
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+
+    .dayCellToday {
+      border-color: color-mix(in srgb, var(--accent-soft) 100%, white 18%);
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 20%, transparent), transparent 72%),
+        color-mix(in srgb, var(--accent-soft) 24%, var(--background-elevated));
+      outline: 2px solid color-mix(in srgb, var(--accent-soft) 70%, white 12%);
+      outline-offset: -2px;
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, white 32%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--accent-soft) 38%, transparent),
+        0 0 24px color-mix(in srgb, var(--accent-soft) 22%, transparent);
+
+      .dayNumber {
+        color: #f8f8ff;
+        text-shadow: 0 0 10px color-mix(in srgb, var(--accent-soft) 28%, transparent);
+        background: color-mix(in srgb, var(--accent-soft) 30%, transparent);
+        border-radius: 999px;
+        padding: 0.08rem 0.34rem;
+      }
+
+      .completionMark {
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--accent-soft) 32%, transparent),
+          0 0 10px color-mix(in srgb, var(--accent-soft) 20%, transparent);
+      }
+    }
+
+    .dayCellFuture {
+      opacity: 0.55;
+    }
+
+    .dayNumber {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .completionMark {
+      width: 0.42rem;
+      height: 0.42rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent);
+    }
+  }
+}
+
+@media (max-width: 740px) {
+  .calendarSection {
+    .weekdayRow,
+    .dayGrid {
+      gap: 0.28rem;
+    }
+
+    .dayGrid {
+      .dayCell {
+        min-height: 2.7rem;
+        padding: 0.34rem 0.28rem;
+      }
+    }
+  }
+}
