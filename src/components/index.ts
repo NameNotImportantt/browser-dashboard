@@ -2,6 +2,15 @@ export {QuickLinks} from './QuickLinks';
 
 export {ActionStatus} from './ActionStatus/ActionStatus';
 
+export {
+    FieldValidationMessage,
+    fieldValidationStyles,
+    getFieldValidationProps,
+    useFieldValidation,
+} from './FieldValidation';
+
+export type {FieldValidationAriaProps, FieldValidationState} from './FieldValidation';
+
 export {ScreenMenu, screenMenuStyles} from './ScreenMenu';
 
 export type {ScreenId} from './ScreenMenu';
