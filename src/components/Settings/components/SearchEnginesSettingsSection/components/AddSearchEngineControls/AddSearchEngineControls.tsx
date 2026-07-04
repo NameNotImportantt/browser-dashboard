@@ -1,5 +1,6 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useId, useMemo, useState, type ChangeEvent, type FormEvent} from 'react';
 import clsx from 'clsx';
+import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
@@ -29,36 +30,86 @@ export function AddSearchEngineControls({
 }: AddSearchEngineControlsProps) {
     const [engineName, setEngineName] = useState('');
     const [engineUrl, setEngineUrl] = useState('');
-    const [engineError, setEngineError] = useState<string | null>(null);
+    const engineNameValidation = useFieldValidation();
+    const engineUrlValidation = useFieldValidation();
     const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
+    const searchTemplateHintId = useId();
     const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
+    const engineNameInputClassName = clsx(styles.formInput, engineNameValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
+    const engineUrlInputClassName = clsx(styles.formInput, engineUrlValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
+
+    const searchTemplateHintClassName = clsx(
+        settingsStyles.hint,
+        engineUrlValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
+    );
 
     const searchEngineSelectOptions = useMemo(
         () => searchOptions.map(option => ({value: option.id, label: option.name})),
         [searchOptions],
     );
 
-    useEffect(() => {
-        setEngineError(null);
+    const resetCustomEngineForm = () => {
         setEngineName('');
         setEngineUrl('');
+        engineNameValidation.reset();
+        engineUrlValidation.reset();
+    };
+
+    useEffect(() => {
+        resetCustomEngineForm();
     }, [dismissRequestId]);
 
-    const addEngine = async () => {
-        if (!engineName.trim()) {
-            setEngineError(t(locale, 'searchEngineNameRequired'));
+    const handleActiveEngineChange = (value: string) => {
+        void onSelectActiveEngine(value);
+    };
+
+    const handleOnlineSuggestionsChange = () => {
+        void onToggleOnlineSuggestionsEnabled(!settings.onlineSearchSuggestionsEnabled);
+    };
+
+    const handleEngineNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setEngineName(event.target.value);
+        engineNameValidation.clearError();
+    };
+
+    const handleEngineUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setEngineUrl(event.target.value);
+        engineUrlValidation.clearError();
+    };
+
+    const addEngine = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const trimmedEngineName = engineName.trim();
+        const trimmedEngineUrl = engineUrl.trim();
+        let hasError = false;
+
+        if (!trimmedEngineName) {
+            engineNameValidation.markSubmitted();
+            engineNameValidation.setError(t(locale, 'searchEngineNameRequired'));
+            hasError = true;
+        } else {
+            engineNameValidation.clearError();
+        }
+
+        if (!trimmedEngineUrl) {
+            engineUrlValidation.markSubmitted();
+            engineUrlValidation.setError(t(locale, 'searchEngineUrlTemplateRequired'));
+            hasError = true;
+        } else if (!isValidSearchUrlTemplate(trimmedEngineUrl)) {
+            engineUrlValidation.markSubmitted();
+            engineUrlValidation.setError(t(locale, 'customSearchTemplateInvalid'));
+            hasError = true;
+        } else {
+            engineUrlValidation.clearError();
+        }
+
+        if (hasError) {
             return;
         }
 
-        if (!isValidSearchUrlTemplate(engineUrl.trim())) {
-            setEngineError(t(locale, 'customSearchTemplateInvalid'));
-            return;
-        }
-
-        await onAddCustomEngine({name: engineName, urlTemplate: engineUrl});
-        setEngineName('');
-        setEngineUrl('');
-        setEngineError(null);
+        await onAddCustomEngine({name: trimmedEngineName, urlTemplate: trimmedEngineUrl});
+        resetCustomEngineForm();
     };
 
     return (
@@ -69,41 +120,59 @@ export function AddSearchEngineControls({
                     dismissRequestId={dismissRequestId}
                     value={settings.activeSearchEngineId}
                     options={searchEngineSelectOptions}
-                    onChange={value => void onSelectActiveEngine(value)}
+                    onChange={handleActiveEngineChange}
                     ariaLabel={t(locale, 'currentSearchEngines')}
                 />
             </div>
 
-            <div className={styles.customEngineForm}>
-                <input
-                    value={engineName}
-                    onChange={event => {
-                        setEngineName(event.target.value);
-                        setEngineError(null);
-                    }}
-                    placeholder={t(locale, 'searchEngineNamePlaceholder')}
-                />
-                <input
-                    value={engineUrl}
-                    onChange={event => {
-                        setEngineUrl(event.target.value);
-                        setEngineError(null);
-                    }}
-                    placeholder={t(locale, 'searchEngineLinkPlaceholder')}
-                />
-                <small className={settingsStyles.hint}>
-                    {t(locale, 'customSearchFormat')} <code>{SEARCH_URL_HINT}</code>
-                </small>
-                {engineError ? <small className={settingsStyles.error}>{engineError}</small> : null}
-                <button type="button" className="primary" onClick={() => void addEngine()}>
+            <form className={styles.customEngineForm} onSubmit={addEngine}>
+                <div className={styles.formField}>
+                    <input
+                        className={engineNameInputClassName}
+                        value={engineName}
+                        onChange={handleEngineNameChange}
+                        placeholder={t(locale, 'searchEngineNamePlaceholder')}
+                        aria-label={t(locale, 'searchEngineNamePlaceholder')}
+                        {...engineNameValidation.getAriaProps()}
+                    />
+
+                    <FieldValidationMessage
+                        className={styles.formMessage}
+                        id={engineNameValidation.messageId}
+                        message={engineNameValidation.showError ? engineNameValidation.validation.error : null}
+                    />
+                </div>
+
+                <div className={styles.formField}>
+                    <input
+                        className={engineUrlInputClassName}
+                        value={engineUrl}
+                        onChange={handleEngineUrlChange}
+                        placeholder={t(locale, 'searchEngineLinkPlaceholder')}
+                        aria-label={t(locale, 'searchEngineLinkPlaceholder')}
+                        {...engineUrlValidation.getAriaProps(searchTemplateHintId)}
+                    />
+
+                    <small className={searchTemplateHintClassName} id={searchTemplateHintId}>
+                        {t(locale, 'customSearchFormat')} <code>{SEARCH_URL_HINT}</code>
+                    </small>
+
+                    <FieldValidationMessage
+                        className={styles.formMessage}
+                        id={engineUrlValidation.messageId}
+                        message={engineUrlValidation.showError ? engineUrlValidation.validation.error : null}
+                    />
+                </div>
+
+                <button type="submit" className="primary">
                     {t(locale, 'addSearchEngine')}
                 </button>
-            </div>
+            </form>
 
             <div className={onlineSuggestionsFieldClassName}>
                 <Checkbox
                     checked={settings.onlineSearchSuggestionsEnabled}
-                    onChange={() => void onToggleOnlineSuggestionsEnabled(!settings.onlineSearchSuggestionsEnabled)}
+                    onChange={handleOnlineSuggestionsChange}
                     label={t(locale, 'onlineSearchSuggestionsEnabled')}
                 />
                 <small className={settingsStyles.hint}>{t(locale, 'onlineSearchSuggestionsHint')}</small>
@@ -111,20 +180,26 @@ export function AddSearchEngineControls({
 
             {settings.customSearchEngines.length > 0 ? (
                 <ul className={styles.engineList}>
-                    {settings.customSearchEngines.map(engine => (
-                        <li className={styles.engineItem} key={engine.id}>
-                            <span className={styles.engineItemText}>
-                                {engine.name}: {engine.urlTemplate}
-                            </span>
-                            <button
-                                type="button"
-                                className={styles.dangerButton}
-                                onClick={() => void onRemoveCustomEngine(engine.id)}
-                            >
-                                {t(locale, 'remove')}
-                            </button>
-                        </li>
-                    ))}
+                    {settings.customSearchEngines.map(engine => {
+                        const handleRemoveEngineClick = () => {
+                            void onRemoveCustomEngine(engine.id);
+                        };
+
+                        return (
+                            <li className={styles.engineItem} key={engine.id}>
+                                <span className={styles.engineItemText}>
+                                    {engine.name}: {engine.urlTemplate}
+                                </span>
+                                <button
+                                    type="button"
+                                    className={styles.dangerButton}
+                                    onClick={handleRemoveEngineClick}
+                                >
+                                    {t(locale, 'remove')}
+                                </button>
+                            </li>
+                        );
+                    })}
                 </ul>
             ) : null}
         </>

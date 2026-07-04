@@ -131,6 +131,7 @@ const messages = {
         newCategory: 'Новая категория',
         addLink: 'Добавить ссылку',
         categoryName: 'Название категории',
+        categoryNameRequired: 'Введите название категории',
         cancel: 'Отмена',
         add: 'Добавить',
         bookmarkTitle: 'Название',
@@ -210,6 +211,7 @@ const messages = {
         settingsDateTime: 'Дата и время',
         currentSearchEngines: 'Текущие поисковые системы',
         searchEngineLinkPlaceholder: 'Ссылка поисковой системы',
+        searchEngineUrlTemplateRequired: 'Введите шаблон ссылки поисковой системы',
         keyboardHelpButton: 'Подсказки горячих клавиш',
         keyboardHelpTitle: 'Горячие клавиши',
         keyboardHelpInputHint:
@@ -356,6 +358,7 @@ const messages = {
         newCategory: 'New category',
         addLink: 'Add link',
         categoryName: 'Category name',
+        categoryNameRequired: 'Enter a category name',
         cancel: 'Cancel',
         add: 'Add',
         bookmarkTitle: 'Title',
@@ -434,6 +437,7 @@ const messages = {
         settingsDateTime: 'Date & time',
         currentSearchEngines: 'Current search engines',
         searchEngineLinkPlaceholder: 'Search engine link',
+        searchEngineUrlTemplateRequired: 'Enter a search engine URL template',
         keyboardHelpButton: 'Keyboard shortcuts',
         keyboardHelpTitle: 'Keyboard shortcuts',
         keyboardHelpInputHint:
