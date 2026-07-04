@@ -1,6 +1,6 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {ActionStatus, FieldMessage, getFieldMessageProps, Loader, Modal} from '@/components';
+import {ActionStatus, FieldValidationMessage, fieldValidationStyles, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
@@ -51,19 +51,22 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
 
     const {
         draft: intervalDaysDraft,
-        error: intervalDaysError,
         handleBlur: handleIntervalDaysBlur,
         handleChange: handleIntervalDaysChange,
+        hintId: intervalDaysHintId,
+        inputAriaProps: intervalDaysInputAriaProps,
+        isInvalid: isIntervalDaysInvalid,
+        message: intervalDaysErrorMessage,
+        messageId: intervalDaysMessageId,
     } = useBackupReminderIntervalField({
         locale,
         value: settings.backupReminderIntervalDays,
         onCommit: setBackupReminderIntervalDays,
     });
-    const intervalDaysFieldValidation = getFieldMessageProps({
-        error: intervalDaysError,
-        hasHint: true,
-        id: 'backup-reminder-interval-days',
-    });
+    const intervalInputClassName = clsx(
+        styles.intervalInput,
+        isIntervalDaysInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
 
     const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
         dateStyle: 'medium',
@@ -171,7 +174,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                 <label className={panelStyles.field}>
                     <div className={styles.inlineRow}>
                         <input
-                            className={clsx(styles.intervalInput, intervalDaysError ? styles.intervalInputInvalid : null)}
+                            className={intervalInputClassName}
                             type="number"
                             min={1}
                             max={365}
@@ -179,23 +182,19 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                             value={intervalDaysDraft}
                             onChange={handleIntervalDaysChange}
                             onBlur={handleIntervalDaysBlur}
-                            {...intervalDaysFieldValidation.inputProps}
+                            {...intervalDaysInputAriaProps}
                         />
                         <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
                     </div>
-                    <FieldMessage
-                        className={panelStyles.hint}
-                        id={intervalDaysFieldValidation.hintId}
-                    >
+                    <small className={panelStyles.hint} id={intervalDaysHintId}>
                         {t(locale, 'backupReminderIntervalHint')}
-                    </FieldMessage>
-                    <FieldMessage
-                        ariaLive="polite"
+                    </small>
+
+                    <FieldValidationMessage
                         className={panelStyles.error}
-                        id={intervalDaysFieldValidation.errorId}
-                    >
-                        {intervalDaysError}
-                    </FieldMessage>
+                        id={intervalDaysMessageId}
+                        message={intervalDaysErrorMessage}
+                    />
                 </label>
 
                 <div className={panelStyles.field}>

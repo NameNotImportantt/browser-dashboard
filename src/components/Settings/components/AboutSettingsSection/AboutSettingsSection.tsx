@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {BookOpenText, CircleHelp, ExternalLink} from 'lucide-react';
-import {KEYBOARD_SHORTCUTS} from '@/app';
+import {KEYBOARD_SHORTCUTS} from '@/app/index';
 import appIconUrl from '@/assets/favicon-32x32.png';
 import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';

@@ -1,12 +1,12 @@
-import {useEffect, useId, useMemo, useState, type ChangeEvent, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
+import {FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
-import {getSearchEngineOptions, isValidSearchUrlTemplate, SEARCH_URL_HINT} from '@/search';
+import {SEARCH_URL_HINT} from '@/search';
 import settingsStyles from '../../../../SettingsPanel.module.scss';
 import styles from './AddSearchEngineControls.module.scss';
+import {useAddSearchEngineControls} from './hooks/useAddSearchEngineControls';
 import type {AppLocale, AppSettings} from '@/db';
 
 export interface AddSearchEngineControlsProps {
@@ -28,12 +28,23 @@ export function AddSearchEngineControls({
     onAddCustomEngine,
     onRemoveCustomEngine,
 }: AddSearchEngineControlsProps) {
-    const [engineName, setEngineName] = useState('');
-    const [engineUrl, setEngineUrl] = useState('');
-    const engineNameValidation = useFieldValidation();
-    const engineUrlValidation = useFieldValidation();
-    const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
-    const searchTemplateHintId = useId();
+    const {
+        engineName,
+        engineNameValidation,
+        engineUrl,
+        engineUrlValidation,
+        handleAddEngine,
+        handleEngineNameChange,
+        handleEngineUrlChange,
+        searchEngineSelectOptions,
+        searchTemplateHintId,
+    } = useAddSearchEngineControls({
+        dismissRequestId,
+        locale,
+        settings,
+        onAddCustomEngine,
+    });
+
     const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
     const engineNameInputClassName = clsx(styles.formInput, engineNameValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
     const engineUrlInputClassName = clsx(styles.formInput, engineUrlValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
@@ -43,73 +54,12 @@ export function AddSearchEngineControls({
         engineUrlValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
     );
 
-    const searchEngineSelectOptions = useMemo(
-        () => searchOptions.map(option => ({value: option.id, label: option.name})),
-        [searchOptions],
-    );
-
-    const resetCustomEngineForm = () => {
-        setEngineName('');
-        setEngineUrl('');
-        engineNameValidation.reset();
-        engineUrlValidation.reset();
-    };
-
-    useEffect(() => {
-        resetCustomEngineForm();
-    }, [dismissRequestId]);
-
     const handleActiveEngineChange = (value: string) => {
         void onSelectActiveEngine(value);
     };
 
     const handleOnlineSuggestionsChange = () => {
         void onToggleOnlineSuggestionsEnabled(!settings.onlineSearchSuggestionsEnabled);
-    };
-
-    const handleEngineNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setEngineName(event.target.value);
-        engineNameValidation.clearError();
-    };
-
-    const handleEngineUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setEngineUrl(event.target.value);
-        engineUrlValidation.clearError();
-    };
-
-    const addEngine = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const trimmedEngineName = engineName.trim();
-        const trimmedEngineUrl = engineUrl.trim();
-        let hasError = false;
-
-        if (!trimmedEngineName) {
-            engineNameValidation.markSubmitted();
-            engineNameValidation.setError(t(locale, 'searchEngineNameRequired'));
-            hasError = true;
-        } else {
-            engineNameValidation.clearError();
-        }
-
-        if (!trimmedEngineUrl) {
-            engineUrlValidation.markSubmitted();
-            engineUrlValidation.setError(t(locale, 'searchEngineUrlTemplateRequired'));
-            hasError = true;
-        } else if (!isValidSearchUrlTemplate(trimmedEngineUrl)) {
-            engineUrlValidation.markSubmitted();
-            engineUrlValidation.setError(t(locale, 'customSearchTemplateInvalid'));
-            hasError = true;
-        } else {
-            engineUrlValidation.clearError();
-        }
-
-        if (hasError) {
-            return;
-        }
-
-        await onAddCustomEngine({name: trimmedEngineName, urlTemplate: trimmedEngineUrl});
-        resetCustomEngineForm();
     };
 
     return (
@@ -125,7 +75,7 @@ export function AddSearchEngineControls({
                 />
             </div>
 
-            <form className={styles.customEngineForm} onSubmit={addEngine}>
+            <form className={styles.customEngineForm} onSubmit={handleAddEngine}>
                 <div className={styles.formField}>
                     <input
                         className={engineNameInputClassName}
