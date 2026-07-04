@@ -97,6 +97,21 @@
   display: grid;
   grid-template-columns: 1fr auto auto;
   gap: 0.45rem;
+
+  .formField {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+
+    .formInput {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .formMessage {
+      text-align: left;
+    }
+  }
 }
 
 .linksRow {
@@ -261,6 +276,21 @@
   display: grid;
   grid-template-columns: 1fr 1fr auto auto;
   gap: 0.45rem;
+
+  .formField {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+
+    .formInput {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .formMessage {
+      text-align: left;
+    }
+  }
 }
 
 .actionStatus {

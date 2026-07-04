@@ -4,3 +4,6 @@ export declare const dangerButton: string;
 export declare const engineItem: string;
 export declare const engineItemText: string;
 export declare const engineList: string;
+export declare const formField: string;
+export declare const formInput: string;
+export declare const formMessage: string;

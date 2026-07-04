@@ -1,9 +1,11 @@
-import type {ChangeEvent, FocusEvent, MouseEvent} from 'react';
+import {useEffect, type ChangeEvent, type FocusEvent, type MouseEvent} from 'react';
 import clsx from 'clsx';
+import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
 import {normalizeHexColor} from '@/theme';
 import styles from './TextColorField.module.scss';
 
 interface TextColorFieldProps {
+  invalidMessage: string;
   label: string;
   value: string;
   pickerValue: string;
@@ -12,29 +14,61 @@ interface TextColorFieldProps {
   onChange: (value: string, commit?: boolean) => void;
 }
 
-export function TextColorField({label, value, pickerValue, placeholder, swatches, onChange}: TextColorFieldProps) {
+export function TextColorField({invalidMessage, label, value, pickerValue, placeholder, swatches, onChange}: TextColorFieldProps) {
     const selectedValue = normalizeHexColor(value) ?? pickerValue;
     const inputColorValue = normalizeHexColor(pickerValue) ?? placeholder;
+    const validation = useFieldValidation();
+
+    const fieldLabelClassName = clsx(
+        styles.fieldLabel,
+        validation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
+    );
+    const hexInputClassName = clsx(
+        styles.hexInput,
+        validation.isInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
+
+    useEffect(() => {
+        if (normalizeHexColor(value) !== null) {
+            validation.clearError();
+        }
+    }, [validation, value]);
 
     const handleHexInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        onChange(event.target.value);
+        const nextValue = event.target.value;
+
+        onChange(nextValue);
+
+        if (normalizeHexColor(nextValue) !== null) {
+            validation.clearError();
+        }
     };
 
     const handleHexInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+        validation.markTouched();
+
+        if (normalizeHexColor(event.target.value) === null) {
+            validation.setError(invalidMessage);
+            return;
+        }
+
+        validation.clearError();
         onChange(event.target.value, true);
     };
 
     const handlePickerChange = (event: ChangeEvent<HTMLInputElement>) => {
+        validation.clearError();
         onChange(event.target.value, true);
     };
 
     const handleSwatchClick = (event: MouseEvent<HTMLButtonElement>) => {
+        validation.clearError();
         onChange(event.currentTarget.value, true);
     };
 
     return (
         <label className={styles.field}>
-            <span className={styles.fieldLabel}>{label}</span>
+            <span className={fieldLabelClassName}>{label}</span>
 
             <div className={styles.controlRow}>
                 <input
@@ -46,13 +80,15 @@ export function TextColorField({label, value, pickerValue, placeholder, swatches
                 />
 
                 <input
-                    className={styles.hexInput}
+                    className={hexInputClassName}
                     value={value}
                     onChange={handleHexInputChange}
                     onBlur={handleHexInputBlur}
                     spellCheck={false}
                     maxLength={7}
                     placeholder={placeholder}
+                    aria-label={label}
+                    {...validation.getAriaProps()}
                 />
 
                 <div className={styles.swatchRow} role="list" aria-label={label}>
@@ -76,6 +112,12 @@ export function TextColorField({label, value, pickerValue, placeholder, swatches
                     })}
                 </div>
             </div>
+
+            <FieldValidationMessage
+                className={styles.fieldMessage}
+                id={validation.messageId}
+                message={validation.showError ? validation.validation.error : null}
+            />
         </label>
     );
 }

@@ -3,6 +3,7 @@ export declare const formError: string;
 export declare const inlineRow: string;
 export declare const inlineRowField: string;
 export declare const inputField: string;
+export declare const inputFieldInvalid: string;
 export declare const stackForm: string;
 export declare const todoList: string;
 export declare const todoWidget: string;

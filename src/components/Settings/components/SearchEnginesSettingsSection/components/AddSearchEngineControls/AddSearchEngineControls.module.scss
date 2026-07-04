@@ -1,6 +1,21 @@
 .customEngineForm {
   display: grid;
   gap: 0.5rem;
+
+  .formField {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+
+    .formInput {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .formMessage {
+      text-align: left;
+    }
+  }
 }
 
 .checkboxField {

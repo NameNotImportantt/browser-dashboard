@@ -26,6 +26,10 @@
 
 .inputField {
   width: 100%;
+
+  &.inputFieldInvalid {
+    border-color: var(--danger);
+  }
 }
 
 .formError {

@@ -24,6 +24,7 @@ export function AppearanceSettingsSection() {
                 {textColorFields.map(field => (
                     <TextColorField
                         key={field.key}
+                        invalidMessage={t(locale, 'textColorHexInvalid')}
                         label={field.label}
                         value={field.value}
                         pickerValue={field.pickerValue}

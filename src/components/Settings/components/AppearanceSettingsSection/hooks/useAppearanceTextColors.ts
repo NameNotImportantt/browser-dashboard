@@ -57,7 +57,6 @@ export function useAppearanceTextColors() {
         const normalized = normalizeHexColor(value);
 
         if (!normalized) {
-            setTextColorDrafts(resolvedTextColors);
             return;
         }
 

@@ -12,6 +12,10 @@
       width: 8.5rem;
       padding: 0.35rem 0.55rem;
       font-size: 0.82rem;
+
+      &.addInputInvalid {
+        border-color: var(--danger);
+      }
     }
 
     .addFormButton {

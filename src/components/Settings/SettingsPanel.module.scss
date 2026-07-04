@@ -78,11 +78,11 @@
   display: flex;
   gap: 0.5rem;
   min-width: 0;
+}
 
-  input {
-    flex: 1;
-    min-width: 0;
-  }
+.inlineRowInput {
+  flex: 1;
+  min-width: 0;
 }
 
 .section {

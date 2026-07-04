@@ -1,12 +1,16 @@
-import type {FormEvent,ChangeEvent} from 'react';
+import type {ChangeEvent, FormEvent} from 'react';
 import clsx from 'clsx';
+import {FieldValidationMessage, fieldValidationStyles, type FieldValidationAriaProps} from '@/components';
 import {t} from '@/i18n';
 import styles from './AddWorkspaceForm.module.scss';
 import type {AppLocale} from '@/db';
 
 interface AddWorkspaceFormProps {
-    error: string | null;
+    errorMessage: string | null;
+    inputAriaProps: FieldValidationAriaProps;
+    isInvalid: boolean;
     locale: AppLocale;
+    messageId: string;
     name: string;
     onCancel: () => void;
     onNameChange: (value: string) => void;
@@ -14,14 +18,21 @@ interface AddWorkspaceFormProps {
 }
 
 export function AddWorkspaceForm({
-    error,
+    errorMessage,
+    inputAriaProps,
+    isInvalid,
     locale,
+    messageId,
     name,
     onCancel,
     onNameChange,
     onSubmit,
 }: AddWorkspaceFormProps) {
     const addFormSubmitButtonClassName = clsx(styles.addFormButton, 'primary');
+    const addInputClassName = clsx(
+        styles.addInput,
+        isInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
 
     const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
         void onSubmit(event);
@@ -39,11 +50,12 @@ export function AddWorkspaceForm({
         <div className={styles.addFormBlock}>
             <form className={styles.addForm} onSubmit={handleFormSubmit}>
                 <input
-                    className={styles.addInput}
+                    className={addInputClassName}
                     value={name}
                     onChange={handleInputChange}
                     placeholder={t(locale, 'workspaceNameAriaLabel')}
                     aria-label={t(locale, 'workspaceNameAriaLabel')}
+                    {...inputAriaProps}
                     autoFocus
                 />
 
@@ -60,7 +72,11 @@ export function AddWorkspaceForm({
                 </button>
             </form>
 
-            {error ? <small className={styles.formError}>{error}</small> : null}
+            <FieldValidationMessage
+                className={styles.formError}
+                id={messageId}
+                message={errorMessage}
+            />
         </div>
     );
 }
