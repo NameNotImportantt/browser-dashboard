@@ -1,12 +1,10 @@
-import {useEffect, useId, useMemo, useState, type ChangeEvent, type FocusEvent} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
-import {ActionStatus, FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
+import {ActionStatus, FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {Select} from '@/components/Select';
-import {useSettings, useWeather} from '@/dashboard';
-import {useActionStatus} from '@/hooks/useActionStatus';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
+import {useGeneralSettingsController} from './hooks/useGeneralSettingsController';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 
 interface GeneralSettingsSectionProps {
@@ -14,17 +12,28 @@ interface GeneralSettingsSectionProps {
 }
 
 export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSectionProps) {
-    const {settings, setLocale, setTabTitle: saveSettingsTabTitle} = useSettings();
-    const {setWeatherCity: saveWeatherCity} = useWeather();
-    const locale = settings.locale;
-    const [tabTitle, setTabTitle] = useState(settings.tabTitle);
-    const [weatherCity, setWeatherCity] = useState(settings.weatherLocation?.label ?? '');
-    const weatherStatus = useActionStatus();
-    const tabTitleValidation = useFieldValidation();
-    const weatherCityValidation = useFieldValidation();
-    const weatherLocationHintId = useId();
-    const sectionClassName = clsx(styles.section, styles.sectionFirst);
+    const {
+        clearWeatherCity,
+        handleLocaleChange,
+        handleTabTitleBlur,
+        handleTabTitleChange,
+        handleTabTitleSave,
+        handleWeatherCityBlur,
+        handleWeatherCityChange,
+        locale,
+        localeOptions,
+        lookupWeatherCity,
+        settings,
+        tabTitle,
+        tabTitleValidation,
+        weatherCity,
+        weatherCityValidation,
+        weatherInputAriaProps,
+        weatherLocationHintId,
+        weatherStatus,
+    } = useGeneralSettingsController({dismissRequestId});
 
+    const sectionClassName = clsx(styles.section, styles.sectionFirst);
     const tabTitleFieldLabelClassName = clsx(
         styles.fieldLabel,
         tabTitleValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
@@ -46,135 +55,8 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         weatherCityValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
     );
 
-    useEffect(() => {
-        setTabTitle(settings.tabTitle);
-        setWeatherCity(settings.weatherLocation?.label ?? '');
-        tabTitleValidation.reset();
-        weatherCityValidation.reset();
-    }, [settings.tabTitle, settings.weatherLocation?.label]);
-
-    useEffect(() => {
-        weatherStatus.reset();
-        tabTitleValidation.reset();
-        weatherCityValidation.reset();
-    }, [dismissRequestId]);
-
-    const localeOptions = useMemo(
-        () => [
-            {value: 'ru', label: 'Русский'},
-            {value: 'en', label: 'English'},
-        ],
-        [],
-    );
-
-    const validateTabTitle = (nextTabTitle: string) => {
-        return nextTabTitle.trim() ? null : t(locale, 'tabTitleRequired');
-    };
-
-    const validateWeatherCity = (nextWeatherCity: string) => {
-        return nextWeatherCity.trim() ? null : t(locale, 'weatherCityRequired');
-    };
-
-    const handleLocaleChange = (value: string) => {
-        void setLocale(value as typeof settings.locale);
-    };
-
-    const handleTabTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const nextTabTitle = event.target.value;
-
-        setTabTitle(nextTabTitle);
-
-        if (validateTabTitle(nextTabTitle) === null) {
-            tabTitleValidation.clearError();
-        }
-    };
-
-    const handleTabTitleBlur = (event: FocusEvent<HTMLInputElement>) => {
-        tabTitleValidation.markTouched();
-
-        const error = validateTabTitle(event.target.value);
-
-        if (error) {
-            tabTitleValidation.setError(error);
-            return;
-        }
-
-        tabTitleValidation.clearError();
-    };
-
-    const saveTabTitle = async () => {
-        const error = validateTabTitle(tabTitle);
-
-        if (error) {
-            tabTitleValidation.markTouched();
-            tabTitleValidation.setError(error);
-            return;
-        }
-
-        tabTitleValidation.clearError();
-        await saveSettingsTabTitle(tabTitle.trim());
-    };
-
     const handleSaveTabTitleClick = () => {
-        void saveTabTitle();
-    };
-
-    const handleWeatherCityChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const nextWeatherCity = event.target.value;
-
-        setWeatherCity(nextWeatherCity);
-        weatherStatus.reset();
-
-        if (validateWeatherCity(nextWeatherCity) === null) {
-            weatherCityValidation.clearError();
-        }
-    };
-
-    const handleWeatherCityBlur = (event: FocusEvent<HTMLInputElement>) => {
-        weatherCityValidation.markTouched();
-
-        const error = validateWeatherCity(event.target.value);
-
-        if (error) {
-            weatherCityValidation.setError(error);
-            return;
-        }
-
-        weatherCityValidation.clearError();
-    };
-
-    const lookupWeatherCity = async () => {
-        const nextCity = weatherCity.trim();
-        const error = validateWeatherCity(nextCity);
-
-        if (error) {
-            weatherCityValidation.markTouched();
-            weatherCityValidation.setError(error);
-            return;
-        }
-
-        weatherCityValidation.clearError();
-        weatherStatus.start();
-
-        try {
-            await saveWeatherCity(nextCity);
-            weatherStatus.succeed(t(locale, 'weatherLookupSuccess'));
-        } catch {
-            weatherStatus.fail(t(locale, 'weatherLookupFailed'));
-        }
-    };
-
-    const clearWeatherCity = async () => {
-        weatherCityValidation.reset();
-        weatherStatus.start();
-
-        try {
-            await saveWeatherCity('');
-            setWeatherCity('');
-            weatherStatus.succeed(t(locale, 'weatherLookupCleared'));
-        } catch {
-            weatherStatus.fail(t(locale, 'weatherLookupFailed'));
-        }
+        void handleTabTitleSave();
     };
 
     const handleLookupWeatherCityClick = () => {
@@ -184,10 +66,6 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     const handleClearWeatherCityClick = () => {
         void clearWeatherCity();
     };
-
-    const weatherInputAriaProps = settings.weatherLocation
-        ? weatherCityValidation.getAriaProps(weatherLocationHintId)
-        : weatherCityValidation.getAriaProps();
 
     return (
         <section className={sectionClassName}>
@@ -210,8 +88,8 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         <input
                             className={tabTitleInputClassName}
                             value={tabTitle}
-                            onChange={handleTabTitleChange}
-                            onBlur={handleTabTitleBlur}
+                            onChange={event => handleTabTitleChange(event.target.value)}
+                            onBlur={event => handleTabTitleBlur(event.target.value)}
                             aria-label={t(locale, 'tabTitle')}
                             {...tabTitleValidation.getAriaProps()}
                         />
@@ -233,8 +111,8 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         <input
                             className={weatherInputClassName}
                             value={weatherCity}
-                            onChange={handleWeatherCityChange}
-                            onBlur={handleWeatherCityBlur}
+                            onChange={event => handleWeatherCityChange(event.target.value)}
+                            onBlur={event => handleWeatherCityBlur(event.target.value)}
                             placeholder={t(locale, 'weatherCityPlaceholder')}
                             aria-label={t(locale, 'weatherCity')}
                             {...weatherInputAriaProps}

@@ -24,7 +24,6 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
         addBookmarkCategory,
         deleteBookmarkCategory,
     } = useBookmarks();
-
     const {settings, locale} = useSettings();
     const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
     const [isAddingLink, setIsAddingLink] = useState(false);
@@ -38,7 +37,9 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
     const categoryValidation = useFieldValidation();
 
     const visibleBookmarks = useMemo(() => {
-        if (activeFilter === 'all') {return bookmarks;}
+        if (activeFilter === 'all') {
+            return bookmarks;
+        }
 
         return bookmarks.filter(item => item.categoryId === activeFilter);
     }, [activeFilter, bookmarks]);
@@ -213,6 +214,7 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                     const handleCategoryFilterClick = () => {
                         setActiveFilter(category.id);
                     };
+
                     const handleCategoryDeleteClick = () => {
                         void handleDeleteCategory(category.id);
                     };
@@ -232,7 +234,7 @@ export function QuickLinks({dismissRequestId = 0}: QuickLinksProps) {
                                 onClick={handleCategoryDeleteClick}
                                 aria-label={`${t(locale, 'deleteCategory')} ${category.name}`}
                             >
-                                ×
+                                Г—
                             </button>
                         </span>
                     );
@@ -393,7 +395,7 @@ function QuickLinkItem({areBookmarkFaviconsEnabled, bookmark, index, locale, onD
         <Fragment>
             {index > 0 ? (
                 <span className={styles.separator} aria-hidden>
-                    ·
+                    В·
                 </span>
             ) : null}
 
@@ -416,7 +418,7 @@ function QuickLinkItem({areBookmarkFaviconsEnabled, bookmark, index, locale, onD
                     onClick={handleDeleteClick}
                     aria-label={`${t(locale, 'remove')} ${bookmark.title}`}
                 >
-                    ×
+                    Г—
                 </button>
             </span>
         </Fragment>

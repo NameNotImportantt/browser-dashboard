@@ -37,7 +37,6 @@ export function AddSearchEngineControls({
     const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
     const engineNameInputClassName = clsx(styles.formInput, engineNameValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
     const engineUrlInputClassName = clsx(styles.formInput, engineUrlValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
-
     const searchTemplateHintClassName = clsx(
         settingsStyles.hint,
         engineUrlValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,

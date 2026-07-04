@@ -10,6 +10,7 @@ import {t} from '@/i18n';
 import panelStyles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './BackupSettingsSection.module.scss';
+import {useBackupReminderIntervalField} from './hooks/useBackupReminderIntervalField';
 
 interface BackupSettingsSectionProps {
     dismissRequestId?: number;
@@ -43,20 +44,27 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
-    const [intervalDaysDraft, setIntervalDaysDraft] = useState(() => String(settings.backupReminderIntervalDays));
     const exportStatus = useActionStatus();
     const importStatus = useActionStatus();
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
     const backupReminderOverdue = isBackupReminderOverdue(settings);
+    const {
+        draft: intervalDaysDraft,
+        error: intervalDaysError,
+        errorId: intervalDaysErrorId,
+        handleBlur: handleIntervalDaysBlur,
+        handleChange: handleIntervalDaysChange,
+        hintId: intervalDaysHintId,
+    } = useBackupReminderIntervalField({
+        locale,
+        value: settings.backupReminderIntervalDays,
+        onCommit: setBackupReminderIntervalDays,
+    });
 
     const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
         dateStyle: 'medium',
         timeStyle: 'short',
     }).format(new Date(value));
-
-    const syncIntervalDaysDraft = (nextValue: number) => {
-        setIntervalDaysDraft(String(nextValue));
-    };
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.item(0) ?? null;
@@ -93,14 +101,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         }
     };
 
-    const commitReminderIntervalDays = async () => {
-        const parsedValue = Number(intervalDaysDraft);
-        const normalizedValue = Number.isFinite(parsedValue) ? Math.min(365, Math.max(1, Math.round(parsedValue))) : 7;
-
-        syncIntervalDaysDraft(normalizedValue);
-        await setBackupReminderIntervalDays(normalizedValue);
-    };
-
     const handleExport = async () => {
         exportStatus.start();
 
@@ -119,10 +119,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         exportStatus.reset();
         importStatus.reset();
     }, [dismissRequestId]);
-
-    useEffect(() => {
-        syncIntervalDaysDraft(settings.backupReminderIntervalDays);
-    }, [settings.backupReminderIntervalDays]);
 
     const sectionCardClassName = clsx(
         styles.sectionCard,
@@ -171,18 +167,25 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                 <label className={panelStyles.field}>
                     <div className={styles.inlineRow}>
                         <input
-                            className={styles.intervalInput}
+                            className={clsx(styles.intervalInput, intervalDaysError ? styles.intervalInputInvalid : null)}
                             type="number"
                             min={1}
                             max={365}
                             step={1}
                             value={intervalDaysDraft}
-                            onChange={event => setIntervalDaysDraft(event.target.value)}
-                            onBlur={() => void commitReminderIntervalDays()}
+                            onChange={handleIntervalDaysChange}
+                            onBlur={handleIntervalDaysBlur}
+                            aria-describedby={intervalDaysError ? intervalDaysErrorId : intervalDaysHintId}
+                            aria-invalid={intervalDaysError ? 'true' : undefined}
                         />
                         <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
                     </div>
-                    <small className={panelStyles.hint}>{t(locale, 'backupReminderIntervalHint')}</small>
+                    <small className={panelStyles.hint} id={intervalDaysHintId}>{t(locale, 'backupReminderIntervalHint')}</small>
+                    {intervalDaysError ? (
+                        <small className={panelStyles.error} id={intervalDaysErrorId} aria-live="polite">
+                            {intervalDaysError}
+                        </small>
+                    ) : null}
                 </label>
 
                 <div className={panelStyles.field}>

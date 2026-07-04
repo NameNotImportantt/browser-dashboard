@@ -1,33 +1,19 @@
-import {useMemo, useState, type ChangeEvent, type FormEvent} from 'react';
+import {useMemo} from 'react';
 import clsx from 'clsx';
-import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
+import {FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useTodos} from '@/dashboard';
 import {t} from '@/i18n';
 import {TodoFilters} from './components/TodoFilters/TodoFilters';
 import {TodoListItem} from './components/TodoListItem/TodoListItem';
 import {useTodoFilters} from './hooks/useTodoFilters';
-import {reorderIds} from './lib/reorderIds';
+import {useTodoWidgetController} from './hooks/useTodoWidgetController';
 import styles from './TodoWidget.module.scss';
 import type {TodoPriority} from '@/db';
 
 export function TodoWidget() {
-    const {todos, addTodo, toggleTodo, deleteTodo, reorderTodos} = useTodos();
+    const {todos} = useTodos();
     const {locale} = useSettings();
-    const [title, setTitle] = useState('');
-    const [priority, setPriority] = useState<TodoPriority>('medium');
-    const [dueDate, setDueDate] = useState('');
-    const [draggedId, setDraggedId] = useState<string | null>(null);
-    const titleValidation = useFieldValidation();
-
-    const priorityOptions = useMemo(
-        () => [
-            {value: 'low', label: t(locale, 'priorityLow')},
-            {value: 'medium', label: t(locale, 'priorityMedium')},
-            {value: 'high', label: t(locale, 'priorityHigh')},
-        ],
-        [locale],
-    );
 
     const {
         dateFilter,
@@ -43,75 +29,26 @@ export function TodoWidget() {
     } = useTodoFilters(todos, locale);
 
     const filteredTodoIds = useMemo(() => filteredTodos.map(todo => todo.id), [filteredTodos]);
+    const {
+        dueDate,
+        emptyMessage,
+        handleDeleteTodo,
+        handleDropTodo,
+        handleDueDateChange,
+        handlePriorityChange,
+        handleTitleChange,
+        handleToggleTodo,
+        priority,
+        priorityOptions,
+        setDraggedId,
+        submit,
+        title,
+        titleValidation,
+    } = useTodoWidgetController(filteredTodoIds);
 
     const todoWidgetClassName = clsx('card', styles.todoWidget);
     const todoListClassName = clsx(styles.widgetList, styles.todoList);
     const titleInputClassName = clsx(styles.inputField, titleValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
-    const isEmptyTodoList = todos.length === 0;
-    const emptyMessage = isEmptyTodoList ? t(locale, 'todoEmpty') : t(locale, 'todoFilteredEmpty');
-
-    const dropOn = async (targetId: string) => {
-        if (!draggedId || draggedId === targetId) {return;}
-
-        const reorderedVisibleTodoIds = reorderIds(filteredTodoIds, draggedId, targetId);
-
-        const orderedTodoIds = mergeFilteredTodoOrder(
-            todos.map(todo => todo.id),
-            filteredTodoIds,
-            reorderedVisibleTodoIds,
-        );
-
-        setDraggedId(null);
-        await reorderTodos(orderedTodoIds);
-    };
-
-    const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setTitle(event.target.value);
-        titleValidation.clearError();
-    };
-
-    const handlePriorityChange = (value: string) => {
-        setPriority(value as TodoPriority);
-    };
-
-    const handleDueDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setDueDate(event.target.value);
-    };
-
-    const handleTodoToggle = (todoId: string) => {
-        void toggleTodo(todoId);
-    };
-
-    const handleTodoDelete = (todoId: string) => {
-        void deleteTodo(todoId);
-    };
-
-    const handleTodoDragStart = (todoId: string) => {
-        setDraggedId(todoId);
-    };
-
-    const handleTodoDrop = (todoId: string) => {
-        void dropOn(todoId);
-    };
-
-    const submit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        if (!title.trim()) {
-            titleValidation.markSubmitted();
-            titleValidation.setError(t(locale, 'todoTitleRequired'));
-            return;
-        }
-
-        await addTodo({
-            title,
-            priority,
-            dueDate: dueDate || null,
-        });
-        setTitle('');
-        setDueDate('');
-        titleValidation.reset();
-    };
 
     return (
         <section className={todoWidgetClassName}>
@@ -123,7 +60,7 @@ export function TodoWidget() {
                 <input
                     className={titleInputClassName}
                     value={title}
-                    onChange={handleTitleChange}
+                    onChange={event => handleTitleChange(event.target.value)}
                     placeholder={t(locale, 'todoNewPlaceholder')}
                     aria-label={t(locale, 'todoNewPlaceholder')}
                     {...titleValidation.getAriaProps()}
@@ -134,7 +71,7 @@ export function TodoWidget() {
                         className={styles.inlineRowField}
                         value={priority}
                         options={priorityOptions}
-                        onChange={handlePriorityChange}
+                        onChange={value => handlePriorityChange(value as TodoPriority)}
                         ariaLabel={t(locale, 'todoPriority')}
                     />
 
@@ -142,7 +79,7 @@ export function TodoWidget() {
                         className={styles.inlineRowField}
                         type="date"
                         value={dueDate}
-                        onChange={handleDueDateChange}
+                        onChange={event => handleDueDateChange(event.target.value)}
                         aria-label={t(locale, 'todoDueDateAriaLabel')}
                     />
                 </div>
@@ -177,28 +114,13 @@ export function TodoWidget() {
                         key={todo.id}
                         todo={todo}
                         locale={locale}
-                        onToggle={handleTodoToggle}
-                        onDelete={handleTodoDelete}
-                        onDragStart={handleTodoDragStart}
-                        onDrop={handleTodoDrop}
+                        onToggle={handleToggleTodo}
+                        onDelete={handleDeleteTodo}
+                        onDragStart={todoId => setDraggedId(todoId)}
+                        onDrop={handleDropTodo}
                     />
                 )) : <li className={styles.emptyState}>{emptyMessage}</li>}
             </ul>
         </section>
     );
-}
-
-function mergeFilteredTodoOrder(allTodoIds: string[], visibleTodoIds: string[], reorderedVisibleTodoIds: string[]) {
-    const visibleTodoIdSet = new Set(visibleTodoIds);
-    const reorderedVisibleTodoQueue = [...reorderedVisibleTodoIds];
-
-    return allTodoIds.map(todoId => {
-        if (!visibleTodoIdSet.has(todoId)) {
-            return todoId;
-        }
-
-        const nextVisibleTodoId = reorderedVisibleTodoQueue.shift();
-
-        return nextVisibleTodoId ?? todoId;
-    });
 }
