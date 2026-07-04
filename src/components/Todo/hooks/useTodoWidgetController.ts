@@ -79,6 +79,7 @@ export function useTodoWidgetController(filteredTodoIds: string[]) {
         }
 
         const reorderedVisibleTodoIds = reorderIds(filteredTodoIds, draggedId, targetId);
+
         const orderedTodoIds = mergeFilteredTodoOrder(
             todos.map(todo => todo.id),
             filteredTodoIds,

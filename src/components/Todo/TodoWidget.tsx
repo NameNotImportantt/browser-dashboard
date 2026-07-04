@@ -29,6 +29,7 @@ export function TodoWidget() {
     } = useTodoFilters(todos, locale);
 
     const filteredTodoIds = useMemo(() => filteredTodos.map(todo => todo.id), [filteredTodos]);
+
     const {
         dueDate,
         emptyMessage,

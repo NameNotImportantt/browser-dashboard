@@ -4,8 +4,8 @@ import {ActionStatus, FieldValidationMessage, fieldValidationStyles} from '@/com
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
-import {useGeneralSettingsController} from './hooks/useGeneralSettingsController';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {useGeneralSettingsController} from './hooks/useGeneralSettingsController';
 
 interface GeneralSettingsSectionProps {
   dismissRequestId?: number;

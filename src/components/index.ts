@@ -3,8 +3,10 @@ export {QuickLinks} from './QuickLinks';
 export {ActionStatus} from './ActionStatus/ActionStatus';
 
 export {
+    FieldMessage,
     FieldValidationMessage,
     fieldValidationStyles,
+    getFieldMessageProps,
     getFieldValidationProps,
     useFieldValidation,
 } from './FieldValidation';

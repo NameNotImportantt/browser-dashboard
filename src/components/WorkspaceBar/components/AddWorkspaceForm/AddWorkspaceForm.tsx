@@ -1,4 +1,4 @@
-import type {FormEvent,ChangeEvent} from 'react';
+import type {ChangeEvent, FormEvent} from 'react';
 import clsx from 'clsx';
 import {FieldValidationMessage, fieldValidationStyles, type FieldValidationAriaProps} from '@/components';
 import {t} from '@/i18n';
@@ -29,7 +29,6 @@ export function AddWorkspaceForm({
     onSubmit,
 }: AddWorkspaceFormProps) {
     const addFormSubmitButtonClassName = clsx(styles.addFormButton, 'primary');
-
     const addInputClassName = clsx(
         styles.addInput,
         isInvalid && fieldValidationStyles.fieldControlInvalid,

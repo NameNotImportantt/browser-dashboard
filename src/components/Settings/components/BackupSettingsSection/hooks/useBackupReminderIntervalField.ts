@@ -8,9 +8,6 @@ interface UseBackupReminderIntervalFieldOptions {
     onCommit: (value: number) => Promise<void>;
 }
 
-const INTERVAL_DAYS_ERROR_ID = 'backup-reminder-interval-days-error';
-const INTERVAL_DAYS_HINT_ID = 'backup-reminder-interval-days-hint';
-
 export function useBackupReminderIntervalField({
     locale,
     value,
@@ -71,9 +68,7 @@ export function useBackupReminderIntervalField({
     return {
         draft,
         error,
-        errorId: INTERVAL_DAYS_ERROR_ID,
         handleBlur,
         handleChange,
-        hintId: INTERVAL_DAYS_HINT_ID,
     };
 }

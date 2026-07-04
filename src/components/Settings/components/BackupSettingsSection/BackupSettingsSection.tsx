@@ -1,6 +1,6 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {ActionStatus, Loader, Modal} from '@/components';
+import {ActionStatus, FieldMessage, getFieldMessageProps, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
@@ -51,14 +51,17 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     const {
         draft: intervalDaysDraft,
         error: intervalDaysError,
-        errorId: intervalDaysErrorId,
         handleBlur: handleIntervalDaysBlur,
         handleChange: handleIntervalDaysChange,
-        hintId: intervalDaysHintId,
     } = useBackupReminderIntervalField({
         locale,
         value: settings.backupReminderIntervalDays,
         onCommit: setBackupReminderIntervalDays,
+    });
+    const intervalDaysFieldValidation = getFieldMessageProps({
+        error: intervalDaysError,
+        hasHint: true,
+        id: 'backup-reminder-interval-days',
     });
 
     const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
@@ -175,17 +178,23 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                             value={intervalDaysDraft}
                             onChange={handleIntervalDaysChange}
                             onBlur={handleIntervalDaysBlur}
-                            aria-describedby={intervalDaysError ? intervalDaysErrorId : intervalDaysHintId}
-                            aria-invalid={intervalDaysError ? 'true' : undefined}
+                            {...intervalDaysFieldValidation.inputProps}
                         />
                         <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
                     </div>
-                    <small className={panelStyles.hint} id={intervalDaysHintId}>{t(locale, 'backupReminderIntervalHint')}</small>
-                    {intervalDaysError ? (
-                        <small className={panelStyles.error} id={intervalDaysErrorId} aria-live="polite">
-                            {intervalDaysError}
-                        </small>
-                    ) : null}
+                    <FieldMessage
+                        className={panelStyles.hint}
+                        id={intervalDaysFieldValidation.hintId}
+                    >
+                        {t(locale, 'backupReminderIntervalHint')}
+                    </FieldMessage>
+                    <FieldMessage
+                        ariaLive="polite"
+                        className={panelStyles.error}
+                        id={intervalDaysFieldValidation.errorId}
+                    >
+                        {intervalDaysError}
+                    </FieldMessage>
                 </label>
 
                 <div className={panelStyles.field}>
