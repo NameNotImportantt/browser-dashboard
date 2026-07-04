@@ -48,6 +48,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     const importStatus = useActionStatus();
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
     const backupReminderOverdue = isBackupReminderOverdue(settings);
+
     const {
         draft: intervalDaysDraft,
         error: intervalDaysError,

@@ -34,6 +34,7 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     } = useGeneralSettingsController({dismissRequestId});
 
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
+
     const tabTitleFieldLabelClassName = clsx(
         styles.fieldLabel,
         tabTitleValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,

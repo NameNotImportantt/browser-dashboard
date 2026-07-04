@@ -11,6 +11,7 @@ export declare const faviconWrap: string;
 export declare const formError: string;
 export declare const formField: string;
 export declare const formInput: string;
+export declare const formInputInvalid: string;
 export declare const formMessage: string;
 export declare const iconButton: string;
 export declare const inlineForm: string;

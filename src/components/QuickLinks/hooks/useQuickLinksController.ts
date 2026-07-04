@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState, type FormEvent} from 'react';
+import {useFieldValidation} from '@/components';
 import {useBookmarks, useSettings} from '@/dashboard';
 import {normalizeUrl} from '@/data/bookmarks';
 import {useActionStatus} from '@/hooks/useActionStatus';
@@ -28,8 +29,10 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
     const [bookmarkTitle, setBookmarkTitle] = useState('');
     const [bookmarkUrl, setBookmarkUrl] = useState('');
     const [categoryName, setCategoryName] = useState('');
-    const [bookmarkError, setBookmarkError] = useState<string | null>(null);
     const faviconRefreshStatus = useActionStatus();
+    const bookmarkTitleValidation = useFieldValidation();
+    const bookmarkUrlValidation = useFieldValidation();
+    const categoryValidation = useFieldValidation();
 
     const visibleBookmarks = useMemo(() => {
         if (activeFilter === 'all') {
@@ -48,44 +51,89 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
         setBookmarkTitle('');
         setBookmarkUrl('');
         setCategoryName('');
-        setBookmarkError(null);
+        bookmarkTitleValidation.reset();
+        bookmarkUrlValidation.reset();
+        categoryValidation.reset();
         faviconRefreshStatus.reset();
     }, [dismissRequestId]);
 
+    useEffect(() => {
+        if (faviconRefreshStatus.status !== 'success') {
+            return;
+        }
+
+        const resetTimeoutId = window.setTimeout(() => {
+            faviconRefreshStatus.reset();
+        }, 2000);
+
+        return () => {
+            window.clearTimeout(resetTimeoutId);
+        };
+    }, [faviconRefreshStatus.reset, faviconRefreshStatus.status]);
+
     const handleBookmarkTitleChange = (nextValue: string) => {
         setBookmarkTitle(nextValue);
-        setBookmarkError(null);
+        bookmarkTitleValidation.clearError();
     };
 
     const handleBookmarkUrlChange = (nextValue: string) => {
         setBookmarkUrl(nextValue);
-        setBookmarkError(null);
+        bookmarkUrlValidation.clearError();
     };
 
     const handleCategoryNameChange = (nextValue: string) => {
         setCategoryName(nextValue);
+        categoryValidation.clearError();
     };
 
     const handleCategoryFormToggle = () => {
         setIsAddingCategory(currentValue => !currentValue);
         setIsAddingLink(false);
-        setBookmarkError(null);
+        setBookmarkTitle('');
+        setBookmarkUrl('');
+        bookmarkTitleValidation.reset();
+        bookmarkUrlValidation.reset();
+
+        if (isAddingCategory) {
+            setCategoryName('');
+            categoryValidation.reset();
+            return;
+        }
+
+        categoryValidation.reset();
     };
 
     const handleBookmarkFormToggle = () => {
         setIsAddingLink(currentValue => !currentValue);
         setIsAddingCategory(false);
-        setBookmarkError(null);
+
+        setCategoryName('');
+        categoryValidation.reset();
+
+        if (isAddingLink) {
+            setBookmarkTitle('');
+            setBookmarkUrl('');
+            bookmarkTitleValidation.reset();
+            bookmarkUrlValidation.reset();
+            return;
+        }
+
+        bookmarkTitleValidation.reset();
+        bookmarkUrlValidation.reset();
     };
 
     const handleCategoryFormCancel = () => {
         setIsAddingCategory(false);
         setCategoryName('');
+        categoryValidation.reset();
     };
 
     const handleBookmarkFormCancel = () => {
         setIsAddingLink(false);
-        setBookmarkError(null);
+        setBookmarkTitle('');
+        setBookmarkUrl('');
+        bookmarkTitleValidation.reset();
+        bookmarkUrlValidation.reset();
     };
 
     const submitLink = async (event: FormEvent<HTMLFormElement>) => {
@@ -93,33 +141,54 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
 
         const trimmedTitle = bookmarkTitle.trim();
         const trimmedUrl = bookmarkUrl.trim();
+        let hasError = false;
 
         if (!trimmedTitle) {
-            setBookmarkError(t(locale, 'bookmarkTitleRequired'));
-            return;
+            bookmarkTitleValidation.markSubmitted();
+            bookmarkTitleValidation.setError(t(locale, 'bookmarkTitleRequired'));
+            hasError = true;
+        } else {
+            bookmarkTitleValidation.clearError();
         }
 
         if (!trimmedUrl) {
-            setBookmarkError(t(locale, 'bookmarkUrlRequired'));
-            return;
+            bookmarkUrlValidation.markSubmitted();
+            bookmarkUrlValidation.setError(t(locale, 'bookmarkUrlRequired'));
+            hasError = true;
+        } else if (!normalizeUrl(trimmedUrl)) {
+            bookmarkUrlValidation.markSubmitted();
+            bookmarkUrlValidation.setError(t(locale, 'bookmarkUrlInvalid'));
+            hasError = true;
+        } else {
+            bookmarkUrlValidation.clearError();
         }
 
-        if (!normalizeUrl(trimmedUrl)) {
-            setBookmarkError(t(locale, 'bookmarkUrlInvalid'));
+        if (hasError) {
             return;
         }
 
         await addBookmark({title: bookmarkTitle, url: bookmarkUrl, categoryId: activeCategoryId});
         setBookmarkTitle('');
         setBookmarkUrl('');
-        setBookmarkError(null);
+        bookmarkTitleValidation.reset();
+        bookmarkUrlValidation.reset();
         setIsAddingLink(false);
     };
 
     const submitCategory = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        await addBookmarkCategory({name: categoryName});
+
+        const trimmedCategoryName = categoryName.trim();
+
+        if (!trimmedCategoryName) {
+            categoryValidation.markSubmitted();
+            categoryValidation.setError(t(locale, 'categoryNameRequired'));
+            return;
+        }
+
+        await addBookmarkCategory({name: trimmedCategoryName});
         setCategoryName('');
+        categoryValidation.reset();
         setIsAddingCategory(false);
     };
 
@@ -145,11 +214,16 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
     return {
         activeFilter,
         areBookmarkFaviconsEnabled,
-        bookmarkError,
         bookmarkTitle,
+        isBookmarkTitleInvalid: bookmarkTitleValidation.isInvalid,
+        bookmarkTitleValidation,
         bookmarkUrl,
+        isBookmarkUrlInvalid: bookmarkUrlValidation.isInvalid,
+        bookmarkUrlValidation,
         categories,
         categoryName,
+        isCategoryInvalid: categoryValidation.isInvalid,
+        categoryValidation,
         deleteBookmark,
         faviconRefreshStatus,
         handleBookmarkFormCancel,

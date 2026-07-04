@@ -68,7 +68,7 @@
 
   &:hover {
     color: var(--danger);
-    transform: none;
+    transform: translateY(-50%) scale(1);
     box-shadow: none;
   }
 }
@@ -106,6 +106,10 @@
     .formInput {
       width: 100%;
       min-width: 0;
+
+      &.formInputInvalid {
+        border-color: var(--danger);
+      }
     }
 
     .formMessage {
@@ -285,6 +289,10 @@
     .formInput {
       width: 100%;
       min-width: 0;
+
+      &.formInputInvalid {
+        border-color: var(--danger);
+      }
     }
 
     .formMessage {
