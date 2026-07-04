@@ -1,7 +1,7 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useId, useMemo, useState, type ChangeEvent, type FocusEvent} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
-import {ActionStatus} from '@/components';
+import {ActionStatus, FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useWeather} from '@/dashboard';
 import {useActionStatus} from '@/hooks/useActionStatus';
@@ -20,15 +20,43 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     const [tabTitle, setTabTitle] = useState(settings.tabTitle);
     const [weatherCity, setWeatherCity] = useState(settings.weatherLocation?.label ?? '');
     const weatherStatus = useActionStatus();
+    const tabTitleValidation = useFieldValidation();
+    const weatherCityValidation = useFieldValidation();
+    const weatherLocationHintId = useId();
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
+
+    const tabTitleFieldLabelClassName = clsx(
+        styles.fieldLabel,
+        tabTitleValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
+    );
+    const weatherFieldLabelClassName = clsx(
+        styles.fieldLabel,
+        weatherCityValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
+    );
+    const tabTitleInputClassName = clsx(
+        styles.inlineRowInput,
+        tabTitleValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
+    const weatherInputClassName = clsx(
+        styles.inlineRowInput,
+        weatherCityValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
+    const weatherLocationHintClassName = clsx(
+        styles.hint,
+        weatherCityValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
+    );
 
     useEffect(() => {
         setTabTitle(settings.tabTitle);
         setWeatherCity(settings.weatherLocation?.label ?? '');
+        tabTitleValidation.reset();
+        weatherCityValidation.reset();
     }, [settings.tabTitle, settings.weatherLocation?.label]);
 
     useEffect(() => {
         weatherStatus.reset();
+        tabTitleValidation.reset();
+        weatherCityValidation.reset();
     }, [dismissRequestId]);
 
     const localeOptions = useMemo(
@@ -39,18 +67,93 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         [],
     );
 
+    const validateTabTitle = (nextTabTitle: string) => {
+        return nextTabTitle.trim() ? null : t(locale, 'tabTitleRequired');
+    };
+
+    const validateWeatherCity = (nextWeatherCity: string) => {
+        return nextWeatherCity.trim() ? null : t(locale, 'weatherCityRequired');
+    };
+
+    const handleLocaleChange = (value: string) => {
+        void setLocale(value as typeof settings.locale);
+    };
+
+    const handleTabTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const nextTabTitle = event.target.value;
+
+        setTabTitle(nextTabTitle);
+
+        if (validateTabTitle(nextTabTitle) === null) {
+            tabTitleValidation.clearError();
+        }
+    };
+
+    const handleTabTitleBlur = (event: FocusEvent<HTMLInputElement>) => {
+        tabTitleValidation.markTouched();
+
+        const error = validateTabTitle(event.target.value);
+
+        if (error) {
+            tabTitleValidation.setError(error);
+            return;
+        }
+
+        tabTitleValidation.clearError();
+    };
+
     const saveTabTitle = async () => {
-        await saveSettingsTabTitle(tabTitle);
+        const error = validateTabTitle(tabTitle);
+
+        if (error) {
+            tabTitleValidation.markTouched();
+            tabTitleValidation.setError(error);
+            return;
+        }
+
+        tabTitleValidation.clearError();
+        await saveSettingsTabTitle(tabTitle.trim());
+    };
+
+    const handleSaveTabTitleClick = () => {
+        void saveTabTitle();
+    };
+
+    const handleWeatherCityChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const nextWeatherCity = event.target.value;
+
+        setWeatherCity(nextWeatherCity);
+        weatherStatus.reset();
+
+        if (validateWeatherCity(nextWeatherCity) === null) {
+            weatherCityValidation.clearError();
+        }
+    };
+
+    const handleWeatherCityBlur = (event: FocusEvent<HTMLInputElement>) => {
+        weatherCityValidation.markTouched();
+
+        const error = validateWeatherCity(event.target.value);
+
+        if (error) {
+            weatherCityValidation.setError(error);
+            return;
+        }
+
+        weatherCityValidation.clearError();
     };
 
     const lookupWeatherCity = async () => {
         const nextCity = weatherCity.trim();
+        const error = validateWeatherCity(nextCity);
 
-        if (!nextCity) {
-            weatherStatus.fail(t(locale, 'weatherCityRequired'));
+        if (error) {
+            weatherCityValidation.markTouched();
+            weatherCityValidation.setError(error);
             return;
         }
 
+        weatherCityValidation.clearError();
         weatherStatus.start();
 
         try {
@@ -62,6 +165,7 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     };
 
     const clearWeatherCity = async () => {
+        weatherCityValidation.reset();
         weatherStatus.start();
 
         try {
@@ -73,6 +177,18 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         }
     };
 
+    const handleLookupWeatherCityClick = () => {
+        void lookupWeatherCity();
+    };
+
+    const handleClearWeatherCityClick = () => {
+        void clearWeatherCity();
+    };
+
+    const weatherInputAriaProps = settings.weatherLocation
+        ? weatherCityValidation.getAriaProps(weatherLocationHintId)
+        : weatherCityValidation.getAriaProps();
+
     return (
         <section className={sectionClassName}>
             <SettingsSectionHeader title={t(locale, 'settingsGeneral')} icon={SlidersHorizontal} />
@@ -83,47 +199,72 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         dismissRequestId={dismissRequestId}
                         value={settings.locale}
                         options={localeOptions}
-                        onChange={value => void setLocale(value as typeof settings.locale)}
+                        onChange={handleLocaleChange}
                         ariaLabel={t(locale, 'locale')}
                     />
                 </div>
 
                 <label className={styles.field}>
-                    <span className={styles.fieldLabel}>{t(locale, 'tabTitle')}</span>
+                    <span className={tabTitleFieldLabelClassName}>{t(locale, 'tabTitle')}</span>
                     <div className={styles.inlineRow}>
-                        <input value={tabTitle} onChange={event => setTabTitle(event.target.value)} />
-                        <button type="button" onClick={() => void saveTabTitle()}>
+                        <input
+                            className={tabTitleInputClassName}
+                            value={tabTitle}
+                            onChange={handleTabTitleChange}
+                            onBlur={handleTabTitleBlur}
+                            aria-label={t(locale, 'tabTitle')}
+                            {...tabTitleValidation.getAriaProps()}
+                        />
+                        <button type="button" onClick={handleSaveTabTitleClick}>
                             {t(locale, 'save')}
                         </button>
                     </div>
+
+                    <FieldValidationMessage
+                        className={styles.error}
+                        id={tabTitleValidation.messageId}
+                        message={tabTitleValidation.showError ? tabTitleValidation.validation.error : null}
+                    />
                 </label>
 
                 <div className={styles.field}>
-                    <span className={styles.fieldLabel}>{t(locale, 'weatherCity')}</span>
+                    <span className={weatherFieldLabelClassName}>{t(locale, 'weatherCity')}</span>
                     <div className={styles.inlineRow}>
                         <input
+                            className={weatherInputClassName}
                             value={weatherCity}
-                            onChange={event => {
-                                setWeatherCity(event.target.value);
-                                weatherStatus.reset();
-                            }}
+                            onChange={handleWeatherCityChange}
+                            onBlur={handleWeatherCityBlur}
                             placeholder={t(locale, 'weatherCityPlaceholder')}
+                            aria-label={t(locale, 'weatherCity')}
+                            {...weatherInputAriaProps}
                         />
-                        <button type="button" onClick={() => void lookupWeatherCity()} disabled={weatherStatus.isPending}>
+                        <button type="button" onClick={handleLookupWeatherCityClick} disabled={weatherStatus.isPending}>
                             {t(locale, 'lookupCity')}
                         </button>
                         {settings.weatherLocation ? (
                             <button
                                 type="button"
                                 className={styles.dangerButton}
-                                onClick={() => void clearWeatherCity()}
+                                onClick={handleClearWeatherCityClick}
                                 disabled={weatherStatus.isPending}
                             >
                                 {t(locale, 'remove')}
                             </button>
                         ) : null}
                     </div>
-                    {settings.weatherLocation ? <small className={styles.hint}>{settings.weatherLocation.label}</small> : null}
+                    {settings.weatherLocation ? (
+                        <small className={weatherLocationHintClassName} id={weatherLocationHintId}>
+                            {settings.weatherLocation.label}
+                        </small>
+                    ) : null}
+
+                    <FieldValidationMessage
+                        className={styles.error}
+                        id={weatherCityValidation.messageId}
+                        message={weatherCityValidation.showError ? weatherCityValidation.validation.error : null}
+                    />
+
                     <ActionStatus
                         status={weatherStatus.status}
                         message={weatherStatus.message}
