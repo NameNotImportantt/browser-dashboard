@@ -38,6 +38,9 @@ export default createViteConfig({
                 cleanupOutdatedCaches: true,
                 navigateFallback: 'index.html',
                 globPatterns: ['**/*.{html,js,css,ico,png,webmanifest}'],
+                // Keep offline support limited to local app shell assets.
+                // Weather, online suggestions, and remote favicons stay best-effort.
+                runtimeCaching: [],
             },
         }),
     ],
