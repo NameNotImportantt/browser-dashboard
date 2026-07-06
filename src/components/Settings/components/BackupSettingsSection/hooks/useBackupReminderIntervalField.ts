@@ -1,4 +1,5 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
+import {useFieldValidation} from '@/components';
 import {t} from '@/i18n';
 import type {AppLocale} from '@/db';
 
@@ -14,11 +15,12 @@ export function useBackupReminderIntervalField({
     onCommit,
 }: UseBackupReminderIntervalFieldOptions) {
     const [draft, setDraft] = useState(() => String(value));
-    const [error, setError] = useState<string | null>(null);
+    const validation = useFieldValidation();
+    const hintId = 'backup-reminder-interval-days-hint';
 
     useEffect(() => {
         setDraft(String(value));
-        setError(null);
+        validation.reset();
     }, [value]);
 
     const validateDraft = (nextValue: string) => {
@@ -42,33 +44,35 @@ export function useBackupReminderIntervalField({
 
         setDraft(nextValue);
 
-        if (error) {
-            setError(validateDraft(nextValue));
+        if (validation.validation.error) {
+            validation.setError(validateDraft(nextValue));
         }
     };
 
     const handleBlur = () => {
         void (async () => {
+            validation.markTouched();
             const nextError = validateDraft(draft);
 
-            setError(nextError);
+            validation.setError(nextError);
 
             if (nextError) {
                 return;
             }
 
-            const normalizedValue = Math.round(Number(draft));
+            const normalizedValue = Math.round(Number(draft.trim()));
 
             setDraft(String(normalizedValue));
-            setError(null);
             await onCommit(normalizedValue);
         })();
     };
 
     return {
         draft,
-        error,
         handleBlur,
         handleChange,
+        hintId,
+        inputAriaProps: validation.getAriaProps(hintId),
+        validation,
     };
 }

@@ -29,6 +29,7 @@ export function AddWorkspaceForm({
     onSubmit,
 }: AddWorkspaceFormProps) {
     const addFormSubmitButtonClassName = clsx(styles.addFormButton, 'primary');
+
     const addInputClassName = clsx(
         styles.addInput,
         isInvalid && fieldValidationStyles.fieldControlInvalid,

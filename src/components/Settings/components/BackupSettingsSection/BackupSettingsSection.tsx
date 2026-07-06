@@ -1,6 +1,6 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {ActionStatus, FieldMessage, getFieldMessageProps, Loader, Modal} from '@/components';
+import {ActionStatus, FieldValidationMessage, fieldValidationStyles, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
@@ -48,21 +48,31 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
     const importStatus = useActionStatus();
     const dangerButtonClassName = clsx(panelStyles.dangerButton);
     const backupReminderOverdue = isBackupReminderOverdue(settings);
+
     const {
         draft: intervalDaysDraft,
-        error: intervalDaysError,
         handleBlur: handleIntervalDaysBlur,
         handleChange: handleIntervalDaysChange,
+        hintId: intervalDaysHintId,
+        inputAriaProps: intervalDaysInputAriaProps,
+        validation: intervalDaysValidation,
     } = useBackupReminderIntervalField({
         locale,
         value: settings.backupReminderIntervalDays,
         onCommit: setBackupReminderIntervalDays,
     });
-    const intervalDaysFieldValidation = getFieldMessageProps({
-        error: intervalDaysError,
-        hasHint: true,
-        id: 'backup-reminder-interval-days',
-    });
+    const intervalTitleClassName = clsx(
+        styles.minorTitle,
+        intervalDaysValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
+    );
+    const intervalInputClassName = clsx(
+        styles.intervalInput,
+        intervalDaysValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
+    );
+    const intervalHintClassName = clsx(
+        panelStyles.hint,
+        intervalDaysValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
+    );
 
     const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
         dateStyle: 'medium',
@@ -76,6 +86,10 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         importStatus.reset();
         setIsConfirmOpen(false);
         event.target.value = '';
+    };
+
+    const handleBackupReminderEnabledChange = () => {
+        void setBackupReminderEnabled(!settings.backupReminderEnabled);
     };
 
     const handleImport = async () => {
@@ -115,6 +129,28 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         }
     };
 
+    const handleBannerExportClick = () => {
+        void handleExport();
+    };
+
+    const handleActionExportClick = () => {
+        void handleExport();
+    };
+
+    const handleConfirmOpenClick = () => {
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmClose = () => {
+        if (!isImporting) {
+            setIsConfirmOpen(false);
+        }
+    };
+
+    const handleConfirmImport = () => {
+        void handleImport();
+    };
+
     useEffect(() => {
         setSelectedFile(null);
         setIsConfirmOpen(false);
@@ -137,7 +173,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                 <div className={panelStyles.field}>
                     <Checkbox
                         checked={settings.backupReminderEnabled}
-                        onChange={() => void setBackupReminderEnabled(!settings.backupReminderEnabled)}
+                        onChange={handleBackupReminderEnabledChange}
                         label={t(locale, 'backupReminderEnabled')}
                     />
                 </div>
@@ -151,7 +187,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         <button
                             type="button"
                             className={styles.reminderAction}
-                            onClick={() => void handleExport()}
+                            onClick={handleBannerExportClick}
                             disabled={isExporting || isImporting}
                         >
                             {t(locale, 'backupExport')}
@@ -166,11 +202,11 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </div>
                 ) : null}
 
-                <h5 className={styles.minorTitle}>{t(locale, 'backupReminderIntervalDays')}</h5>
+                <h5 className={intervalTitleClassName}>{t(locale, 'backupReminderIntervalDays')}</h5>
                 <label className={panelStyles.field}>
                     <div className={styles.inlineRow}>
                         <input
-                            className={clsx(styles.intervalInput, intervalDaysError ? styles.intervalInputInvalid : null)}
+                            className={intervalInputClassName}
                             type="number"
                             min={1}
                             max={365}
@@ -178,23 +214,18 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                             value={intervalDaysDraft}
                             onChange={handleIntervalDaysChange}
                             onBlur={handleIntervalDaysBlur}
-                            {...intervalDaysFieldValidation.inputProps}
+                            {...intervalDaysInputAriaProps}
                         />
                         <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
                     </div>
-                    <FieldMessage
-                        className={panelStyles.hint}
-                        id={intervalDaysFieldValidation.hintId}
-                    >
+                    <small className={intervalHintClassName} id={intervalDaysHintId}>
                         {t(locale, 'backupReminderIntervalHint')}
-                    </FieldMessage>
-                    <FieldMessage
-                        ariaLive="polite"
+                    </small>
+                    <FieldValidationMessage
                         className={panelStyles.error}
-                        id={intervalDaysFieldValidation.errorId}
-                    >
-                        {intervalDaysError}
-                    </FieldMessage>
+                        id={intervalDaysValidation.messageId}
+                        message={intervalDaysValidation.showError ? intervalDaysValidation.validation.error : null}
+                    />
                 </label>
 
                 <div className={panelStyles.field}>
@@ -215,7 +246,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                 </div>
 
                 <div className={styles.actionRow}>
-                    <button type="button" onClick={() => void handleExport()} disabled={isExporting || isImporting}>
+                    <button type="button" onClick={handleActionExportClick} disabled={isExporting || isImporting}>
                         {t(locale, 'backupExport')}
                     </button>
                 </div>
@@ -245,7 +276,7 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     <button
                         type="button"
                         className={dangerButtonClassName}
-                        onClick={() => setIsConfirmOpen(true)}
+                        onClick={handleConfirmOpenClick}
                         disabled={!selectedFile || isImporting}
                     >
                         {t(locale, 'confirmImport')}
@@ -280,14 +311,10 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                 <Modal
                     open={isConfirmOpen}
                     title={t(locale, 'backupImportConfirmTitle')}
-                    onClose={() => {
-                        if (!isImporting) {
-                            setIsConfirmOpen(false);
-                        }
-                    }}
+                    onClose={handleConfirmClose}
                     closeLabel={t(locale, 'cancel')}
                     confirmLabel={t(locale, 'confirmImport')}
-                    onConfirm={() => void handleImport()}
+                    onConfirm={handleConfirmImport}
                     confirmDisabled={isImporting}
                     confirmButtonClassName={dangerButtonClassName}
                     showCloseIcon

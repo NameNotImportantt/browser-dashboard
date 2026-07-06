@@ -1,0 +1,87 @@
+.categoryRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.categoryPillWrap {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+
+  &:hover .categoryRemove {
+    opacity: 1;
+  }
+}
+
+.categoryPill {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text-soft);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.84rem;
+  line-height: 1.2;
+  box-shadow: none;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+
+  &:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.categoryPillActive {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 65%, transparent);
+}
+
+.categoryRemove {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.2rem;
+  width: 1rem;
+  height: 1rem;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-strong) 95%, transparent);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0;
+  box-shadow: none;
+  transition: opacity 0.18s ease, color 0.18s ease;
+
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--danger);
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.newCategoryButton {
+  border: 1px dashed color-mix(in srgb, var(--border-strong) 80%, var(--border));
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.84rem;
+  box-shadow: none;
+
+  &:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    transform: none;
+    box-shadow: none;
+  }
+}

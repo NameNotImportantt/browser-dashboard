@@ -1,3 +1,4 @@
+import {type ChangeEvent, type FocusEvent} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
 import {ActionStatus, FieldValidationMessage, fieldValidationStyles} from '@/components';
@@ -34,6 +35,7 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     } = useGeneralSettingsController({dismissRequestId});
 
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
+
     const tabTitleFieldLabelClassName = clsx(
         styles.fieldLabel,
         tabTitleValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
@@ -59,12 +61,28 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         void handleTabTitleSave();
     };
 
+    const handleTabTitleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        handleTabTitleChange(event.target.value);
+    };
+
+    const handleTabTitleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+        handleTabTitleBlur(event.target.value);
+    };
+
     const handleLookupWeatherCityClick = () => {
         void lookupWeatherCity();
     };
 
     const handleClearWeatherCityClick = () => {
         void clearWeatherCity();
+    };
+
+    const handleWeatherCityInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        handleWeatherCityChange(event.target.value);
+    };
+
+    const handleWeatherCityInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+        handleWeatherCityBlur(event.target.value);
     };
 
     return (
@@ -88,8 +106,8 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         <input
                             className={tabTitleInputClassName}
                             value={tabTitle}
-                            onChange={event => handleTabTitleChange(event.target.value)}
-                            onBlur={event => handleTabTitleBlur(event.target.value)}
+                            onChange={handleTabTitleInputChange}
+                            onBlur={handleTabTitleInputBlur}
                             aria-label={t(locale, 'tabTitle')}
                             {...tabTitleValidation.getAriaProps()}
                         />
@@ -111,8 +129,8 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         <input
                             className={weatherInputClassName}
                             value={weatherCity}
-                            onChange={event => handleWeatherCityChange(event.target.value)}
-                            onBlur={event => handleWeatherCityBlur(event.target.value)}
+                            onChange={handleWeatherCityInputChange}
+                            onBlur={handleWeatherCityInputBlur}
                             placeholder={t(locale, 'weatherCityPlaceholder')}
                             aria-label={t(locale, 'weatherCity')}
                             {...weatherInputAriaProps}

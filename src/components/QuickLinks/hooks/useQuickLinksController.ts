@@ -1,4 +1,5 @@
-import {useEffect, useMemo, useState, type FormEvent} from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import {useFieldValidation} from '@/components';
 import {useBookmarks, useSettings} from '@/dashboard';
 import {normalizeUrl} from '@/data/bookmarks';
 import {useActionStatus} from '@/hooks/useActionStatus';
@@ -28,8 +29,10 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
     const [bookmarkTitle, setBookmarkTitle] = useState('');
     const [bookmarkUrl, setBookmarkUrl] = useState('');
     const [categoryName, setCategoryName] = useState('');
-    const [bookmarkError, setBookmarkError] = useState<string | null>(null);
     const faviconRefreshStatus = useActionStatus();
+    const linkTitleValidation = useFieldValidation();
+    const linkUrlValidation = useFieldValidation();
+    const categoryValidation = useFieldValidation();
 
     const visibleBookmarks = useMemo(() => {
         if (activeFilter === 'all') {
@@ -42,85 +45,134 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
     const activeCategoryId = activeFilter === 'all' ? null : activeFilter;
     const areBookmarkFaviconsEnabled = settings.bookmarkFaviconsEnabled;
 
+    const resetLinkForm = () => {
+        setBookmarkTitle('');
+        setBookmarkUrl('');
+        linkTitleValidation.reset();
+        linkUrlValidation.reset();
+    };
+
+    const closeLinkForm = () => {
+        setIsAddingLink(false);
+        resetLinkForm();
+    };
+
+    const resetCategoryForm = () => {
+        setCategoryName('');
+        categoryValidation.reset();
+    };
+
+    const closeCategoryForm = () => {
+        setIsAddingCategory(false);
+        resetCategoryForm();
+    };
+
     useEffect(() => {
         setIsAddingLink(false);
         setIsAddingCategory(false);
-        setBookmarkTitle('');
-        setBookmarkUrl('');
-        setCategoryName('');
-        setBookmarkError(null);
+        resetLinkForm();
+        resetCategoryForm();
         faviconRefreshStatus.reset();
     }, [dismissRequestId]);
 
+    const handleAllFilterClick = () => {
+        setActiveFilter('all');
+    };
+
+    const handleCategoryFilterClick = (categoryId: string) => {
+        setActiveFilter(categoryId);
+    };
+
+    const handleCategoryFormToggle = () => {
+        const shouldOpen = !isAddingCategory;
+
+        setIsAddingCategory(shouldOpen);
+        setIsAddingLink(false);
+        resetLinkForm();
+
+        if (shouldOpen) {
+            categoryValidation.reset();
+            return;
+        }
+
+        resetCategoryForm();
+    };
+
+    const handleBookmarkFormToggle = () => {
+        const shouldOpen = !isAddingLink;
+
+        setIsAddingLink(shouldOpen);
+        setIsAddingCategory(false);
+        resetCategoryForm();
+
+        if (shouldOpen) {
+            linkTitleValidation.reset();
+            linkUrlValidation.reset();
+            return;
+        }
+
+        resetLinkForm();
+    };
+
     const handleBookmarkTitleChange = (nextValue: string) => {
         setBookmarkTitle(nextValue);
-        setBookmarkError(null);
+        linkTitleValidation.clearError();
     };
 
     const handleBookmarkUrlChange = (nextValue: string) => {
         setBookmarkUrl(nextValue);
-        setBookmarkError(null);
+        linkUrlValidation.clearError();
     };
 
     const handleCategoryNameChange = (nextValue: string) => {
         setCategoryName(nextValue);
+        categoryValidation.clearError();
     };
 
-    const handleCategoryFormToggle = () => {
-        setIsAddingCategory(currentValue => !currentValue);
-        setIsAddingLink(false);
-        setBookmarkError(null);
-    };
-
-    const handleBookmarkFormToggle = () => {
-        setIsAddingLink(currentValue => !currentValue);
-        setIsAddingCategory(false);
-        setBookmarkError(null);
-    };
-
-    const handleCategoryFormCancel = () => {
-        setIsAddingCategory(false);
-        setCategoryName('');
-    };
-
-    const handleBookmarkFormCancel = () => {
-        setIsAddingLink(false);
-        setBookmarkError(null);
-    };
-
-    const submitLink = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
+    const submitLink = async () => {
         const trimmedTitle = bookmarkTitle.trim();
         const trimmedUrl = bookmarkUrl.trim();
+        let hasError = false;
 
         if (!trimmedTitle) {
-            setBookmarkError(t(locale, 'bookmarkTitleRequired'));
-            return;
+            linkTitleValidation.markSubmitted();
+            linkTitleValidation.setError(t(locale, 'bookmarkTitleRequired'));
+            hasError = true;
+        } else {
+            linkTitleValidation.clearError();
         }
 
         if (!trimmedUrl) {
-            setBookmarkError(t(locale, 'bookmarkUrlRequired'));
+            linkUrlValidation.markSubmitted();
+            linkUrlValidation.setError(t(locale, 'bookmarkUrlRequired'));
+            hasError = true;
+        } else if (!normalizeUrl(trimmedUrl)) {
+            linkUrlValidation.markSubmitted();
+            linkUrlValidation.setError(t(locale, 'bookmarkUrlInvalid'));
+            hasError = true;
+        } else {
+            linkUrlValidation.clearError();
+        }
+
+        if (hasError) {
             return;
         }
 
-        if (!normalizeUrl(trimmedUrl)) {
-            setBookmarkError(t(locale, 'bookmarkUrlInvalid'));
-            return;
-        }
-
-        await addBookmark({title: bookmarkTitle, url: bookmarkUrl, categoryId: activeCategoryId});
-        setBookmarkTitle('');
-        setBookmarkUrl('');
-        setBookmarkError(null);
-        setIsAddingLink(false);
+        await addBookmark({title: trimmedTitle, url: trimmedUrl, categoryId: activeCategoryId});
+        closeLinkForm();
     };
 
-    const submitCategory = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        await addBookmarkCategory({name: categoryName});
-        setCategoryName('');
-        setIsAddingCategory(false);
+    const submitCategory = async () => {
+        const trimmedCategoryName = categoryName.trim();
+
+        if (!trimmedCategoryName) {
+            categoryValidation.markSubmitted();
+            categoryValidation.setError(t(locale, 'categoryNameRequired'));
+            return;
+        }
+
+        await addBookmarkCategory({name: trimmedCategoryName});
+        closeCategoryForm();
     };
 
     const handleDeleteCategory = async (categoryId: string) => {
@@ -145,26 +197,29 @@ export function useQuickLinksController({dismissRequestId}: UseQuickLinksControl
     return {
         activeFilter,
         areBookmarkFaviconsEnabled,
-        bookmarkError,
         bookmarkTitle,
         bookmarkUrl,
         categories,
         categoryName,
+        categoryValidation,
+        closeCategoryForm,
+        closeLinkForm,
         deleteBookmark,
         faviconRefreshStatus,
-        handleBookmarkFormCancel,
+        handleAllFilterClick,
         handleBookmarkFormToggle,
         handleBookmarkTitleChange,
         handleBookmarkUrlChange,
-        handleCategoryFormCancel,
+        handleCategoryFilterClick,
         handleCategoryFormToggle,
         handleCategoryNameChange,
         handleDeleteCategory,
         isAddingCategory,
         isAddingLink,
+        linkTitleValidation,
+        linkUrlValidation,
         locale,
         refreshVisibleFavicons,
-        setActiveFilter,
         submitCategory,
         submitLink,
         visibleBookmarks,
