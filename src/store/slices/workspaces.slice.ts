@@ -1,5 +1,11 @@
 import * as repository from '@/data/workspaces/workspaceRepository';
-import {appendSnapshotCollectionItem, mapSnapshotCollectionItem, patchSnapshot, removeSnapshotCollectionItem, replaceSnapshotField} from '../lib/snapshotMutations';
+import {
+    appendSnapshotCollectionItem,
+    mapSnapshotCollectionItem,
+    patchSnapshot,
+    removeSnapshotCollectionItem,
+    replaceSnapshotField
+} from '../lib/snapshotMutations';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type WorkspacesSlice} from '../types';
 
 function getWorkspaces(dashboardStore: DashboardStore) {

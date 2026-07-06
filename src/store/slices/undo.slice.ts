@@ -4,7 +4,7 @@ import * as searchHistoryRepository from '@/data/searchHistory/searchHistoryRepo
 import * as todoRepository from '@/data/todos/todoRepository';
 import * as workspaceRepository from '@/data/workspaces/workspaceRepository';
 import {createId} from '@/lib';
-import {appendSortedSnapshotCollectionItem, patchSnapshot, patchSnapshotCollection, replaceSnapshotField} from '../lib/snapshotMutations';
+import {appendSortedSnapshotCollectionItem, patchSnapshot, patchSnapshotCollection} from '../lib/snapshotMutations';
 import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoSlice} from '../types';
 
 const UNDO_TIMEOUT_MS = 6000;

@@ -1,4 +1,5 @@
 import {trackFullSnapshotReload} from '@/app/bootstrap/devPerformance';
+import {loadPositionedTableRows} from '@/data/lib/loadPositionedTableRows';
 import {DEFAULT_SETTINGS, mergeSettings} from '@/data/settings';
 import {db} from '@/db';
 import {createId} from '@/lib';
@@ -69,12 +70,12 @@ export async function loadSnapshot(mode = SnapshotLoadMode.Full): Promise<Snapsh
 
     const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
         await Promise.all([
-            db.workspaces.toArray(),
-            db.todos.toArray(),
-            isFullLoad ? db.habits.toArray() : Promise.resolve([]),
-            db.bookmarks.toArray(),
-            db.bookmarkCategories.toArray(),
-            isFullLoad ? db.notes.toArray() : Promise.resolve([]),
+            loadPositionedTableRows(db.workspaces),
+            loadPositionedTableRows(db.todos),
+            isFullLoad ? loadPositionedTableRows(db.habits) : Promise.resolve([]),
+            loadPositionedTableRows(db.bookmarks),
+            loadPositionedTableRows(db.bookmarkCategories),
+            isFullLoad ? loadPositionedTableRows(db.notes) : Promise.resolve([]),
             db.settings.get('app'),
             db.weatherCache.get('current'),
             isFullLoad ? db.searchHistory.orderBy('usedAt').reverse().toArray() : Promise.resolve([]),
@@ -94,12 +95,12 @@ export async function loadSnapshot(mode = SnapshotLoadMode.Full): Promise<Snapsh
     });
 
     return {
-        workspaces: sortByPosition(workspaces),
-        todos: sortByPosition(todos),
-        habits: sortByPosition(habits),
-        bookmarks: sortByPosition(bookmarks),
-        bookmarkCategories: sortByPosition(bookmarkCategories),
-        notes: sortByPosition(notes),
+        workspaces,
+        todos,
+        habits,
+        bookmarks,
+        bookmarkCategories,
+        notes,
         settings: mergeSettings(settings),
         weatherCache: weatherCache ?? null,
         searchHistory,

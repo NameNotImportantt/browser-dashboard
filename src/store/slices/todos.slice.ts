@@ -1,5 +1,10 @@
 import * as repository from '@/data/todos/todoRepository';
-import {appendSnapshotCollectionItem, mapSnapshotCollectionItem, patchSnapshotCollection, removeSnapshotCollectionItem} from '../lib/snapshotMutations';
+import {
+    appendSnapshotCollectionItem,
+    mapSnapshotCollectionItem,
+    patchSnapshotCollection,
+    removeSnapshotCollectionItem
+} from '../lib/snapshotMutations';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type TodosSlice} from '../types';
 
 function getWorkspaceTodos(dashboardStore: DashboardStore) {

@@ -3,7 +3,7 @@ import {createSnapshotFieldReload} from '../lib/createSnapshotFieldReload';
 import {replaceSnapshotField} from '../lib/snapshotMutations';
 import type {SliceCreator, WeatherSlice} from '../types';
 
-export const createWeatherSlice: SliceCreator<WeatherSlice> = (set, get) => {
+export const createWeatherSlice: SliceCreator<WeatherSlice> = (set) => {
     const reloadWeatherCache = createSnapshotFieldReload(set, 'weatherCache', repository.getWeatherCache);
 
     return {

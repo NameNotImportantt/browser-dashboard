@@ -1,3 +1,4 @@
+import {deleteWorkspaceScopedTableRows} from '@/data/lib/deleteWorkspaceScopedTableRows';
 import {mergeSettings} from '@/data/settings';
 import {db} from '@/db';
 import {createId} from '@/lib';
@@ -70,11 +71,11 @@ export async function deleteWorkspace(workspaceId: string, workspaces: Workspace
         [db.workspaces, db.todos, db.habits, db.bookmarks, db.bookmarkCategories, db.notes, db.settings],
         async () => {
             await Promise.all([
-                db.todos.where('workspaceId').equals(workspaceId).delete(),
-                db.habits.where('workspaceId').equals(workspaceId).delete(),
-                db.bookmarks.where('workspaceId').equals(workspaceId).delete(),
-                db.bookmarkCategories.where('workspaceId').equals(workspaceId).delete(),
-                db.notes.where('workspaceId').equals(workspaceId).delete(),
+                deleteWorkspaceScopedTableRows(db.todos, workspaceId),
+                deleteWorkspaceScopedTableRows(db.habits, workspaceId),
+                deleteWorkspaceScopedTableRows(db.bookmarks, workspaceId),
+                deleteWorkspaceScopedTableRows(db.bookmarkCategories, workspaceId),
+                deleteWorkspaceScopedTableRows(db.notes, workspaceId),
                 db.workspaces.delete(workspaceId),
             ]);
 
