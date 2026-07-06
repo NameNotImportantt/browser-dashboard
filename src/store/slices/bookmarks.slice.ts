@@ -1,5 +1,11 @@
 import * as repository from '@/data/bookmarks/bookmarkRepository';
 import {DEFAULT_SETTINGS} from '@/data/settings';
+import {
+    appendSnapshotCollectionItem,
+    mapSnapshotCollectionItem,
+    patchSnapshotCollection,
+    removeSnapshotCollectionItem,
+} from '../lib/snapshotMutations';
 import {UndoActionKind, type BookmarksSlice, type DashboardStore, type SliceCreator} from '../types';
 
 function getWorkspaceBookmarks(dashboardStore: DashboardStore) {
@@ -16,14 +22,24 @@ function getWorkspaceBookmarkCategories(dashboardStore: DashboardStore) {
 
 export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) => ({
     addBookmark: async payload => {
-        const bookmarkId = await repository.addBookmark(payload, get().activeWorkspaceId, getWorkspaceBookmarks(get()));
+        const bookmark = await repository.addBookmark(payload, get().activeWorkspaceId, getWorkspaceBookmarks(get()));
         const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
 
-        await get().refresh();
+        if (!bookmark) {
+            return;
+        }
 
-        if (bookmarkId && bookmarkFaviconsEnabled) {
-            void repository.refreshBookmarkFavicon(bookmarkId)
-                .then(() => get().refresh())
+        appendSnapshotCollectionItem(_set, 'bookmarks', bookmark);
+
+        if (bookmarkFaviconsEnabled) {
+            void repository.refreshBookmarkFavicon(bookmark.id)
+                .then(nextBookmark => {
+                    if (!nextBookmark) {
+                        return;
+                    }
+
+                    mapSnapshotCollectionItem(_set, 'bookmarks', nextBookmark.id, () => nextBookmark);
+                })
                 .catch(() => undefined);
         }
     },
@@ -39,27 +55,53 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
             });
         }
 
-        await get().refresh();
+        removeSnapshotCollectionItem(_set, 'bookmarks', bookmarkId);
     },
     refreshBookmarkFavicon: async bookmarkId => {
         const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
 
         if (!bookmarkFaviconsEnabled) {return;}
 
-        await repository.refreshBookmarkFavicon(bookmarkId);
-        await get().refresh();
+        const bookmark = await repository.refreshBookmarkFavicon(bookmarkId);
+
+        if (!bookmark) {
+            return;
+        }
+
+        mapSnapshotCollectionItem(_set, 'bookmarks', bookmarkId, () => bookmark);
     },
     refreshBookmarkFavicons: async bookmarkIds => {
         const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
 
         if (!bookmarkFaviconsEnabled) {return;}
 
-        await Promise.allSettled(bookmarkIds.map(bookmarkId => repository.refreshBookmarkFavicon(bookmarkId)));
-        await get().refresh();
+        const settledBookmarks = await Promise.allSettled(bookmarkIds.map(bookmarkId => repository.refreshBookmarkFavicon(bookmarkId)));
+
+        const refreshedBookmarks = settledBookmarks
+            .flatMap(result => (result.status === 'fulfilled' && result.value ? [result.value] : []));
+
+        if (refreshedBookmarks.length === 0) {
+            return;
+        }
+
+        patchSnapshotCollection(_set, 'bookmarks', bookmarks => bookmarks.map(bookmark => {
+            const refreshedBookmark = refreshedBookmarks.find(candidate => candidate.id === bookmark.id);
+
+            return refreshedBookmark ?? bookmark;
+        }));
     },
     addBookmarkCategory: async payload => {
-        await repository.addBookmarkCategory(payload, get().activeWorkspaceId, getWorkspaceBookmarkCategories(get()).length);
-        await get().refresh();
+        const category = await repository.addBookmarkCategory(
+            payload,
+            get().activeWorkspaceId,
+            getWorkspaceBookmarkCategories(get()).length,
+        );
+
+        if (!category) {
+            return;
+        }
+
+        appendSnapshotCollectionItem(_set, 'bookmarkCategories', category);
     },
     deleteBookmarkCategory: async categoryId => {
         const category = getWorkspaceBookmarkCategories(get()).find(workspaceCategory => workspaceCategory.id === categoryId);
@@ -78,6 +120,18 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
             });
         }
 
-        await get().refresh();
+        removeSnapshotCollectionItem(_set, 'bookmarkCategories', categoryId);
+        patchSnapshotCollection(
+            _set,
+            'bookmarks',
+            bookmarks => bookmarks.map(bookmark => (
+                bookmark.categoryId === categoryId
+                    ? {
+                        ...bookmark,
+                        categoryId: null,
+                    }
+                    : bookmark
+            )),
+        );
     },
 });

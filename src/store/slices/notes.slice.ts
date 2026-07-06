@@ -1,4 +1,5 @@
 import * as repository from '@/data/notes/noteRepository';
+import {appendSortedSnapshotCollectionItem, mapSnapshotCollectionItem, removeSnapshotCollectionItem} from '../lib/snapshotMutations';
 import type {DashboardStore, NotesSlice, SliceCreator} from '../types';
 import type {NoteDraft} from '@/db';
 
@@ -23,20 +24,26 @@ export const createNotesSlice: SliceCreator<NotesSlice> = (set, get) => ({
 
     createNote: async (draft: NoteDraft = {title: '', text: ''}) => {
         const dashboardStore = get();
-        const noteId = await repository.createNote(draft, dashboardStore.activeWorkspaceId, getWorkspaceNotes(dashboardStore));
+        const note = await repository.createNote(draft, dashboardStore.activeWorkspaceId, getWorkspaceNotes(dashboardStore));
 
-        if (noteId) {
-            set({activeNoteId: noteId});
+        if (!note) {
+            return null;
         }
 
-        await get().refresh();
+        set({activeNoteId: note.id});
+        appendSortedSnapshotCollectionItem(set, 'notes', note);
 
-        return noteId;
+        return note.id;
     },
 
     updateNote: async (noteId, patch) => {
-        await repository.updateNote(noteId, patch);
-        await get().refresh();
+        const nextNote = await repository.updateNote(noteId, patch);
+
+        if (!nextNote) {
+            return;
+        }
+
+        mapSnapshotCollectionItem(set, 'notes', noteId, () => nextNote);
     },
 
     deleteNote: async noteId => {
@@ -51,6 +58,6 @@ export const createNotesSlice: SliceCreator<NotesSlice> = (set, get) => ({
 
         await repository.deleteNote(noteId);
         set({activeNoteId: nextActiveNoteId});
-        await get().refresh();
+        removeSnapshotCollectionItem(set, 'notes', noteId);
     },
 });

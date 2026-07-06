@@ -20,7 +20,7 @@ export async function addBookmark(
     const categoryBookmarks = workspaceBookmarks.filter(item => item.categoryId === categoryId);
     const id = createId();
 
-    await db.bookmarks.add({
+    const bookmark: Bookmark = {
         id,
         workspaceId: activeWorkspaceId,
         categoryId,
@@ -29,9 +29,11 @@ export async function addBookmark(
         faviconUrl: null,
         position: categoryBookmarks.length,
         createdAt: Date.now(),
-    });
+    };
 
-    return id;
+    await db.bookmarks.add(bookmark);
+
+    return bookmark;
 }
 
 export async function deleteBookmark(bookmarkId: string) {
@@ -45,11 +47,16 @@ export async function restoreBookmark(bookmark: Bookmark) {
 export async function refreshBookmarkFavicon(bookmarkId: string) {
     const bookmark = await db.bookmarks.get(bookmarkId);
 
-    if (!bookmark) {return;}
+    if (!bookmark) {return null;}
 
     const faviconUrl = resolveBookmarkFaviconUrl(bookmark.url);
 
     await db.bookmarks.update(bookmarkId, {faviconUrl});
+
+    return {
+        ...bookmark,
+        faviconUrl,
+    };
 }
 
 export async function addBookmarkCategory(
@@ -57,19 +64,23 @@ export async function addBookmarkCategory(
     activeWorkspaceId: string | null,
     position: number,
 ) {
-    if (!activeWorkspaceId) {return;}
+    if (!activeWorkspaceId) {return null;}
 
     const name = payload.name.trim();
 
-    if (!name) {return;}
+    if (!name) {return null;}
 
-    await db.bookmarkCategories.add({
+    const category: BookmarkCategory = {
         id: createId(),
         workspaceId: activeWorkspaceId,
         name,
         position,
         createdAt: Date.now(),
-    });
+    };
+
+    await db.bookmarkCategories.add(category);
+
+    return category;
 }
 
 export async function deleteBookmarkCategory(categoryId: string) {

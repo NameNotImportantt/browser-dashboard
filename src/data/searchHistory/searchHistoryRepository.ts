@@ -39,6 +39,10 @@ export async function addSearchHistoryEntry(query: string) {
     }
 }
 
+export async function listSearchHistoryEntries() {
+    return db.searchHistory.orderBy('usedAt').reverse().toArray();
+}
+
 export async function deleteSearchHistoryEntry(entryId: string) {
     await db.searchHistory.delete(entryId);
 }

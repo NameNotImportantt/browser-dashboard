@@ -1,4 +1,5 @@
 import * as repository from '@/data/todos/todoRepository';
+import {appendSnapshotCollectionItem, mapSnapshotCollectionItem, patchSnapshotCollection, removeSnapshotCollectionItem} from '../lib/snapshotMutations';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type TodosSlice} from '../types';
 
 function getWorkspaceTodos(dashboardStore: DashboardStore) {
@@ -9,12 +10,22 @@ function getWorkspaceTodos(dashboardStore: DashboardStore) {
 
 export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
     addTodo: async payload => {
-        await repository.addTodo(payload, get().activeWorkspaceId, getWorkspaceTodos(get()).length);
-        await get().refresh();
+        const todo = await repository.addTodo(payload, get().activeWorkspaceId, getWorkspaceTodos(get()).length);
+
+        if (!todo) {
+            return;
+        }
+
+        appendSnapshotCollectionItem(_set, 'todos', todo);
     },
     toggleTodo: async todoId => {
-        await repository.toggleTodo(todoId);
-        await get().refresh();
+        const nextTodo = await repository.toggleTodo(todoId);
+
+        if (!nextTodo) {
+            return;
+        }
+
+        mapSnapshotCollectionItem(_set, 'todos', todoId, () => nextTodo);
     },
     deleteTodo: async todoId => {
         const todo = getWorkspaceTodos(get()).find(workspaceTodo => workspaceTodo.id === todoId);
@@ -28,10 +39,25 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
             });
         }
 
-        await get().refresh();
+        removeSnapshotCollectionItem(_set, 'todos', todoId);
     },
     reorderTodos: async orderedTodoIdList => {
-        await repository.reorderTodos(orderedTodoIdList);
-        await get().refresh();
+        const updatedAt = await repository.reorderTodos(orderedTodoIdList);
+
+        patchSnapshotCollection(_set, 'todos', todos => todos
+            .map(todo => {
+                const nextPosition = orderedTodoIdList.indexOf(todo.id);
+
+                if (nextPosition < 0) {
+                    return todo;
+                }
+
+                return {
+                    ...todo,
+                    position: nextPosition,
+                    updatedAt,
+                };
+            })
+            .sort((firstTodo, secondTodo) => firstTodo.position - secondTodo.position));
     },
 });

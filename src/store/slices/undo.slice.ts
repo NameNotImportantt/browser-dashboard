@@ -1,8 +1,10 @@
+import {sortByPosition} from '@/data';
 import * as bookmarkRepository from '@/data/bookmarks/bookmarkRepository';
 import * as searchHistoryRepository from '@/data/searchHistory/searchHistoryRepository';
 import * as todoRepository from '@/data/todos/todoRepository';
 import * as workspaceRepository from '@/data/workspaces/workspaceRepository';
 import {createId} from '@/lib';
+import {appendSortedSnapshotCollectionItem, patchSnapshot, patchSnapshotCollection, replaceSnapshotField} from '../lib/snapshotMutations';
 import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoSlice} from '../types';
 
 const UNDO_TIMEOUT_MS = 6000;
@@ -84,6 +86,65 @@ export const createUndoSlice: SliceCreator<UndoSlice> = (set, get) => ({
         });
 
         await restoreUndoEntry(currentUndoEntry);
-        await get().refresh();
+
+        if (currentUndoEntry.kind === UndoActionKind.TodoDelete) {
+            appendSortedSnapshotCollectionItem(set, 'todos', currentUndoEntry.todo);
+            return;
+        }
+
+        if (currentUndoEntry.kind === UndoActionKind.BookmarkDelete) {
+            appendSortedSnapshotCollectionItem(set, 'bookmarks', currentUndoEntry.bookmark);
+            return;
+        }
+
+        if (currentUndoEntry.kind === UndoActionKind.BookmarkCategoryDelete) {
+            appendSortedSnapshotCollectionItem(set, 'bookmarkCategories', currentUndoEntry.category);
+            patchSnapshotCollection(
+                set,
+                'bookmarks',
+                bookmarks => bookmarks.map(bookmark => (
+                    currentUndoEntry.bookmarkIds.includes(bookmark.id)
+                        ? {
+                            ...bookmark,
+                            categoryId: currentUndoEntry.category.id,
+                        }
+                        : bookmark
+                )),
+            );
+            return;
+        }
+
+        if (currentUndoEntry.kind === UndoActionKind.WorkspaceDelete) {
+            patchSnapshot(set, snapshot => ({
+                ...snapshot,
+                workspaces: sortByPosition([...snapshot.workspaces, currentUndoEntry.workspace]),
+                todos: sortByPosition([...snapshot.todos, ...currentUndoEntry.todos]),
+                habits: sortByPosition([...snapshot.habits, ...currentUndoEntry.habits]),
+                bookmarks: sortByPosition([...snapshot.bookmarks, ...currentUndoEntry.bookmarks]),
+                bookmarkCategories: sortByPosition([...snapshot.bookmarkCategories, ...currentUndoEntry.bookmarkCategories]),
+                notes: sortByPosition([...snapshot.notes, ...currentUndoEntry.notes]),
+                settings: currentUndoEntry.wasActive
+                    ? {
+                        ...snapshot.settings,
+                        lastWorkspaceId: currentUndoEntry.workspace.id,
+                    }
+                    : snapshot.settings,
+            }));
+
+            if (currentUndoEntry.wasActive) {
+                set({
+                    activeWorkspaceId: currentUndoEntry.workspace.id,
+                });
+            }
+
+            return;
+        }
+
+        patchSnapshotCollection(
+            set,
+            'searchHistory',
+            searchHistory => [...searchHistory, ...currentUndoEntry.entries]
+                .sort((firstEntry, secondEntry) => secondEntry.usedAt - firstEntry.usedAt),
+        );
     },
 });

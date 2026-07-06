@@ -2,7 +2,9 @@ import {trackStoreActionFailure, trackStoreActionStart, trackStoreActionSuccess}
 
 type StoreActionResult = Promise<string | null | void> | string | null | void;
 
-type StoreAction = (...args: never[]) => StoreActionResult;
+type StoreActionArg = boolean | File | null | number | object | string | undefined;
+
+type StoreAction = (...args: StoreActionArg[]) => StoreActionResult;
 
 export function instrumentStoreActions<TStore extends object>(store: TStore) {
     const instrumentedStore = {...store};
@@ -16,7 +18,7 @@ export function instrumentStoreActions<TStore extends object>(store: TStore) {
         const originalAction = storeEntryValue as StoreAction;
 
         const instrumentedAction: StoreAction = (...args) => {
-            const startedAt = trackStoreActionStart(actionName);
+            const startedAt = trackStoreActionStart();
 
             try {
                 const actionResult = originalAction(...args);

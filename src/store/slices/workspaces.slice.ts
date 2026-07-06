@@ -1,4 +1,5 @@
 import * as repository from '@/data/workspaces/workspaceRepository';
+import {appendSnapshotCollectionItem, mapSnapshotCollectionItem, patchSnapshot, removeSnapshotCollectionItem, replaceSnapshotField} from '../lib/snapshotMutations';
 import {UndoActionKind, type DashboardStore, type SliceCreator, type WorkspacesSlice} from '../types';
 
 function getWorkspaces(dashboardStore: DashboardStore) {
@@ -7,16 +8,30 @@ function getWorkspaces(dashboardStore: DashboardStore) {
 
 export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) => ({
     selectWorkspace: async workspaceId => {
-        await repository.selectWorkspace(workspaceId);
-        await get().refresh();
+        const settings = await repository.selectWorkspace(workspaceId);
+
+        replaceSnapshotField(_set, 'settings', settings);
+        _set({activeWorkspaceId: workspaceId});
     },
     addWorkspace: async name => {
-        await repository.addWorkspace(name, getWorkspaces(get()));
-        await get().refresh();
+        const result = await repository.addWorkspace(name, getWorkspaces(get()));
+
+        if (!result) {
+            return;
+        }
+
+        appendSnapshotCollectionItem(_set, 'workspaces', result.workspace);
+        replaceSnapshotField(_set, 'settings', result.settings);
+        _set({activeWorkspaceId: result.workspace.id});
     },
     renameWorkspace: async (workspaceId, name) => {
-        await repository.renameWorkspace(workspaceId, name);
-        await get().refresh();
+        const workspace = await repository.renameWorkspace(workspaceId, name);
+
+        if (!workspace) {
+            return;
+        }
+
+        mapSnapshotCollectionItem(_set, 'workspaces', workspaceId, () => workspace);
     },
     deleteWorkspace: async workspaceId => {
         const dashboardStore = get();
@@ -24,7 +39,11 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
         const workspaces = getWorkspaces(dashboardStore);
         const workspace = workspaces.find(currentWorkspace => currentWorkspace.id === workspaceId);
 
-        await repository.deleteWorkspace(workspaceId, workspaces);
+        const result = await repository.deleteWorkspace(workspaceId, workspaces);
+
+        if (!result) {
+            return;
+        }
 
         if (snapshot && workspace && workspaces.length > 1) {
             get().enqueueUndoEntry({
@@ -39,6 +58,19 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
             });
         }
 
-        await get().refresh();
+        replaceSnapshotField(_set, 'settings', result.nextSettings);
+        removeSnapshotCollectionItem(_set, 'workspaces', workspaceId);
+        patchSnapshot(_set, currentSnapshot => ({
+            ...currentSnapshot,
+            todos: currentSnapshot.todos.filter(todo => todo.workspaceId !== workspaceId),
+            habits: currentSnapshot.habits.filter(habit => habit.workspaceId !== workspaceId),
+            bookmarks: currentSnapshot.bookmarks.filter(bookmark => bookmark.workspaceId !== workspaceId),
+            bookmarkCategories: currentSnapshot.bookmarkCategories.filter(category => category.workspaceId !== workspaceId),
+            notes: currentSnapshot.notes.filter(note => note.workspaceId !== workspaceId),
+        }));
+        _set({
+            activeNoteId: dashboardStore.activeWorkspaceId === workspaceId ? null : dashboardStore.activeNoteId,
+            activeWorkspaceId: result.nextSettings.lastWorkspaceId,
+        });
     },
 });

@@ -1,54 +1,59 @@
 import * as repository from '@/data/searchHistory/searchHistoryRepository';
+import {createSnapshotFieldReload} from '../lib/createSnapshotFieldReload';
 import {UndoActionKind, type SearchHistorySlice, type SliceCreator} from '../types';
 
-export const createSearchHistorySlice: SliceCreator<SearchHistorySlice> = (_set, get) => ({
-    addSearchHistoryEntry: async query => {
-        await repository.addSearchHistoryEntry(query);
-        await get().refresh();
-    },
-    deleteSearchHistoryEntry: async entryId => {
-        const entry = get().snapshot?.searchHistory.find(searchHistoryEntry => searchHistoryEntry.id === entryId) ?? null;
+export const createSearchHistorySlice: SliceCreator<SearchHistorySlice> = (set, get) => {
+    const reloadSearchHistory = createSnapshotFieldReload(set, 'searchHistory', repository.listSearchHistoryEntries);
 
-        await repository.deleteSearchHistoryEntry(entryId);
+    return {
+        addSearchHistoryEntry: async query => {
+            await repository.addSearchHistoryEntry(query);
+            await reloadSearchHistory();
+        },
+        deleteSearchHistoryEntry: async entryId => {
+            const entry = get().snapshot?.searchHistory.find(searchHistoryEntry => searchHistoryEntry.id === entryId) ?? null;
 
-        if (entry) {
-            get().enqueueUndoEntry({
-                kind: UndoActionKind.SearchHistoryDelete,
-                entries: [entry],
-                clearedAll: false,
-            });
-        }
+            await repository.deleteSearchHistoryEntry(entryId);
 
-        await get().refresh();
-    },
-    deleteSearchHistoryEntries: async entryIds => {
-        const entries = (get().snapshot?.searchHistory ?? []).filter(searchHistoryEntry => entryIds.includes(searchHistoryEntry.id));
+            if (entry) {
+                get().enqueueUndoEntry({
+                    kind: UndoActionKind.SearchHistoryDelete,
+                    entries: [entry],
+                    clearedAll: false,
+                });
+            }
 
-        await repository.deleteSearchHistoryEntries(entryIds);
+            await reloadSearchHistory();
+        },
+        deleteSearchHistoryEntries: async entryIds => {
+            const entries = (get().snapshot?.searchHistory ?? []).filter(searchHistoryEntry => entryIds.includes(searchHistoryEntry.id));
 
-        if (entries.length > 0) {
-            get().enqueueUndoEntry({
-                kind: UndoActionKind.SearchHistoryDelete,
-                entries,
-                clearedAll: false,
-            });
-        }
+            await repository.deleteSearchHistoryEntries(entryIds);
 
-        await get().refresh();
-    },
-    clearSearchHistory: async () => {
-        const entries = get().snapshot?.searchHistory ?? [];
+            if (entries.length > 0) {
+                get().enqueueUndoEntry({
+                    kind: UndoActionKind.SearchHistoryDelete,
+                    entries,
+                    clearedAll: false,
+                });
+            }
 
-        await repository.clearSearchHistory();
+            await reloadSearchHistory();
+        },
+        clearSearchHistory: async () => {
+            const entries = get().snapshot?.searchHistory ?? [];
 
-        if (entries.length > 0) {
-            get().enqueueUndoEntry({
-                kind: UndoActionKind.SearchHistoryDelete,
-                entries,
-                clearedAll: true,
-            });
-        }
+            await repository.clearSearchHistory();
 
-        await get().refresh();
-    },
-});
+            if (entries.length > 0) {
+                get().enqueueUndoEntry({
+                    kind: UndoActionKind.SearchHistoryDelete,
+                    entries,
+                    clearedAll: true,
+                });
+            }
+
+            await reloadSearchHistory();
+        },
+    };
+};

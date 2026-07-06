@@ -3,21 +3,22 @@ import {db} from '@/db';
 import {patchSettings} from '../settings/settingsRepository';
 import {WEATHER_CACHE_TTL_MS, WEATHER_FETCH_TIMEOUT_MS} from './constants';
 import {geocodeCity} from './lib/geocodeCity';
+import type {AppSettings, WeatherCache} from '@/db';
 
-export async function refreshWeather(force = false) {
+export async function refreshWeather(force = false): Promise<WeatherCache | null> {
     const currentSettings = mergeSettings(await db.settings.get('app'));
     const cache = await db.weatherCache.get('current');
     const cacheIsFresh = cache ? Date.now() - cache.fetchedAt < WEATHER_CACHE_TTL_MS : false;
 
     if (!force && cacheIsFresh) {
-        return;
+        return cache ?? null;
     }
 
     const location = currentSettings.weatherLocation;
 
     if (!location) {
         await db.weatherCache.delete('current');
-        return;
+        return null;
     }
 
     const query = new URLSearchParams({
@@ -61,16 +62,20 @@ export async function refreshWeather(force = false) {
             latestLocation.lon !== location.lon ||
             latestLocation.label !== location.label
         ) {
-            return;
+            return null;
         }
 
-        await db.weatherCache.put({
+        const nextWeatherCache: WeatherCache = {
             id: 'current',
             locationLabel: location.label,
             temperatureC,
             weatherCode,
             fetchedAt: Date.now(),
-        });
+        };
+
+        await db.weatherCache.put(nextWeatherCache);
+
+        return nextWeatherCache;
     } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
             throw new Error('Сервис погоды не ответил вовремя');
@@ -82,16 +87,21 @@ export async function refreshWeather(force = false) {
     }
 }
 
-export async function setWeatherCity(city: string) {
+export async function getWeatherCache() {
+    return (await db.weatherCache.get('current')) ?? null;
+}
+
+export async function setWeatherCity(city: string): Promise<AppSettings> {
     const trimmed = city.trim();
 
     if (!trimmed) {
-        await patchSettings({weatherLocation: null});
+        const settings = await patchSettings({weatherLocation: null});
+
         await db.weatherCache.delete('current');
-        return;
+        return settings;
     }
 
     const location = await geocodeCity(trimmed);
 
-    await patchSettings({weatherLocation: location});
+    return patchSettings({weatherLocation: location});
 }

@@ -69,7 +69,7 @@ function logDevPerformance(scope: string, message: string, fields?: DevPerforman
     console.info(`[perf:${scope}] ${message}`, fields ?? {});
 }
 
-export function trackStoreActionStart(actionName: string) {
+export function trackStoreActionStart() {
     if (!isDevPerformanceEnabled()) {
         return 0;
     }
