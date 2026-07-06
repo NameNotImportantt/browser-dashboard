@@ -15,6 +15,8 @@ interface CreateViteConfigOptions {
     inlineAssets: boolean;
     outDir: string;
     pwaEnabled: boolean;
+    plugins?: PluginOption[];
+    publicDir?: string | false;
 }
 
 function createFaviconLinks(inlineAssets: boolean) {
@@ -42,16 +44,23 @@ function createFaviconPlugin(inlineAssets: boolean): Plugin {
     };
 }
 
-export function createViteConfig({inlineAssets, outDir, pwaEnabled}: CreateViteConfigOptions): UserConfigExport {
+export function createViteConfig({
+    inlineAssets,
+    outDir,
+    pwaEnabled,
+    plugins: extraPlugins = [],
+    publicDir = false,
+}: CreateViteConfigOptions): UserConfigExport {
     const plugins: PluginOption[] = [
         react(),
         createFaviconPlugin(inlineAssets),
         ...(inlineAssets ? [viteSingleFile()] : []),
+        ...extraPlugins,
     ];
 
     return defineConfig({
         root: './src',
-        publicDir: false,
+        publicDir,
         plugins,
         base: './',
         build: {
