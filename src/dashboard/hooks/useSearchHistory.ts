@@ -2,8 +2,8 @@ import {useMemo} from 'react';
 import {useDashboardStore} from '@/store';
 
 export function useSearchHistory() {
-    const snapshot = useDashboardStore(dashboardStore => dashboardStore.snapshot);
-    const searchHistory = useMemo(() => snapshot?.searchHistory ?? [], [snapshot]);
+    const searchHistoryCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.searchHistory ?? []);
+    const searchHistory = useMemo(() => searchHistoryCollection, [searchHistoryCollection]);
     const addSearchHistoryEntry = useDashboardStore(dashboardStore => dashboardStore.addSearchHistoryEntry);
     const deleteSearchHistoryEntry = useDashboardStore(dashboardStore => dashboardStore.deleteSearchHistoryEntry);
     const deleteSearchHistoryEntries = useDashboardStore(dashboardStore => dashboardStore.deleteSearchHistoryEntries);

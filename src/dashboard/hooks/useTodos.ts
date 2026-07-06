@@ -1,15 +1,14 @@
 import {useMemo} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 import {useDashboardStore} from '@/store';
+import {selectWorkspaceScopedItems} from './lib/workspaceCollections';
 
 export function useTodos() {
-    const snapshot = useDashboardStore(dashboardStore => dashboardStore.snapshot);
+    const todosCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.todos ?? []);
     const activeWorkspaceId = useDashboardStore(dashboardStore => dashboardStore.activeWorkspaceId);
 
     const todos = useMemo(() => {
-        if (!activeWorkspaceId) {return [];}
-
-        const filtered = snapshot?.todos.filter(todo => todo.workspaceId === activeWorkspaceId) ?? [];
+        const filtered = selectWorkspaceScopedItems(todosCollection, activeWorkspaceId);
 
         return [...filtered].sort((firstTodo, secondTodo) => {
             if (firstTodo.completed !== secondTodo.completed) {
@@ -18,7 +17,7 @@ export function useTodos() {
 
             return firstTodo.position - secondTodo.position;
         });
-    }, [activeWorkspaceId, snapshot]);
+    }, [activeWorkspaceId, todosCollection]);
     const actions = useDashboardStore(
         useShallow(dashboardStore => ({
             addTodo: dashboardStore.addTodo,

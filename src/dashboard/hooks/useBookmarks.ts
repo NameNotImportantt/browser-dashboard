@@ -1,25 +1,21 @@
 import {useMemo} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 import {useDashboardStore} from '@/store';
+import {selectSortedWorkspaceScopedItems} from './lib/workspaceCollections';
 
 export function useBookmarks() {
-    const snapshot = useDashboardStore(dashboardStore => dashboardStore.snapshot);
+    const bookmarksCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.bookmarks ?? []);
+    const bookmarkCategoriesCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.bookmarkCategories ?? []);
     const activeWorkspaceId = useDashboardStore(dashboardStore => dashboardStore.activeWorkspaceId);
 
-    const bookmarks = useMemo(() => {
-        if (!activeWorkspaceId) {return [];}
-
-        return [...(snapshot?.bookmarks.filter(bookmark => bookmark.workspaceId === activeWorkspaceId) ?? [])].sort(
-            (firstBookmark, secondBookmark) => firstBookmark.position - secondBookmark.position,
-        );
-    }, [activeWorkspaceId, snapshot]);
-    const categories = useMemo(() => {
-        if (!activeWorkspaceId) {return [];}
-
-        return [...(snapshot?.bookmarkCategories.filter(category => category.workspaceId === activeWorkspaceId) ?? [])].sort(
-            (firstCategory, secondCategory) => firstCategory.position - secondCategory.position,
-        );
-    }, [activeWorkspaceId, snapshot]);
+    const bookmarks = useMemo(
+        () => selectSortedWorkspaceScopedItems(bookmarksCollection, activeWorkspaceId),
+        [activeWorkspaceId, bookmarksCollection],
+    );
+    const categories = useMemo(
+        () => selectSortedWorkspaceScopedItems(bookmarkCategoriesCollection, activeWorkspaceId),
+        [activeWorkspaceId, bookmarkCategoriesCollection],
+    );
     const actions = useDashboardStore(
         useShallow(dashboardStore => ({
             addBookmark: dashboardStore.addBookmark,

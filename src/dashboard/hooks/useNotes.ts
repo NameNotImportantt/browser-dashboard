@@ -1,10 +1,11 @@
 import {useEffect, useMemo} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 import {useDashboardStore} from '@/store';
+import {selectSortedWorkspaceScopedItems} from './lib/workspaceCollections';
 import {useNoteDraft} from './useNoteDraft';
 
 export function useNotes() {
-    const snapshot = useDashboardStore(dashboardStore => dashboardStore.snapshot);
+    const notesCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.notes ?? []);
     const activeWorkspaceId = useDashboardStore(dashboardStore => dashboardStore.activeWorkspaceId);
 
     const {
@@ -23,13 +24,10 @@ export function useNotes() {
         })),
     );
 
-    const notes = useMemo(() => {
-        if (!activeWorkspaceId) {return [];}
-
-        return (snapshot?.notes.filter(note => note.workspaceId === activeWorkspaceId) ?? []).sort(
-            (firstNote, secondNote) => firstNote.position - secondNote.position,
-        );
-    }, [activeWorkspaceId, snapshot]);
+    const notes = useMemo(
+        () => selectSortedWorkspaceScopedItems(notesCollection, activeWorkspaceId),
+        [activeWorkspaceId, notesCollection],
+    );
 
     const activeNote = useMemo(() => {
         if (notes.length === 0) {return null;}
