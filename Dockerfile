@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package.json bun.lock tsconfig.json vite.config.ts ./
 COPY config ./config
+COPY public-multi ./public-multi
 COPY src ./src
 
 RUN bun install --frozen-lockfile

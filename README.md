@@ -157,7 +157,7 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 - **Search suggestions need the network** — online suggestions call Google Suggest over JSONP. Ad blockers, strict privacy settings, or offline mode may disable them; local search history still works.
 - **Background images are stored locally** — uploaded images are compressed and saved inside IndexedDB (max 8 MB source file, longest edge resized to 1920 px). Very large libraries of custom backgrounds are not supported.
 - **Single note per workspace** — the Notes screen holds one text field per workspace, not a full notes app with multiple pages.
-- **`file://` constraints** — some browser policies treat local files differently. If a feature that requires `fetch()` fails, check browser security settings or try serving the file through a local static server during development.
+- **`file://` constraints** — some browser policies treat local files differently. If a feature that requires `fetch()` fails, check browser security settings or try serving the file through a local static server during development. PWA installability and service worker support require `https://` or `http://localhost`, so they do not apply to the single-file `file://` release.
 - **Alpha status** — the project is under active development; UI and behavior may change between releases.
 
 ### Screenshots
@@ -212,7 +212,7 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 
 ### For Developers
 
-See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. Current build split: `bun run build` creates single-file release artifact, while `bun run build:multi` creates standard multi-file Vite output. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
+See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. Current build split: `bun run build` creates single-file release artifact, while `bun run build:multi` creates standard multi-file Vite output with PWA support for `https://` and `http://localhost`. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
 
 ### License
 

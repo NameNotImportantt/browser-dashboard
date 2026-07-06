@@ -51,6 +51,8 @@ dist-vite/
 
 This output keeps normal JS/CSS/assets files and is intended for local static hosting, Docker, and upcoming PWA/live-preview scenarios.
 
+PWA support belongs only to standard multi-file build. It is expected to work on `https://` or `http://localhost`, not on the single-file `file://` release.
+
 ## Docker
 
 Docker image targets standard multi-file build, not single-file release artifact.
