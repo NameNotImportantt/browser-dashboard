@@ -26,6 +26,11 @@ export interface Snapshot {
   searchHistory: SearchHistoryEntry[];
 }
 
+export enum SnapshotLoadMode {
+    Critical = 'critical',
+    Full = 'full',
+}
+
 export function sortByPosition<T extends { position: number }>(items: T[]) {
     return [...items].sort((a, b) => a.position - b.position);
 }
@@ -58,23 +63,25 @@ export async function ensureSeedData() {
     }
 }
 
-export async function loadSnapshot(): Promise<Snapshot> {
+export async function loadSnapshot(mode = SnapshotLoadMode.Full): Promise<Snapshot> {
     const startedAt = performance.now();
+    const isFullLoad = mode === SnapshotLoadMode.Full;
 
     const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
         await Promise.all([
             db.workspaces.toArray(),
             db.todos.toArray(),
-            db.habits.toArray(),
+            isFullLoad ? db.habits.toArray() : Promise.resolve([]),
             db.bookmarks.toArray(),
             db.bookmarkCategories.toArray(),
-            db.notes.toArray(),
+            isFullLoad ? db.notes.toArray() : Promise.resolve([]),
             db.settings.get('app'),
             db.weatherCache.get('current'),
-            db.searchHistory.orderBy('usedAt').reverse().toArray(),
+            isFullLoad ? db.searchHistory.orderBy('usedAt').reverse().toArray() : Promise.resolve([]),
         ]);
 
     trackFullSnapshotReload(performance.now() - startedAt, {
+        mode,
         tableCount: 9,
         workspaceCount: workspaces.length,
         todoCount: todos.length,

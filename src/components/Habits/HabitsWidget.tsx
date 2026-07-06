@@ -1,6 +1,7 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {useHabits, useSettings} from '@/dashboard';
+import {Loader} from '@/components';
+import {useDashboardCore, useHabits, useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import {todayKey} from '@/lib';
 import {HabitMonthCalendar} from './components/HabitMonthCalendar';
@@ -8,6 +9,7 @@ import styles from './HabitsWidget.module.scss';
 import {useHabitAnalytics} from './hooks/useHabitAnalytics';
 
 export function HabitsWidget() {
+    const {deferredLoading, deferredReady} = useDashboardCore();
     const {habits, addHabit, toggleHabitToday, deleteHabit} = useHabits();
     const {locale} = useSettings();
     const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
@@ -17,6 +19,7 @@ export function HabitsWidget() {
     const enrichedHabits = useHabitAnalytics(habits, today);
     const selectedHabit = enrichedHabits.find(habit => habit.id === selectedHabitId) ?? enrichedHabits[0] ?? null;
     const hasSelectedHabitCompletionData = selectedHabit !== null && selectedHabit.completionDates.length > 0;
+    const showDeferredLoading = deferredLoading && !deferredReady;
 
     useEffect(() => {
         if (enrichedHabits.length === 0) {
@@ -64,7 +67,11 @@ export function HabitsWidget() {
                 </button>
             </form>
 
-            {enrichedHabits.length > 0 ? (
+            {showDeferredLoading ? (
+                <p className={styles.emptyState}>
+                    <Loader label={t(locale, 'loadingHabits')} tone="inline" />
+                </p>
+            ) : enrichedHabits.length > 0 ? (
                 <div className={styles.contentLayout}>
                     <ul className={styles.widgetList}>
                         {enrichedHabits.map(habit => {
