@@ -51,6 +51,27 @@ dist-vite/
 
 Этот output сохраняет обычные JS/CSS/assets файлы и предназначен для локального static hosting, Docker и следующих шагов с PWA/live preview.
 
+## Docker
+
+Docker-образ собирается для обычного multi-file build, а не для single-file release-артефакта.
+
+```bash
+docker build -t browser-dashboard .
+docker run -d --rm --name browser-dashboard-app -p 8080:80 browser-dashboard
+```
+
+После запуска приложение доступно по адресу `http://localhost:8080`.
+
+Имя `browser-dashboard-app` берется из `--name`. Если параметр не указать, Docker сам сгенерирует случайное имя контейнера.
+
+Полезные команды:
+
+```bash
+docker ps
+docker logs browser-dashboard-app
+docker stop browser-dashboard-app
+```
+
 ## Структура проекта
 
 ```
