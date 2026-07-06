@@ -308,6 +308,8 @@ const eslintConfig = defineConfig([
         '.next/**',
         'out/**',
         'build/**',
+        'dist-vite/**',
+        'public-multi/**',
         'next-env.d.ts',
         '**/*.module.scss.d.ts',
     ]),
