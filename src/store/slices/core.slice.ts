@@ -1,3 +1,4 @@
+import {trackBootstrapDuration} from '@/app/bootstrap/devPerformance';
 import {ensureSeedData, importDashboardBackup, loadSnapshot, parseDashboardBackupJson} from '@/data';
 import type {CoreSlice, SliceCreator} from '../types';
 
@@ -8,6 +9,8 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
     activeWorkspaceId: null,
 
     init: async () => {
+        const startedAt = performance.now();
+
         try {
             set({loading: true, error: null});
             await ensureSeedData();
@@ -17,6 +20,7 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
                 error: error instanceof Error ? error.message : 'Не удалось инициализировать данные',
             });
         } finally {
+            trackBootstrapDuration(performance.now() - startedAt);
             set({loading: false});
         }
     },

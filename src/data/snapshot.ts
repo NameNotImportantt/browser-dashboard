@@ -1,3 +1,4 @@
+import {trackFullSnapshotReload} from '@/app/bootstrap/devPerformance';
 import {DEFAULT_SETTINGS, mergeSettings} from '@/data/settings';
 import {db} from '@/db';
 import {createId} from '@/lib';
@@ -58,6 +59,8 @@ export async function ensureSeedData() {
 }
 
 export async function loadSnapshot(): Promise<Snapshot> {
+    const startedAt = performance.now();
+
     const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
         await Promise.all([
             db.workspaces.toArray(),
@@ -70,6 +73,18 @@ export async function loadSnapshot(): Promise<Snapshot> {
             db.weatherCache.get('current'),
             db.searchHistory.orderBy('usedAt').reverse().toArray(),
         ]);
+
+    trackFullSnapshotReload(performance.now() - startedAt, {
+        tableCount: 9,
+        workspaceCount: workspaces.length,
+        todoCount: todos.length,
+        habitCount: habits.length,
+        bookmarkCount: bookmarks.length,
+        bookmarkCategoryCount: bookmarkCategories.length,
+        noteCount: notes.length,
+        weatherCacheLoaded: weatherCache !== undefined && weatherCache !== null,
+        searchHistoryCount: searchHistory.length,
+    });
 
     return {
         workspaces: sortByPosition(workspaces),
