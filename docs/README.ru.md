@@ -216,7 +216,7 @@ Browser Dashboard — компромисс между простотой и по
 
 ### Для разработчиков
 
-См. [руководство разработчика](./DEVELOPERS.ru.md) — сборка, структура проекта и чеклист релиза. Чтобы отправить pull request, см. [Contributing](../CONTRIBUTING.md) (на английском).
+См. [руководство разработчика](./DEVELOPERS.ru.md) — сборка, структура проекта и чеклист релиза. Текущая схема сборки разделена: `bun run build` делает single-file release-артефакт, а `bun run build:multi` собирает обычный multi-file Vite output. Чтобы отправить pull request, см. [Contributing](../CONTRIBUTING.md) (на английском).
 
 ### Лицензия
 

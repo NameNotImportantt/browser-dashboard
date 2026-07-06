@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "bunx typed-scss-modules src -w & vite",
     "build": "tsc -b && vite build",
+    "build:multi": "tsc -b && vite build --config config/vite/standard.config.ts",
     "start": "vite preview",
+    "start:vite": "vite preview --config config/vite/standard.config.ts",
     "lint": "eslint",
     "lint:ts": "eslint \"./src/**/*.{ts,tsx}\"",
     "lint:ts:fix": "eslint \"./src/**/*.{ts,tsx}\" --fix"

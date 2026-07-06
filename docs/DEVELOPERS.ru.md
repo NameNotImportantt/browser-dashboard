@@ -28,8 +28,10 @@ Dev-сервер поднимается через Vite (по умолчанию
 | Команда | Описание |
 | --- | --- |
 | `bun run dev` | Генерация `.d.ts` для SCSS-модулей и запуск Vite dev-сервера |
-| `bun run build` | Проверка типов (`tsc -b`) и production-сборка |
-| `bun run start` | Локальный предпросмотр production-сборки |
+| `bun run build` | Проверка типов (`tsc -b`) и single-file production-сборка |
+| `bun run build:multi` | Проверка типов (`tsc -b`) и обычная multi-file Vite-сборка |
+| `bun run start` | Локальный предпросмотр single-file production-сборки |
+| `bun run start:vite` | Локальный предпросмотр обычной multi-file сборки |
 
 ## Результат сборки
 
@@ -40,6 +42,14 @@ dist/index.html
 ```
 
 JavaScript, CSS и favicon встроены в HTML. Именно этот файл попадает в Releases для пользователей.
+
+Обычная multi-file сборка выводится отдельно в:
+
+```
+dist-vite/
+```
+
+Этот output сохраняет обычные JS/CSS/assets файлы и предназначен для локального static hosting, Docker и следующих шагов с PWA/live preview.
 
 ## Структура проекта
 

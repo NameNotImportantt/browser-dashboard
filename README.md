@@ -212,7 +212,7 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 
 ### For Developers
 
-See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
+See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. Current build split: `bun run build` creates single-file release artifact, while `bun run build:multi` creates standard multi-file Vite output. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
 
 ### License
 

@@ -28,8 +28,10 @@ Dev server runs on Vite (default `http://localhost:5173`). Hot reload is enabled
 | Command | Description |
 | --- | --- |
 | `bun run dev` | Generate SCSS module `.d.ts` files and start Vite dev server |
-| `bun run build` | Type-check with `tsc -b`, then production build |
-| `bun run start` | Preview the production build locally |
+| `bun run build` | Type-check with `tsc -b`, then build single-file release artifact |
+| `bun run build:multi` | Type-check with `tsc -b`, then build standard multi-file Vite output |
+| `bun run start` | Preview the single-file production build locally |
+| `bun run start:vite` | Preview the standard multi-file build locally |
 
 ## Build Output
 
@@ -40,6 +42,14 @@ dist/index.html
 ```
 
 Everything — JavaScript, CSS, inlined favicon — is bundled into that HTML. This file is what end users download from Releases.
+
+Standard multi-file build is emitted separately to:
+
+```
+dist-vite/
+```
+
+This output keeps normal JS/CSS/assets files and is intended for local static hosting, Docker, and upcoming PWA/live-preview scenarios.
 
 ## Project Structure
 
