@@ -34,7 +34,7 @@ export function useGeneralSettingsController({dismissRequestId}: UseGeneralSetti
 
     const localeOptions = useMemo(
         () => [
-            {value: 'ru', label: 'Р СѓСЃСЃРєРёР№'},
+            {value: 'ru', label: 'Русский'},
             {value: 'en', label: 'English'},
         ],
         [],
