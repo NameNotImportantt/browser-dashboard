@@ -14,6 +14,7 @@ const favicon32Path = fileURLToPath(
 interface CreateViteConfigOptions {
     inlineAssets: boolean;
     outDir: string;
+    pwaEnabled: boolean;
 }
 
 function createFaviconLinks(inlineAssets: boolean) {
@@ -41,7 +42,7 @@ function createFaviconPlugin(inlineAssets: boolean): Plugin {
     };
 }
 
-export function createViteConfig({inlineAssets, outDir}: CreateViteConfigOptions): UserConfigExport {
+export function createViteConfig({inlineAssets, outDir, pwaEnabled}: CreateViteConfigOptions): UserConfigExport {
     const plugins: PluginOption[] = [
         react(),
         createFaviconPlugin(inlineAssets),
@@ -56,6 +57,9 @@ export function createViteConfig({inlineAssets, outDir}: CreateViteConfigOptions
         build: {
             outDir,
             emptyOutDir: true,
+        },
+        define: {
+            'import.meta.env.VITE_PWA_ENABLED': JSON.stringify(pwaEnabled),
         },
         resolve: {
             alias: {
