@@ -9,7 +9,27 @@ export default createViteConfig({
     plugins: [
         VitePWA({
             injectRegister: false,
-            manifest: false,
+            manifest: {
+                name: 'Browser Dashboard',
+                short_name: 'Dashboard',
+                display: 'standalone',
+                start_url: './',
+                scope: './',
+                theme_color: '#070a11',
+                background_color: '#070a11',
+                icons: [
+                    {
+                        src: 'icons/icon-192.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                    },
+                    {
+                        src: 'icons/icon-512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                    },
+                ],
+            },
             pwaAssets: {
                 disabled: true,
             },
