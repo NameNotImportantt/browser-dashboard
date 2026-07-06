@@ -1,5 +1,6 @@
+import {normalizeSearchHistoryQuery} from '@/data/searchHistory';
 import {mergeSettings} from '@/data/settings';
-import {db, type Note} from '@/db';
+import {db, type Note, type SearchHistoryEntry} from '@/db';
 import {
     BACKUP_SCHEMA_VERSION,
     DashboardBackupError,
@@ -38,6 +39,13 @@ function normalizeImportedNotes(notes: DashboardBackupNote[]): Note[] {
         });
 }
 
+function normalizeImportedSearchHistory(searchHistory: SearchHistoryEntry[]) {
+    return searchHistory.map(entry => ({
+        ...entry,
+        normalizedQuery: entry.normalizedQuery ?? normalizeSearchHistoryQuery(entry.query),
+    }));
+}
+
 export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope {
     let parsed: BackupJsonValue;
 
@@ -61,6 +69,7 @@ export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope 
 export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
     const settings = mergeSettings(envelope.data.settings);
     const notes = normalizeImportedNotes(envelope.data.notes);
+    const searchHistory = normalizeImportedSearchHistory(envelope.data.searchHistory);
 
     try {
         await db.transaction(
@@ -119,8 +128,8 @@ export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
                     await db.weatherCache.put(envelope.data.weatherCache);
                 }
 
-                if (envelope.data.searchHistory.length > 0) {
-                    await db.searchHistory.bulkPut(envelope.data.searchHistory);
+                if (searchHistory.length > 0) {
+                    await db.searchHistory.bulkPut(searchHistory);
                 }
             },
         );

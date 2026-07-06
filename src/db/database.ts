@@ -22,7 +22,7 @@ const DASHBOARD_DATABASE_SCHEMA = {
     bookmarkCategories: 'id,workspaceId,position,createdAt',
     settings: 'key,updatedAt',
     weatherCache: 'id,fetchedAt',
-    searchHistory: 'id,usedAt',
+    searchHistory: 'id,usedAt,normalizedQuery',
 };
 
 export class DashboardDatabase extends Dexie {
@@ -40,6 +40,13 @@ export class DashboardDatabase extends Dexie {
         super(DASHBOARD_DATABASE_NAME);
 
         this.version(10).stores(DASHBOARD_DATABASE_SCHEMA);
+        this.version(11)
+            .stores(DASHBOARD_DATABASE_SCHEMA)
+            .upgrade(async transaction => {
+                await transaction.table('searchHistory').toCollection().modify(searchHistoryEntry => {
+                    searchHistoryEntry.normalizedQuery = searchHistoryEntry.query.trim().toLowerCase();
+                });
+            });
     }
 }
 

@@ -1,3 +1,4 @@
+import {normalizeSearchHistoryQuery} from '@/data/searchHistory';
 import type {SearchHistoryEntry} from '@/db';
 
 export type SearchSuggestionSource = 'history' | 'online';
@@ -22,12 +23,8 @@ type SearchSuggestionsJsonValue =
     | SearchSuggestionsJsonObject
     | SearchSuggestionsJsonValue[];
 
-function normalizeQuery(query: string) {
-    return query.trim().toLowerCase();
-}
-
 function suggestionKey(label: string) {
-    return label.trim().toLowerCase();
+    return normalizeSearchHistoryQuery(label);
 }
 
 function matchesQuery(haystack: string, normalized: string) {
@@ -49,7 +46,7 @@ function mapHistoryEntry(entry: SearchHistoryEntry): SearchSuggestion {
 }
 
 export function getLocalSearchSuggestions(query: string, history: SearchHistoryEntry[]): SearchSuggestion[] {
-    const normalized = normalizeQuery(query);
+    const normalized = normalizeSearchHistoryQuery(query);
 
     if (!normalized) {
         return history.slice(0, MAX_SUGGESTIONS).map(mapHistoryEntry);
