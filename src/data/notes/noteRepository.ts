@@ -16,7 +16,7 @@ export async function createNote(draft: NoteDraft, workspaceId: string | null, n
     const now = Date.now();
     const position = getNextNotePosition(notes);
 
-    await db.notes.add({
+    const note: Note = {
         id,
         workspaceId,
         title: draft.title,
@@ -24,20 +24,36 @@ export async function createNote(draft: NoteDraft, workspaceId: string | null, n
         createdAt: now,
         updatedAt: now,
         position,
-    });
+    };
 
-    return id;
+    await db.notes.add(note);
+
+    return note;
 }
 
 export async function updateNote(noteId: string, patch: NotePatch) {
     if (!('title' in patch) && !('text' in patch)) {
-        return;
+        return null;
     }
+
+    const currentNote = await db.notes.get(noteId);
+
+    if (!currentNote) {
+        return null;
+    }
+
+    const nextNote: Note = {
+        ...currentNote,
+        ...patch,
+        updatedAt: Date.now(),
+    };
 
     await db.notes.update(noteId, {
         ...patch,
-        updatedAt: Date.now(),
+        updatedAt: nextNote.updatedAt,
     });
+
+    return nextNote;
 }
 
 export async function deleteNote(noteId: string) {

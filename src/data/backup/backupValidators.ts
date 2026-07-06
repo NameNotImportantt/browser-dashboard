@@ -155,6 +155,7 @@ function isSearchHistoryEntry(value: BackupInspectableValue): value is SearchHis
     return isRecord(value) &&
         isString(value.id) &&
         isString(value.query) &&
+        (value.normalizedQuery === undefined || isString(value.normalizedQuery)) &&
         isNumber(value.usedAt);
 }
 

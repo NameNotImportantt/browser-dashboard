@@ -1,3 +1,5 @@
+import {trackFullSnapshotReload} from '@/app/bootstrap/devPerformance';
+import {loadPositionedTableRows} from '@/data/lib/loadPositionedTableRows';
 import {DEFAULT_SETTINGS, mergeSettings} from '@/data/settings';
 import {db} from '@/db';
 import {createId} from '@/lib';
@@ -23,6 +25,11 @@ export interface Snapshot {
   settings: AppSettings;
   weatherCache: WeatherCache | null;
   searchHistory: SearchHistoryEntry[];
+}
+
+export enum SnapshotLoadMode {
+    Critical = 'critical',
+    Full = 'full',
 }
 
 export function sortByPosition<T extends { position: number }>(items: T[]) {
@@ -57,27 +64,43 @@ export async function ensureSeedData() {
     }
 }
 
-export async function loadSnapshot(): Promise<Snapshot> {
+export async function loadSnapshot(mode = SnapshotLoadMode.Full): Promise<Snapshot> {
+    const startedAt = performance.now();
+    const isFullLoad = mode === SnapshotLoadMode.Full;
+
     const [workspaces, todos, habits, bookmarks, bookmarkCategories, notes, settings, weatherCache, searchHistory] =
         await Promise.all([
-            db.workspaces.toArray(),
-            db.todos.toArray(),
-            db.habits.toArray(),
-            db.bookmarks.toArray(),
-            db.bookmarkCategories.toArray(),
-            db.notes.toArray(),
+            loadPositionedTableRows(db.workspaces),
+            loadPositionedTableRows(db.todos),
+            isFullLoad ? loadPositionedTableRows(db.habits) : Promise.resolve([]),
+            loadPositionedTableRows(db.bookmarks),
+            loadPositionedTableRows(db.bookmarkCategories),
+            isFullLoad ? loadPositionedTableRows(db.notes) : Promise.resolve([]),
             db.settings.get('app'),
             db.weatherCache.get('current'),
-            db.searchHistory.orderBy('usedAt').reverse().toArray(),
+            isFullLoad ? db.searchHistory.orderBy('usedAt').reverse().toArray() : Promise.resolve([]),
         ]);
 
+    trackFullSnapshotReload(performance.now() - startedAt, {
+        mode,
+        tableCount: 9,
+        workspaceCount: workspaces.length,
+        todoCount: todos.length,
+        habitCount: habits.length,
+        bookmarkCount: bookmarks.length,
+        bookmarkCategoryCount: bookmarkCategories.length,
+        noteCount: notes.length,
+        weatherCacheLoaded: weatherCache !== undefined && weatherCache !== null,
+        searchHistoryCount: searchHistory.length,
+    });
+
     return {
-        workspaces: sortByPosition(workspaces),
-        todos: sortByPosition(todos),
-        habits: sortByPosition(habits),
-        bookmarks: sortByPosition(bookmarks),
-        bookmarkCategories: sortByPosition(bookmarkCategories),
-        notes: sortByPosition(notes),
+        workspaces,
+        todos,
+        habits,
+        bookmarks,
+        bookmarkCategories,
+        notes,
         settings: mergeSettings(settings),
         weatherCache: weatherCache ?? null,
         searchHistory,

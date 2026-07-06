@@ -3,15 +3,15 @@ import {createId} from '@/lib';
 import type {CreateTodoPayload, TodoItem} from '@/db';
 
 export async function addTodo(payload: CreateTodoPayload, activeWorkspaceId: string | null, position: number) {
-    if (!activeWorkspaceId) {return;}
+    if (!activeWorkspaceId) {return null;}
 
     const title = payload.title.trim();
 
-    if (!title) {return;}
+    if (!title) {return null;}
 
     const now = Date.now();
 
-    await db.todos.add({
+    const todo: TodoItem = {
         id: createId(),
         workspaceId: activeWorkspaceId,
         title,
@@ -21,18 +21,30 @@ export async function addTodo(payload: CreateTodoPayload, activeWorkspaceId: str
         position,
         createdAt: now,
         updatedAt: now,
-    });
+    };
+
+    await db.todos.add(todo);
+
+    return todo;
 }
 
 export async function toggleTodo(todoId: string) {
     const item = await db.todos.get(todoId);
 
-    if (!item) {return;}
+    if (!item) {return null;}
 
-    await db.todos.update(todoId, {
+    const nextTodo: TodoItem = {
+        ...item,
         completed: !item.completed,
         updatedAt: Date.now(),
+    };
+
+    await db.todos.update(todoId, {
+        completed: nextTodo.completed,
+        updatedAt: nextTodo.updatedAt,
     });
+
+    return nextTodo;
 }
 
 export async function deleteTodo(todoId: string) {
@@ -51,4 +63,6 @@ export async function reorderTodos(orderedIds: string[]) {
             await db.todos.update(todoId, {position, updatedAt});
         }
     });
+
+    return updatedAt;
 }

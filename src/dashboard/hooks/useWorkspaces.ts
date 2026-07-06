@@ -3,9 +3,9 @@ import {useShallow} from 'zustand/react/shallow';
 import {useDashboardStore} from '@/store';
 
 export function useWorkspaces() {
-    const snapshot = useDashboardStore(dashboardStore => dashboardStore.snapshot);
+    const workspacesCollection = useDashboardStore(dashboardStore => dashboardStore.snapshot?.workspaces ?? []);
     const activeWorkspaceId = useDashboardStore(dashboardStore => dashboardStore.activeWorkspaceId);
-    const workspaces = useMemo(() => snapshot?.workspaces ?? [], [snapshot]);
+    const workspaces = useMemo(() => workspacesCollection, [workspacesCollection]);
 
     const actions = useDashboardStore(
         useShallow(dashboardStore => ({

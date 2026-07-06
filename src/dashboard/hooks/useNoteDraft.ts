@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
+import {trackNoteAutosavePersist, trackNoteAutosaveScheduled} from '@/app/bootstrap/devPerformance';
 import type {Note, NoteDraft} from '@/db';
 
 type NoteSaveStatus = 'idle' | 'saving' | 'saved';
@@ -85,6 +86,7 @@ export function useNoteDraft({
 
         isPersistingRef.current = true;
         setSaveStatus('saving');
+        const startedAt = performance.now();
 
         try {
             if (pendingNoteSave.noteId) {
@@ -102,6 +104,11 @@ export function useNoteDraft({
             pendingNoteSaveRef.current = null;
             setSaveStatus('saved');
             scheduleSavedStatusReset();
+            trackNoteAutosavePersist(performance.now() - startedAt, {
+                noteId: pendingNoteSave.noteId ?? 'new-note',
+                workspaceId: pendingNoteSave.workspaceId ?? 'no-workspace',
+                mode: pendingNoteSave.noteId ? 'update' : 'create',
+            });
         } finally {
             isPersistingRef.current = false;
         }
@@ -170,6 +177,10 @@ export function useNoteDraft({
             title: draftTitle,
             text: draftText,
         };
+        trackNoteAutosaveScheduled({
+            noteId: activeNote?.id ?? 'new-note',
+            workspaceId: activeWorkspaceId,
+        });
 
         clearPendingSaveTimeout();
         pendingSaveTimeoutIdRef.current = window.setTimeout(() => {

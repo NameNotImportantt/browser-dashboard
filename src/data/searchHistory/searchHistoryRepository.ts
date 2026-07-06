@@ -1,12 +1,14 @@
 import {db} from '@/db';
 import {createId} from '@/lib';
 import {SEARCH_HISTORY_LIMIT} from './constants';
+import {normalizeSearchHistoryQuery} from './lib/normalizeSearchHistoryQuery';
 import type {SearchHistoryEntry} from '@/db';
 
 export async function addSearchHistoryEntry(query: string) {
-    const normalized = query.trim();
+    const trimmed = query.trim();
+    const normalizedQuery = normalizeSearchHistoryQuery(query);
 
-    if (!normalized) {
+    if (!trimmed) {
         return;
     }
 
@@ -17,15 +19,19 @@ export async function addSearchHistoryEntry(query: string) {
     }
 
     const now = Date.now();
-    const entries = await db.searchHistory.toArray();
-    const existing = entries.find(entry => entry.query.toLowerCase() === normalized.toLowerCase());
+    const existing = await db.searchHistory.where('normalizedQuery').equals(normalizedQuery).first();
 
     if (existing) {
-        await db.searchHistory.update(existing.id, {usedAt: now});
+        await db.searchHistory.update(existing.id, {
+            query: trimmed,
+            normalizedQuery,
+            usedAt: now,
+        });
     } else {
         await db.searchHistory.add({
             id: createId(),
-            query: normalized,
+            query: trimmed,
+            normalizedQuery,
             usedAt: now,
         });
     }
@@ -37,6 +43,10 @@ export async function addSearchHistoryEntry(query: string) {
 
         await db.searchHistory.bulkDelete(overflow.map(entry => entry.id));
     }
+}
+
+export async function listSearchHistoryEntries() {
+    return db.searchHistory.orderBy('usedAt').reverse().toArray();
 }
 
 export async function deleteSearchHistoryEntry(entryId: string) {
@@ -60,5 +70,8 @@ export async function restoreSearchHistoryEntries(entries: SearchHistoryEntry[])
         return;
     }
 
-    await db.searchHistory.bulkPut(entries);
+    await db.searchHistory.bulkPut(entries.map(entry => ({
+        ...entry,
+        normalizedQuery: entry.normalizedQuery ?? normalizeSearchHistoryQuery(entry.query),
+    })));
 }

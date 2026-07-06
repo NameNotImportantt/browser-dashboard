@@ -1,8 +1,9 @@
 import {useState} from 'react';
 import clsx from 'clsx';
 import {Flame, ListTodo} from 'lucide-react';
+import {Loader} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
-import {useSettings} from '@/dashboard';
+import {useDashboardCore, useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import {TodayHabitRow} from './components/TodayHabitRow/TodayHabitRow';
 import {TodayTaskRow} from './components/TodayTaskRow/TodayTaskRow';
@@ -12,12 +13,14 @@ import styles from './TodayPanel.module.scss';
 
 export function TodayPanel() {
     const {locale} = useSettings();
+    const {deferredLoading, deferredReady} = useDashboardCore();
     const [showCompleted, setShowCompleted] = useState(false);
     const {panelTodos, toggleTodo} = useTodayPanelTodos(showCompleted);
     const {habitRows, toggleHabitToday} = useTodayPanelHabits();
     const todayPanelClassName = clsx('card', styles.todayPanel);
     const habitsSectionClassName = clsx(styles.section, styles.sectionSeparated);
     const taskToggleLabel = t(locale, 'todayTasksShowCompleted');
+    const showHabitsLoading = deferredLoading && !deferredReady;
 
     const handleShowCompletedChange = () => {
         setShowCompleted(currentShowCompleted => !currentShowCompleted);
@@ -75,7 +78,11 @@ export function TodayPanel() {
                     </div>
 
                     <ul className={styles.habitList}>
-                        {habitRows.length > 0 ? (
+                        {showHabitsLoading ? (
+                            <li className={styles.emptyItem}>
+                                <Loader label={t(locale, 'loadingHabits')} tone="inline" />
+                            </li>
+                        ) : habitRows.length > 0 ? (
                             habitRows.map(habit => (
                                 <TodayHabitRow
                                     key={habit.id}

@@ -1,75 +1,93 @@
+import {deleteWorkspaceScopedTableRows} from '@/data/lib/deleteWorkspaceScopedTableRows';
 import {mergeSettings} from '@/data/settings';
 import {db} from '@/db';
 import {createId} from '@/lib';
 import {patchSettings} from '../settings/settingsRepository';
-import type {Bookmark, BookmarkCategory, Habit, Note, TodoItem, Workspace} from '@/db';
+import type {AppSettings, Bookmark, BookmarkCategory, Habit, Note, TodoItem, Workspace} from '@/db';
 
 export async function selectWorkspace(workspaceId: string) {
-    await patchSettings({lastWorkspaceId: workspaceId});
+    return patchSettings({lastWorkspaceId: workspaceId});
 }
 
 export async function addWorkspace(name: string, workspaces: Workspace[]) {
     const value = name.trim();
 
-    if (!value) {return;}
+    if (!value) {return null;}
 
     const id = createId();
     const now = Date.now();
     const position = workspaces.length;
 
-    await db.workspaces.add({
+    const workspace: Workspace = {
         id,
         name: value,
         position,
         createdAt: now,
-    });
+    };
 
-    await patchSettings({lastWorkspaceId: id});
+    await db.workspaces.add(workspace);
+
+    const settings = await patchSettings({lastWorkspaceId: id});
+
+    return {workspace, settings};
 }
 
 export async function renameWorkspace(workspaceId: string, name: string) {
     const value = name.trim();
 
-    if (!value) {return;}
+    if (!value) {return null;}
 
     const workspace = await db.workspaces.get(workspaceId);
 
-    if (!workspace) {return;}
+    if (!workspace) {return null;}
 
     await db.workspaces.update(workspaceId, {name: value});
+
+    return {
+        ...workspace,
+        name: value,
+    };
 }
 
 export async function deleteWorkspace(workspaceId: string, workspaces: Workspace[]) {
-    if (workspaces.length <= 1) {return;}
+    if (workspaces.length <= 1) {return null;}
 
-    if (!workspaces.some(item => item.id === workspaceId)) {return;}
+    if (!workspaces.some(item => item.id === workspaceId)) {return null;}
 
     const remaining = workspaces.filter(item => item.id !== workspaceId);
     const currentSettings = mergeSettings(await db.settings.get('app'));
     const isDeletingActive = currentSettings.lastWorkspaceId === workspaceId;
+
+    const nextSettings: AppSettings = isDeletingActive
+        ? {
+            ...currentSettings,
+            lastWorkspaceId: remaining[0]?.id ?? null,
+            updatedAt: Date.now(),
+        }
+        : currentSettings;
 
     await db.transaction(
         'rw',
         [db.workspaces, db.todos, db.habits, db.bookmarks, db.bookmarkCategories, db.notes, db.settings],
         async () => {
             await Promise.all([
-                db.todos.where('workspaceId').equals(workspaceId).delete(),
-                db.habits.where('workspaceId').equals(workspaceId).delete(),
-                db.bookmarks.where('workspaceId').equals(workspaceId).delete(),
-                db.bookmarkCategories.where('workspaceId').equals(workspaceId).delete(),
-                db.notes.where('workspaceId').equals(workspaceId).delete(),
+                deleteWorkspaceScopedTableRows(db.todos, workspaceId),
+                deleteWorkspaceScopedTableRows(db.habits, workspaceId),
+                deleteWorkspaceScopedTableRows(db.bookmarks, workspaceId),
+                deleteWorkspaceScopedTableRows(db.bookmarkCategories, workspaceId),
+                deleteWorkspaceScopedTableRows(db.notes, workspaceId),
                 db.workspaces.delete(workspaceId),
             ]);
 
             if (isDeletingActive) {
-                await db.settings.put({
-                    ...currentSettings,
-                    lastWorkspaceId: remaining[0]?.id ?? null,
-                    updatedAt: Date.now(),
-                });
+                await db.settings.put(nextSettings);
             }
         },
     );
+
+    return {
+        nextSettings,
+    };
 }
 
 export async function restoreWorkspaceSubtree(payload: {
