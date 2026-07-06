@@ -9,6 +9,7 @@ export default createViteConfig({
     plugins: [
         VitePWA({
             injectRegister: false,
+            registerType: 'autoUpdate',
             manifest: {
                 name: 'Browser Dashboard',
                 short_name: 'Dashboard',
@@ -32,6 +33,11 @@ export default createViteConfig({
             },
             pwaAssets: {
                 disabled: true,
+            },
+            workbox: {
+                cleanupOutdatedCaches: true,
+                navigateFallback: 'index.html',
+                globPatterns: ['**/*.{html,js,css,ico,png,webmanifest}'],
             },
         }),
     ],
