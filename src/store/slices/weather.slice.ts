@@ -9,5 +9,15 @@ export const createWeatherSlice: SliceCreator<WeatherSlice> = (_set, get) => ({
     setWeatherCity: async city => {
         await repository.setWeatherCity(city);
         await get().refresh();
+
+        if (!city.trim()) {
+            return;
+        }
+
+        void repository.refreshWeather(true)
+            .then(async () => {
+                await get().refresh();
+            })
+            .catch(() => undefined);
     },
 });

@@ -1,1 +1,3 @@
 export const WEATHER_CACHE_TTL_MS = 30 * 60 * 1000;
+
+export const WEATHER_FETCH_TIMEOUT_MS = 10_000;
