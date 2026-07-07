@@ -4,6 +4,7 @@
 
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import {registerSW} from 'virtual:pwa-register';
 import {runSmokeChecks} from '@/app';
 import {App} from './App';
 
@@ -31,7 +32,11 @@ function registerServiceWorker() {
         return;
     }
 
-    void navigator.serviceWorker.register('./sw.js');
+    const updateServiceWorker = registerSW({
+        onNeedRefresh() {
+            void updateServiceWorker(true);
+        },
+    });
 }
 
 if (import.meta.hot) {
