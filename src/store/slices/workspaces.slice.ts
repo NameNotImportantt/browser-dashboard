@@ -1,4 +1,5 @@
 import * as repository from '@/data/workspaces/workspaceRepository';
+import {persistHomeBootstrapCache} from '../lib/persistHomeBootstrapCache';
 import {
     appendSnapshotCollectionItem,
     mapSnapshotCollectionItem,
@@ -18,6 +19,7 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
 
         replaceSnapshotField(_set, 'settings', settings);
         _set({activeWorkspaceId: workspaceId});
+        await persistHomeBootstrapCache(get);
     },
     addWorkspace: async name => {
         const result = await repository.addWorkspace(name, getWorkspaces(get()));
@@ -29,6 +31,7 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
         appendSnapshotCollectionItem(_set, 'workspaces', result.workspace);
         replaceSnapshotField(_set, 'settings', result.settings);
         _set({activeWorkspaceId: result.workspace.id});
+        await persistHomeBootstrapCache(get);
     },
     renameWorkspace: async (workspaceId, name) => {
         const workspace = await repository.renameWorkspace(workspaceId, name);
@@ -38,6 +41,7 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
         }
 
         mapSnapshotCollectionItem(_set, 'workspaces', workspaceId, () => workspace);
+        await persistHomeBootstrapCache(get);
     },
     deleteWorkspace: async workspaceId => {
         const dashboardStore = get();
@@ -78,5 +82,6 @@ export const createWorkspacesSlice: SliceCreator<WorkspacesSlice> = (_set, get) 
             activeNoteId: dashboardStore.activeWorkspaceId === workspaceId ? null : dashboardStore.activeNoteId,
             activeWorkspaceId: result.nextSettings.lastWorkspaceId,
         });
+        await persistHomeBootstrapCache(get);
     },
 });

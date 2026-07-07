@@ -1,5 +1,7 @@
 export type {BookmarksSlice} from './bookmarksSlice';
 
+export {BootPhase} from './bootPhase';
+
 export type {CoreSlice} from './coreSlice';
 
 export type {DashboardStore} from './dashboardStore';

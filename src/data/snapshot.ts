@@ -8,6 +8,8 @@ import type {
     Bookmark,
     BookmarkCategory,
     Habit,
+    HomeBootstrapCacheRecord,
+    HomeBootstrapSnapshot,
     Note,
     SearchHistoryEntry,
     TodoItem,
@@ -32,8 +34,71 @@ export enum SnapshotLoadMode {
     Full = 'full',
 }
 
+const HOME_BOOTSTRAP_CACHE_ID = 'home-critical';
+const HOME_BOOTSTRAP_CACHE_SCHEMA_VERSION = 1;
+
 export function sortByPosition<T extends { position: number }>(items: T[]) {
     return [...items].sort((a, b) => a.position - b.position);
+}
+
+export function createHomeBootstrapSnapshot(snapshot: Snapshot): HomeBootstrapSnapshot {
+    return {
+        workspaces: snapshot.workspaces,
+        todos: snapshot.todos,
+        bookmarks: snapshot.bookmarks,
+        bookmarkCategories: snapshot.bookmarkCategories,
+        settings: snapshot.settings,
+        weatherCache: snapshot.weatherCache,
+    };
+}
+
+export function createSnapshotFromHomeBootstrapSnapshot(homeBootstrapSnapshot: HomeBootstrapSnapshot): Snapshot {
+    return {
+        ...homeBootstrapSnapshot,
+        habits: [],
+        notes: [],
+        searchHistory: [],
+    };
+}
+
+function normalizeHomeBootstrapCacheRecord(record: HomeBootstrapCacheRecord) {
+    return {
+        ...record,
+        snapshot: {
+            ...record.snapshot,
+            settings: mergeSettings(record.snapshot.settings),
+            weatherCache: record.snapshot.weatherCache ?? null,
+        },
+    };
+}
+
+export async function loadHomeBootstrapSnapshot() {
+    const record = await db.bootstrapCache.get(HOME_BOOTSTRAP_CACHE_ID);
+
+    if (!record) {
+        return null;
+    }
+
+    if (record.schemaVersion !== HOME_BOOTSTRAP_CACHE_SCHEMA_VERSION) {
+        await db.bootstrapCache.delete(HOME_BOOTSTRAP_CACHE_ID);
+        return null;
+    }
+
+    return normalizeHomeBootstrapCacheRecord(record);
+}
+
+export async function saveHomeBootstrapSnapshot(snapshot: Snapshot, activeWorkspaceId: string | null) {
+    const record: HomeBootstrapCacheRecord = {
+        id: HOME_BOOTSTRAP_CACHE_ID,
+        schemaVersion: HOME_BOOTSTRAP_CACHE_SCHEMA_VERSION,
+        cachedAt: Date.now(),
+        activeWorkspaceId,
+        snapshot: createHomeBootstrapSnapshot(snapshot),
+    };
+
+    await db.bootstrapCache.put(record);
+
+    return record;
 }
 
 export async function ensureSeedData() {

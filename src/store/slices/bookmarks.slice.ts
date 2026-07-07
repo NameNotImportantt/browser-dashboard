@@ -1,5 +1,6 @@
 import * as repository from '@/data/bookmarks/bookmarkRepository';
 import {DEFAULT_SETTINGS} from '@/data/settings';
+import {persistHomeBootstrapCache} from '../lib/persistHomeBootstrapCache';
 import {
     appendSnapshotCollectionItem,
     mapSnapshotCollectionItem,
@@ -30,15 +31,17 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         }
 
         appendSnapshotCollectionItem(_set, 'bookmarks', bookmark);
+        await persistHomeBootstrapCache(get);
 
         if (bookmarkFaviconsEnabled) {
             void repository.refreshBookmarkFavicon(bookmark.id)
-                .then(nextBookmark => {
+                .then(async nextBookmark => {
                     if (!nextBookmark) {
                         return;
                     }
 
                     mapSnapshotCollectionItem(_set, 'bookmarks', nextBookmark.id, () => nextBookmark);
+                    await persistHomeBootstrapCache(get);
                 })
                 .catch(() => undefined);
         }
@@ -56,6 +59,7 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         }
 
         removeSnapshotCollectionItem(_set, 'bookmarks', bookmarkId);
+        await persistHomeBootstrapCache(get);
     },
     refreshBookmarkFavicon: async bookmarkId => {
         const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
@@ -69,6 +73,7 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         }
 
         mapSnapshotCollectionItem(_set, 'bookmarks', bookmarkId, () => bookmark);
+        await persistHomeBootstrapCache(get);
     },
     refreshBookmarkFavicons: async bookmarkIds => {
         const bookmarkFaviconsEnabled = get().snapshot?.settings.bookmarkFaviconsEnabled ?? DEFAULT_SETTINGS.bookmarkFaviconsEnabled;
@@ -89,6 +94,7 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
 
             return refreshedBookmark ?? bookmark;
         }));
+        await persistHomeBootstrapCache(get);
     },
     addBookmarkCategory: async payload => {
         const category = await repository.addBookmarkCategory(
@@ -102,6 +108,7 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
         }
 
         appendSnapshotCollectionItem(_set, 'bookmarkCategories', category);
+        await persistHomeBootstrapCache(get);
     },
     deleteBookmarkCategory: async categoryId => {
         const category = getWorkspaceBookmarkCategories(get()).find(workspaceCategory => workspaceCategory.id === categoryId);
@@ -133,5 +140,6 @@ export const createBookmarksSlice: SliceCreator<BookmarksSlice> = (_set, get) =>
                     : bookmark
             )),
         );
+        await persistHomeBootstrapCache(get);
     },
 });

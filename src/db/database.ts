@@ -4,6 +4,7 @@ import type {
     Bookmark,
     BookmarkCategory,
     Habit,
+    HomeBootstrapCacheRecord,
     Note,
     SearchHistoryEntry,
     TodoItem,
@@ -23,6 +24,7 @@ const DASHBOARD_DATABASE_SCHEMA = {
     settings: 'key,updatedAt',
     weatherCache: 'id,fetchedAt',
     searchHistory: 'id,usedAt,normalizedQuery',
+    bootstrapCache: 'id,schemaVersion,cachedAt',
 };
 
 export class DashboardDatabase extends Dexie {
@@ -35,6 +37,7 @@ export class DashboardDatabase extends Dexie {
     public settings!: Table<AppSettings, string>;
     public weatherCache!: Table<WeatherCache, string>;
     public searchHistory!: Table<SearchHistoryEntry, string>;
+    public bootstrapCache!: Table<HomeBootstrapCacheRecord, string>;
 
     public constructor() {
         super(DASHBOARD_DATABASE_NAME);
@@ -47,6 +50,7 @@ export class DashboardDatabase extends Dexie {
                     searchHistoryEntry.normalizedQuery = searchHistoryEntry.query.trim().toLowerCase();
                 });
             });
+        this.version(12).stores(DASHBOARD_DATABASE_SCHEMA);
     }
 }
 

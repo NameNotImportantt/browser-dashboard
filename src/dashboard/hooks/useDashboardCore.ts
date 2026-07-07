@@ -1,7 +1,8 @@
 import {useDashboardStore} from '@/store';
 
 export function useDashboardCore() {
-    const loading = useDashboardStore(dashboardStore => dashboardStore.loading);
+    const bootPhase = useDashboardStore(dashboardStore => dashboardStore.bootPhase);
+    const hasRenderableSnapshot = useDashboardStore(dashboardStore => dashboardStore.hasRenderableSnapshot);
     const deferredLoading = useDashboardStore(dashboardStore => dashboardStore.deferredLoading);
     const deferredReady = useDashboardStore(dashboardStore => dashboardStore.deferredReady);
     const error = useDashboardStore(dashboardStore => dashboardStore.error);
@@ -10,5 +11,15 @@ export function useDashboardCore() {
     const refresh = useDashboardStore(dashboardStore => dashboardStore.refresh);
     const importDashboardBackupJson = useDashboardStore(dashboardStore => dashboardStore.importDashboardBackupJson);
 
-    return {loading, deferredLoading, deferredReady, error, init, hydrateDeferredData, refresh, importDashboardBackupJson};
+    return {
+        bootPhase,
+        hasRenderableSnapshot,
+        deferredLoading,
+        deferredReady,
+        error,
+        init,
+        hydrateDeferredData,
+        refresh,
+        importDashboardBackupJson,
+    };
 }

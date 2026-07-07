@@ -3,10 +3,11 @@ import {Loader, UndoSnackbar} from '@/components';
 import {useDashboardCore, useDashboardShellEffects, useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import {HomePage} from '@/pages';
+import {BootPhase} from '@/store';
 import styles from './AppShell.module.scss';
 
 export function AppShell() {
-    const {loading, error, init, refresh} = useDashboardCore();
+    const {bootPhase, hasRenderableSnapshot, error, init, refresh} = useDashboardCore();
     const {locale} = useSettings();
 
     useEffect(() => {
@@ -15,7 +16,7 @@ export function AppShell() {
 
     useDashboardShellEffects();
 
-    if (loading) {
+    if (!hasRenderableSnapshot && bootPhase !== BootPhase.Error) {
         return (
             <main>
                 <Loader variant="fullscreen" label={t(locale, 'appLoading')} />
@@ -23,21 +24,19 @@ export function AppShell() {
         );
     }
 
-    if (error) {
-        return (
-            <main className={styles.statusView}>
-                <p>
-                    {t(locale, 'appLoadError')} {error}
-                </p>
-                <button type="button" onClick={() => void refresh()}>
-                    {t(locale, 'retry')}
-                </button>
-            </main>
-        );
-    }
-
     return (
         <>
+            {!hasRenderableSnapshot && error ? (
+                <main className={styles.statusView}>
+                    <p>
+                        {t(locale, 'appLoadError')} {error}
+                    </p>
+                    <button type="button" onClick={() => void refresh()}>
+                        {t(locale, 'retry')}
+                    </button>
+                </main>
+            ) : null}
+
             <HomePage />
             <UndoSnackbar />
         </>

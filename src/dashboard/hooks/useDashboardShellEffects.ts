@@ -7,7 +7,7 @@ import {useSettings} from './useSettings';
 import {useWeather} from './useWeather';
 
 export function useDashboardShellEffects() {
-    const {loading} = useDashboardCore();
+    const {hasRenderableSnapshot} = useDashboardCore();
     const {settings} = useSettings();
     const {weather, refreshWeather} = useWeather();
 
@@ -43,12 +43,12 @@ export function useDashboardShellEffects() {
     }, [settings.tabTitle]);
 
     useEffect(() => {
-        if (loading) {return;}
+        if (!hasRenderableSnapshot) {return;}
 
         const cacheIsFresh = weather ? Date.now() - weather.fetchedAt < WEATHER_CACHE_TTL_MS : false;
 
         if (cacheIsFresh) {return;}
 
         void refreshWeather(false).catch(() => undefined);
-    }, [loading, refreshWeather, weather]);
+    }, [hasRenderableSnapshot, refreshWeather, weather]);
 }

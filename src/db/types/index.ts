@@ -1,3 +1,5 @@
+export type {HomeBootstrapCacheRecord, HomeBootstrapSnapshot} from './bootstrapCache';
+
 export type {SearchHistoryEntry} from './searchHistory';
 
 export type {Bookmark, CreateBookmarkPayload} from './bookmark';

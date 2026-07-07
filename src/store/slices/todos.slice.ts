@@ -1,4 +1,5 @@
 import * as repository from '@/data/todos/todoRepository';
+import {persistHomeBootstrapCache} from '../lib/persistHomeBootstrapCache';
 import {
     appendSnapshotCollectionItem,
     mapSnapshotCollectionItem,
@@ -22,6 +23,7 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
         }
 
         appendSnapshotCollectionItem(_set, 'todos', todo);
+        await persistHomeBootstrapCache(get);
     },
     toggleTodo: async todoId => {
         const nextTodo = await repository.toggleTodo(todoId);
@@ -31,6 +33,7 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
         }
 
         mapSnapshotCollectionItem(_set, 'todos', todoId, () => nextTodo);
+        await persistHomeBootstrapCache(get);
     },
     deleteTodo: async todoId => {
         const todo = getWorkspaceTodos(get()).find(workspaceTodo => workspaceTodo.id === todoId);
@@ -45,6 +48,7 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
         }
 
         removeSnapshotCollectionItem(_set, 'todos', todoId);
+        await persistHomeBootstrapCache(get);
     },
     reorderTodos: async orderedTodoIdList => {
         const updatedAt = await repository.reorderTodos(orderedTodoIdList);
@@ -64,5 +68,6 @@ export const createTodosSlice: SliceCreator<TodosSlice> = (_set, get) => ({
                 };
             })
             .sort((firstTodo, secondTodo) => firstTodo.position - secondTodo.position));
+        await persistHomeBootstrapCache(get);
     },
 });

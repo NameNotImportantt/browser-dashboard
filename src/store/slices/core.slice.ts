@@ -1,13 +1,16 @@
 import {trackBootstrapDuration} from '@/app/bootstrap/devPerformance';
 import {
+    createSnapshotFromHomeBootstrapSnapshot,
     ensureSeedData,
     importDashboardBackup,
+    loadHomeBootstrapSnapshot,
     loadSnapshot,
     parseDashboardBackupJson,
+    saveHomeBootstrapSnapshot,
     SnapshotLoadMode,
     type Snapshot,
 } from '@/data';
-import type {CoreSlice, SliceCreator} from '../types';
+import {BootPhase, type CoreSlice, type SliceCreator} from '../types';
 
 function resolveActiveWorkspaceId(snapshot: Snapshot, currentActiveWorkspaceId: string | null) {
     const preferredId = snapshot.settings.lastWorkspaceId;
@@ -24,7 +27,8 @@ function resolveActiveWorkspaceId(snapshot: Snapshot, currentActiveWorkspaceId: 
 }
 
 export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
-    loading: true,
+    bootPhase: BootPhase.Cold,
+    hasRenderableSnapshot: false,
     deferredLoading: false,
     deferredReady: false,
     error: null,
@@ -33,28 +37,60 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
 
     init: async () => {
         const startedAt = performance.now();
+        let didLoadFreshCriticalSnapshot = false;
 
         try {
-            set({loading: true, error: null});
+            set({
+                bootPhase: BootPhase.Cold,
+                deferredLoading: false,
+                deferredReady: false,
+                error: null,
+            });
             await ensureSeedData();
+
+            const bootstrapCacheRecord = await loadHomeBootstrapSnapshot();
+
+            if (bootstrapCacheRecord) {
+                const cachedSnapshot = createSnapshotFromHomeBootstrapSnapshot(bootstrapCacheRecord.snapshot);
+
+                set({
+                    activeWorkspaceId: resolveActiveWorkspaceId(cachedSnapshot, bootstrapCacheRecord.activeWorkspaceId),
+                    bootPhase: BootPhase.Cached,
+                    hasRenderableSnapshot: true,
+                    snapshot: cachedSnapshot,
+                });
+            }
+
+            if (get().hasRenderableSnapshot) {
+                set({bootPhase: BootPhase.Refreshing});
+            }
+
             const nextSnapshot = await loadSnapshot(SnapshotLoadMode.Critical);
+            const nextActiveWorkspaceId = resolveActiveWorkspaceId(nextSnapshot, get().activeWorkspaceId);
 
             set({
-                activeWorkspaceId: resolveActiveWorkspaceId(nextSnapshot, get().activeWorkspaceId),
+                activeWorkspaceId: nextActiveWorkspaceId,
+                bootPhase: BootPhase.Ready,
                 deferredLoading: true,
                 deferredReady: false,
+                hasRenderableSnapshot: true,
                 snapshot: nextSnapshot,
             });
+
+            await saveHomeBootstrapSnapshot(nextSnapshot, nextActiveWorkspaceId);
+            didLoadFreshCriticalSnapshot = true;
         } catch (error) {
             set({
                 error: error instanceof Error ? error.message : 'Не удалось инициализировать данные',
+                bootPhase: get().hasRenderableSnapshot ? BootPhase.Cached : BootPhase.Error,
             });
-        } finally {
-            trackBootstrapDuration(performance.now() - startedAt);
-            set({loading: false});
         }
 
-        void get().hydrateDeferredData();
+        trackBootstrapDuration(performance.now() - startedAt);
+
+        if (didLoadFreshCriticalSnapshot) {
+            void get().hydrateDeferredData();
+        }
     },
 
     hydrateDeferredData: async () => {
@@ -80,13 +116,19 @@ export const createCoreSlice: SliceCreator<CoreSlice> = (set, get) => ({
 
     refresh: async () => {
         const nextSnapshot = await loadSnapshot();
+        const nextActiveWorkspaceId = resolveActiveWorkspaceId(nextSnapshot, get().activeWorkspaceId);
 
         set({
-            activeWorkspaceId: resolveActiveWorkspaceId(nextSnapshot, get().activeWorkspaceId),
+            activeWorkspaceId: nextActiveWorkspaceId,
+            bootPhase: BootPhase.Ready,
             deferredLoading: false,
             deferredReady: true,
+            error: null,
+            hasRenderableSnapshot: true,
             snapshot: nextSnapshot,
         });
+
+        await saveHomeBootstrapSnapshot(nextSnapshot, nextActiveWorkspaceId);
     },
 
     importDashboardBackupJson: async json => {

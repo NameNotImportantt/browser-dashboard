@@ -1,7 +1,9 @@
+import type {BootPhase} from './bootPhase';
 import type {Snapshot} from '@/data';
 
 export interface CoreSlice {
-  loading: boolean;
+  bootPhase: BootPhase;
+  hasRenderableSnapshot: boolean;
   deferredLoading: boolean;
   deferredReady: boolean;
   error: string | null;

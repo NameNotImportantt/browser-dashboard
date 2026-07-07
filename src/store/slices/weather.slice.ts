@@ -1,9 +1,10 @@
 import * as repository from '@/data/weather/weatherService';
 import {createSnapshotFieldReload} from '../lib/createSnapshotFieldReload';
+import {persistHomeBootstrapCache} from '../lib/persistHomeBootstrapCache';
 import {replaceSnapshotField} from '../lib/snapshotMutations';
 import type {SliceCreator, WeatherSlice} from '../types';
 
-export const createWeatherSlice: SliceCreator<WeatherSlice> = (set) => {
+export const createWeatherSlice: SliceCreator<WeatherSlice> = (set, get) => {
     const reloadWeatherCache = createSnapshotFieldReload(set, 'weatherCache', repository.getWeatherCache);
 
     return {
@@ -11,6 +12,7 @@ export const createWeatherSlice: SliceCreator<WeatherSlice> = (set) => {
             const weatherCache = await repository.refreshWeather(force);
 
             replaceSnapshotField(set, 'weatherCache', weatherCache);
+            await persistHomeBootstrapCache(get);
         },
         setWeatherCity: async city => {
             const settings = await repository.setWeatherCity(city);
@@ -19,13 +21,17 @@ export const createWeatherSlice: SliceCreator<WeatherSlice> = (set) => {
 
             if (!city.trim()) {
                 replaceSnapshotField(set, 'weatherCache', null);
+                await persistHomeBootstrapCache(get);
                 return;
             }
+
+            await persistHomeBootstrapCache(get);
 
             void repository.refreshWeather(true)
                 .then(async weatherCache => {
                     replaceSnapshotField(set, 'weatherCache', weatherCache);
                     await reloadWeatherCache();
+                    await persistHomeBootstrapCache(get);
                 })
                 .catch(() => undefined);
         },

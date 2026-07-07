@@ -4,6 +4,7 @@ import * as searchHistoryRepository from '@/data/searchHistory/searchHistoryRepo
 import * as todoRepository from '@/data/todos/todoRepository';
 import * as workspaceRepository from '@/data/workspaces/workspaceRepository';
 import {createId} from '@/lib';
+import {persistHomeBootstrapCache} from '../lib/persistHomeBootstrapCache';
 import {appendSortedSnapshotCollectionItem, patchSnapshot, patchSnapshotCollection} from '../lib/snapshotMutations';
 import {UndoActionKind, type SliceCreator, type UndoEntry, type UndoSlice} from '../types';
 
@@ -89,11 +90,13 @@ export const createUndoSlice: SliceCreator<UndoSlice> = (set, get) => ({
 
         if (currentUndoEntry.kind === UndoActionKind.TodoDelete) {
             appendSortedSnapshotCollectionItem(set, 'todos', currentUndoEntry.todo);
+            await persistHomeBootstrapCache(get);
             return;
         }
 
         if (currentUndoEntry.kind === UndoActionKind.BookmarkDelete) {
             appendSortedSnapshotCollectionItem(set, 'bookmarks', currentUndoEntry.bookmark);
+            await persistHomeBootstrapCache(get);
             return;
         }
 
@@ -111,6 +114,7 @@ export const createUndoSlice: SliceCreator<UndoSlice> = (set, get) => ({
                         : bookmark
                 )),
             );
+            await persistHomeBootstrapCache(get);
             return;
         }
 
@@ -137,6 +141,7 @@ export const createUndoSlice: SliceCreator<UndoSlice> = (set, get) => ({
                 });
             }
 
+            await persistHomeBootstrapCache(get);
             return;
         }
 
