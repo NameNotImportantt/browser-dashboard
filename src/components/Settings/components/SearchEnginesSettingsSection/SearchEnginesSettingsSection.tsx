@@ -13,6 +13,7 @@ export function SearchEnginesSettingsSection({dismissRequestId = 0}: SearchEngin
     const {
         settings,
         setActiveSearchEngineId,
+        setSearchOpenInNewTab,
         setOnlineSearchSuggestionsEnabled,
         setSearchHistoryEnabled,
         addCustomSearchEngine,
@@ -31,6 +32,7 @@ export function SearchEnginesSettingsSection({dismissRequestId = 0}: SearchEngin
                 locale={locale}
                 settings={settings}
                 onSelectActiveEngine={setActiveSearchEngineId}
+                onToggleSearchOpenInNewTab={setSearchOpenInNewTab}
                 onToggleOnlineSuggestionsEnabled={setOnlineSearchSuggestionsEnabled}
                 onAddCustomEngine={addCustomSearchEngine}
                 onRemoveCustomEngine={removeCustomSearchEngine}

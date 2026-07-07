@@ -123,6 +123,7 @@ function isAppSettings(value: BackupInspectableValue): value is AppSettings {
         isString(value.activeSearchEngineId) &&
         Array.isArray(value.customSearchEngines) &&
         value.customSearchEngines.every(isCustomSearchEngine) &&
+        (value.searchOpenInNewTab === undefined || isBoolean(value.searchOpenInNewTab)) &&
         isBoolean(value.onlineSearchSuggestionsEnabled) &&
         isBoolean(value.searchHistoryEnabled) &&
         isBoolean(value.bookmarkFaviconsEnabled) &&

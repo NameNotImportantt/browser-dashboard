@@ -14,6 +14,7 @@ export interface AddSearchEngineControlsProps {
   locale: AppLocale;
   settings: AppSettings;
   onSelectActiveEngine: (engineId: string) => Promise<void>;
+  onToggleSearchOpenInNewTab: (enabled: boolean) => Promise<void>;
   onToggleOnlineSuggestionsEnabled: (enabled: boolean) => Promise<void>;
   onAddCustomEngine: (payload: { name: string; urlTemplate: string }) => Promise<void>;
   onRemoveCustomEngine: (engineId: string) => Promise<void>;
@@ -24,6 +25,7 @@ export function AddSearchEngineControls({
     locale,
     settings,
     onSelectActiveEngine,
+    onToggleSearchOpenInNewTab,
     onToggleOnlineSuggestionsEnabled,
     onAddCustomEngine,
     onRemoveCustomEngine,
@@ -65,6 +67,10 @@ export function AddSearchEngineControls({
 
     const handleOnlineSuggestionsChange = () => {
         void onToggleOnlineSuggestionsEnabled(!settings.onlineSearchSuggestionsEnabled);
+    };
+
+    const handleSearchOpenInNewTabChange = () => {
+        void onToggleSearchOpenInNewTab(!settings.searchOpenInNewTab);
     };
 
     const handleEngineNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -168,6 +174,15 @@ export function AddSearchEngineControls({
                     {t(locale, 'addSearchEngine')}
                 </button>
             </form>
+
+            <div className={onlineSuggestionsFieldClassName}>
+                <Checkbox
+                    checked={settings.searchOpenInNewTab}
+                    onChange={handleSearchOpenInNewTabChange}
+                    label={t(locale, 'searchOpenInNewTab')}
+                />
+                <small className={settingsStyles.hint}>{t(locale, 'searchOpenInNewTabHint')}</small>
+            </div>
 
             <div className={onlineSuggestionsFieldClassName}>
                 <Checkbox

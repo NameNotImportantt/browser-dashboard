@@ -27,6 +27,7 @@ export interface AppSettings {
   theme: ThemeMode;
   activeSearchEngineId: string;
   customSearchEngines: CustomSearchEngine[];
+  searchOpenInNewTab: boolean;
   onlineSearchSuggestionsEnabled: boolean;
   searchHistoryEnabled: boolean;
   bookmarkFaviconsEnabled: boolean;

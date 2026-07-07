@@ -36,6 +36,10 @@ export async function setActiveSearchEngineId(activeSearchEngineId: string) {
     return patchSettings({activeSearchEngineId});
 }
 
+export async function setSearchOpenInNewTab(searchOpenInNewTab: boolean) {
+    return patchSettings({searchOpenInNewTab});
+}
+
 export async function setOnlineSearchSuggestionsEnabled(onlineSearchSuggestionsEnabled: boolean) {
     return patchSettings({onlineSearchSuggestionsEnabled});
 }

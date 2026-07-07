@@ -13,6 +13,11 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = set => ({
 
         replaceSnapshotField(set, 'settings', settings);
     },
+    setSearchOpenInNewTab: async searchOpenInNewTab => {
+        const settings = await repository.setSearchOpenInNewTab(searchOpenInNewTab);
+
+        replaceSnapshotField(set, 'settings', settings);
+    },
     setOnlineSearchSuggestionsEnabled: async onlineSearchSuggestionsEnabled => {
         const settings = await repository.setOnlineSearchSuggestionsEnabled(onlineSearchSuggestionsEnabled);
 

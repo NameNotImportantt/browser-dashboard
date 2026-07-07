@@ -63,28 +63,49 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
         setActiveIndex(-1);
     }, []);
 
+    const openSearchUrl = useCallback((url: string) => {
+        if (settings.searchOpenInNewTab) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        window.location.assign(url);
+    }, [settings.searchOpenInNewTab]);
+
     const openSearch = useCallback(
-        (searchQuery: string) => {
+        async (searchQuery: string) => {
             const trimmed = searchQuery.trim();
 
             if (!trimmed) {
                 return;
             }
 
-            void addSearchHistoryEntry(trimmed).catch(() => undefined);
             const url = buildSearchUrl(settings.activeSearchEngineId, trimmed, settings.customSearchEngines);
 
-            window.open(url, '_blank', 'noopener,noreferrer');
+            if (settings.searchOpenInNewTab) {
+                void addSearchHistoryEntry(trimmed).catch(() => undefined);
+            } else {
+                await addSearchHistoryEntry(trimmed).catch(() => undefined);
+            }
+
+            openSearchUrl(url);
             setQuery('');
             closeSuggestions();
             inputRef.current?.focus();
         },
-        [addSearchHistoryEntry, closeSuggestions, settings.activeSearchEngineId, settings.customSearchEngines],
+        [
+            addSearchHistoryEntry,
+            closeSuggestions,
+            openSearchUrl,
+            settings.activeSearchEngineId,
+            settings.customSearchEngines,
+            settings.searchOpenInNewTab,
+        ],
     );
 
     const selectSuggestion = useCallback(
         (suggestion: SearchSuggestion) => {
-            openSearch(suggestion.label);
+            void openSearch(suggestion.label);
         },
         [openSearch],
     );
@@ -176,7 +197,7 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
             return;
         }
 
-        openSearch(query);
+        void openSearch(query);
     };
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
