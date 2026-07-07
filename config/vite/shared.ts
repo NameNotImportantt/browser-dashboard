@@ -10,6 +10,9 @@ const favicon16Path = fileURLToPath(
 const favicon32Path = fileURLToPath(
     new URL('../../src/assets/favicon-32x32.png', import.meta.url),
 );
+const pwaRegisterStubPath = fileURLToPath(
+    new URL('../../src/app/bootstrap/pwaRegister.stub.ts', import.meta.url),
+);
 
 interface CreateViteConfigOptions {
     inlineAssets: boolean;
@@ -73,6 +76,7 @@ export function createViteConfig({
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('../../src', import.meta.url)),
+                ...(!pwaEnabled ? {'virtual:pwa-register': pwaRegisterStubPath} : {}),
             },
         },
     });
