@@ -212,7 +212,7 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 
 ### For Developers
 
-See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and release workflow. Current build split: `bun run build` creates single-file release artifact, while `bun run build:multi` creates standard multi-file Vite output with PWA support for `https://` and `http://localhost`. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
+See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and GitHub workflow details. Current build split: `bun run build` creates the single-file release artifact, while `bun run build:multi` creates the standard multi-file Vite output with PWA support for `https://` and `http://localhost`. GitHub Actions now validates both build modes on every push and pull request, while tagged releases keep publishing the single-file `dist/index.html` asset and upload the standard `dist-vite/` output as a separate artifact. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
 
 ### License
 

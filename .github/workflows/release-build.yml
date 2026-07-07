@@ -1,13 +1,16 @@
-name: Build Single-File Release
+name: Build Release
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,14 +28,33 @@ jobs:
       - name: Typecheck
         run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 5.0
 
-      - name: Build
+      - name: Build single-file release
         run: bun run build
 
-      - name: Upload build artifact
+      - name: Verify single-file output
+        run: test -f dist/index.html
+
+      - name: Build standard multi-file output
+        run: bun run build:multi
+
+      - name: Verify PWA build output
+        run: |
+          test -f dist-vite/index.html
+          test -f dist-vite/manifest.webmanifest
+          test -f dist-vite/sw.js
+
+      - name: Upload single-file artifact
         uses: actions/upload-artifact@v4
         with:
           name: browser-dashboard-singlefile
           path: dist/index.html
+          if-no-files-found: error
+
+      - name: Upload standard build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-dashboard-standard-build
+          path: dist-vite
           if-no-files-found: error
 
       - name: Upload release asset

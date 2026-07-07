@@ -1,0 +1,39 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 5.0
+
+      - name: Build single-file release
+        run: bun run build
+
+      - name: Verify single-file output
+        run: test -f dist/index.html
+
+      - name: Build standard multi-file output
+        run: bun run build:multi
+
+      - name: Verify PWA build output
+        run: |
+          test -f dist-vite/index.html
+          test -f dist-vite/manifest.webmanifest
+          test -f dist-vite/sw.js

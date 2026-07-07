@@ -33,6 +33,13 @@ Dev server runs on Vite (default `http://localhost:5173`). Hot reload is enabled
 | `bun run start` | Preview the single-file production build locally |
 | `bun run start:vite` | Preview the standard multi-file build locally |
 
+## GitHub Workflows
+
+- `.github/workflows/build.yml` (`Continuous Integration`) runs on every `push` and `pull_request`
+- CI installs dependencies, runs TypeScript type-check, builds both output modes, and verifies `dist/index.html`, `dist-vite/index.html`, `dist-vite/manifest.webmanifest`, and `dist-vite/sw.js`
+- `.github/workflows/release-build.yml` (`Build Release`) runs on manual dispatch and on `v*` tags
+- Release workflow repeats both builds, uploads `dist/index.html` and `dist-vite/` as separate artifacts, and publishes `dist/index.html` as the GitHub release asset
+
 ## Build Output
 
 Production build uses `vite-plugin-singlefile`. The result is **one file**:
@@ -41,7 +48,7 @@ Production build uses `vite-plugin-singlefile`. The result is **one file**:
 dist/index.html
 ```
 
-Everything — JavaScript, CSS, inlined favicon — is bundled into that HTML. This file is what end users download from Releases.
+Everything — JavaScript, CSS, inlined favicon — is bundled into that HTML. This file is what end users download from Releases and what tagged GitHub releases publish as the primary asset.
 
 Standard multi-file build is emitted separately to:
 
@@ -49,7 +56,7 @@ Standard multi-file build is emitted separately to:
 dist-vite/
 ```
 
-This output keeps normal JS/CSS/assets files and is intended for local static hosting, Docker, and upcoming PWA/live-preview scenarios.
+This output keeps normal JS/CSS/assets files and is intended for local static hosting, Docker, and PWA/live-preview scenarios. The release workflow uploads it as a separate build artifact for inspection and deployment-oriented use.
 
 PWA support belongs only to standard multi-file build. It is expected to work on `https://` or `http://localhost`, not on the single-file `file://` release.
 
