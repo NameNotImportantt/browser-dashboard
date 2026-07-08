@@ -36,3 +36,5 @@ export {HabitsWidget} from './Habits';
 export {NotesWidget} from './Notes';
 
 export {Loader} from './Loader/Loader';
+
+export {IconButton} from './IconButton/IconButton';

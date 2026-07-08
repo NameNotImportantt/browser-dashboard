@@ -8,6 +8,7 @@ import type {SelectOption} from '@/components/Select';
 import type {AppLocale, TodoItem} from '@/db';
 
 export function useTodoFilters(todos: TodoItem[], locale: AppLocale) {
+    const [filtersVisible, setFiltersVisible] = useState(false);
     const [dateFilter, setDateFilter] = useState<TodoDateFilter>(TodoDateFilter.All);
     const [statusFilter, setStatusFilter] = useState<TodoStatusFilter>(TodoStatusFilter.All);
     const [priorityFilter, setPriorityFilter] = useState<TodoPriorityFilter>(TodoPriorityFilter.All);
@@ -40,18 +41,24 @@ export function useTodoFilters(todos: TodoItem[], locale: AppLocale) {
         [locale],
     );
 
+    const toggleFiltersVisible = () => {
+        setFiltersVisible(currentFiltersVisible => !currentFiltersVisible);
+    };
+
     const filteredTodos = useMemo(
         () =>
             todos.filter(
                 todo =>
-                    matchesTodoDateFilter(todo, dateFilter, today)
-                    && matchesTodoStatusFilter(todo, statusFilter)
-                    && matchesTodoPriorityFilter(todo, priorityFilter),
+                    matchesTodoDateFilter(todo, filtersVisible ? dateFilter : TodoDateFilter.All, today)
+                    && matchesTodoStatusFilter(todo, filtersVisible ? statusFilter : TodoStatusFilter.All)
+                    && matchesTodoPriorityFilter(todo, filtersVisible ? priorityFilter : TodoPriorityFilter.All),
             ),
-        [dateFilter, priorityFilter, statusFilter, today, todos],
+        [dateFilter, filtersVisible, priorityFilter, statusFilter, today, todos],
     );
 
     return {
+        filtersVisible,
+        toggleFiltersVisible,
         dateFilter,
         setDateFilter,
         dateFilterOptions,

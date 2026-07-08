@@ -1,4 +1,7 @@
+export declare const actionsRow: string;
 export declare const emptyState: string;
+export declare const filtersToggleButton: string;
+export declare const filtersToggleButtonActive: string;
 export declare const formError: string;
 export declare const inlineRow: string;
 export declare const inlineRowField: string;

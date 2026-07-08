@@ -1,6 +1,7 @@
 import {useMemo} from 'react';
 import clsx from 'clsx';
-import {FieldValidationMessage, fieldValidationStyles} from '@/components';
+import {Filter} from 'lucide-react';
+import {FieldValidationMessage, IconButton, fieldValidationStyles} from '@/components';
 import {Select} from '@/components/Select';
 import {useSettings, useTodos} from '@/dashboard';
 import {t} from '@/i18n';
@@ -16,6 +17,8 @@ export function TodoWidget() {
     const {locale} = useSettings();
 
     const {
+        filtersVisible,
+        toggleFiltersVisible,
         dateFilter,
         setDateFilter,
         dateFilterOptions,
@@ -51,6 +54,27 @@ export function TodoWidget() {
     const todoListClassName = clsx(styles.widgetList, styles.todoList);
     const titleInputClassName = clsx(styles.inputField, titleValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
 
+    const filtersToggleButtonClassName = clsx(
+        styles.filtersToggleButton,
+        filtersVisible && styles.filtersToggleButtonActive,
+    );
+
+    const handleTitleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleTitleChange(event.target.value);
+    };
+
+    const handlePrioritySelectChange = (value: string) => {
+        handlePriorityChange(value as TodoPriority);
+    };
+
+    const handleDueDateInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleDueDateChange(event.target.value);
+    };
+
+    const handleFiltersToggleButtonClick = () => {
+        toggleFiltersVisible();
+    };
+
     return (
         <section className={todoWidgetClassName}>
             <header className={styles.widgetHeader}>
@@ -61,7 +85,7 @@ export function TodoWidget() {
                 <input
                     className={titleInputClassName}
                     value={title}
-                    onChange={event => handleTitleChange(event.target.value)}
+                    onChange={handleTitleInputChange}
                     placeholder={t(locale, 'todoNewPlaceholder')}
                     aria-label={t(locale, 'todoNewPlaceholder')}
                     {...titleValidation.getAriaProps()}
@@ -72,7 +96,7 @@ export function TodoWidget() {
                         className={styles.inlineRowField}
                         value={priority}
                         options={priorityOptions}
-                        onChange={value => handlePriorityChange(value as TodoPriority)}
+                        onChange={handlePrioritySelectChange}
                         ariaLabel={t(locale, 'todoPriority')}
                     />
 
@@ -80,14 +104,26 @@ export function TodoWidget() {
                         className={styles.inlineRowField}
                         type="date"
                         value={dueDate}
-                        onChange={event => handleDueDateChange(event.target.value)}
+                        onChange={handleDueDateInputChange}
                         aria-label={t(locale, 'todoDueDateAriaLabel')}
                     />
                 </div>
 
-                <button className="primary" type="submit">
-                    {t(locale, 'todoAdd')}
-                </button>
+                <div className={styles.actionsRow}>
+                    <button className="primary" type="submit">
+                        {t(locale, 'todoAdd')}
+                    </button>
+                    <IconButton
+                        className={filtersToggleButtonClassName}
+                        withChrome={false}
+                        onClick={handleFiltersToggleButtonClick}
+                        aria-label={filtersVisible ? t(locale, 'hideTodoFilters') : t(locale, 'showTodoFilters')}
+                        aria-pressed={filtersVisible}
+                        title={filtersVisible ? t(locale, 'hideTodoFilters') : t(locale, 'showTodoFilters')}
+                    >
+                        <Filter size={16} strokeWidth={2.2} aria-hidden />
+                    </IconButton>
+                </div>
 
                 <FieldValidationMessage
                     className={styles.formError}
@@ -96,18 +132,20 @@ export function TodoWidget() {
                 />
             </form>
 
-            <TodoFilters
-                locale={locale}
-                dateFilter={dateFilter}
-                onDateFilterChange={setDateFilter}
-                dateFilterOptions={dateFilterOptions}
-                priorityFilter={priorityFilter}
-                onPriorityFilterChange={setPriorityFilter}
-                priorityFilterOptions={priorityFilterOptions}
-                statusFilter={statusFilter}
-                onStatusFilterChange={setStatusFilter}
-                statusFilterOptions={statusFilterOptions}
-            />
+            {filtersVisible ? (
+                <TodoFilters
+                    locale={locale}
+                    dateFilter={dateFilter}
+                    onDateFilterChange={setDateFilter}
+                    dateFilterOptions={dateFilterOptions}
+                    priorityFilter={priorityFilter}
+                    onPriorityFilterChange={setPriorityFilter}
+                    priorityFilterOptions={priorityFilterOptions}
+                    statusFilter={statusFilter}
+                    onStatusFilterChange={setStatusFilter}
+                    statusFilterOptions={statusFilterOptions}
+                />
+            ) : null}
 
             <ul className={todoListClassName}>
                 {filteredTodos.length > 0 ? filteredTodos.map(todo => (

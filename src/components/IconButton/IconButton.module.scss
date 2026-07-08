@@ -1,0 +1,24 @@
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.withoutChrome {
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+
+  &:hover {
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    box-shadow: none;
+  }
+}

@@ -14,6 +14,17 @@
   gap: 0.52rem;
 }
 
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  :global(.primary) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 .inlineRow {
   display: flex;
   gap: 0.5rem;
@@ -35,6 +46,33 @@
 .formError {
   color: var(--danger);
   font-size: 0.85rem;
+}
+
+.filtersToggleButton {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+
+  &:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 4px 16px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+}
+
+.filtersToggleButtonActive {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--text);
 }
 
 .widgetList {
@@ -61,7 +99,12 @@
 }
 
 @media (max-width: 640px) {
+  .actionsRow,
   .inlineRow {
     flex-direction: column;
+  }
+
+  .filtersToggleButton {
+    width: 100%;
   }
 }
