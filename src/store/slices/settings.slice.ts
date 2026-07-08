@@ -10,6 +10,12 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = (set, get) => ({
         replaceSnapshotField(set, 'settings', settings);
         await persistHomeBootstrapCache(get);
     },
+    setAccentColor: async accentColor => {
+        const settings = await repository.setAccentColor(accentColor);
+
+        replaceSnapshotField(set, 'settings', settings);
+        await persistHomeBootstrapCache(get);
+    },
     setActiveSearchEngineId: async activeSearchEngineId => {
         const settings = await repository.setActiveSearchEngineId(activeSearchEngineId);
 

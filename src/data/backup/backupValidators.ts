@@ -120,6 +120,7 @@ function isAppSettings(value: BackupInspectableValue): value is AppSettings {
     return isRecord(value) &&
         value.key === 'app' &&
         (value.theme === 'light' || value.theme === 'dark') &&
+        (value.accentColor === undefined || isNullableString(value.accentColor)) &&
         isString(value.activeSearchEngineId) &&
         Array.isArray(value.customSearchEngines) &&
         value.customSearchEngines.every(isCustomSearchEngine) &&

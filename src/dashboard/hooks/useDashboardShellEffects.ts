@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {DEFAULT_TAB_TITLE} from '@/data/settings';
 import {WEATHER_CACHE_TTL_MS} from '@/data/weather';
-import {applyCustomTextColors} from '@/theme';
+import {applyCustomAccentColor, applyCustomTextColors} from '@/theme';
 import {useDashboardCore} from './useDashboardCore';
 import {useSettings} from './useSettings';
 import {useWeather} from './useWeather';
@@ -18,6 +18,10 @@ export function useDashboardShellEffects() {
     useEffect(() => {
         applyCustomTextColors(settings.theme, settings.customTextColors);
     }, [settings.theme, settings.customTextColors]);
+
+    useEffect(() => {
+        applyCustomAccentColor(settings.theme, settings.accentColor);
+    }, [settings.accentColor, settings.theme]);
 
     useEffect(() => {
         const root = document.documentElement;

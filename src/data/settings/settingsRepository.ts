@@ -32,6 +32,10 @@ export async function setTheme(theme: ThemeMode) {
     return patchSettings({theme});
 }
 
+export async function setAccentColor(accentColor: string | null) {
+    return patchSettings({accentColor});
+}
+
 export async function setActiveSearchEngineId(activeSearchEngineId: string) {
     return patchSettings({activeSearchEngineId});
 }

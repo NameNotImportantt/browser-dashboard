@@ -6,12 +6,14 @@ import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import {TextColorField} from '../TextColorField';
 import {BackgroundImageField} from './components';
+import {useAppearanceAccentColor} from './hooks/useAppearanceAccentColor';
 import {useAppearanceTextColors} from './hooks/useAppearanceTextColors';
 
 export function AppearanceSettingsSection() {
     const {settings} = useSettings();
     const locale = settings.locale;
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
+    const {accentColorField, handleResetAccentColorClick} = useAppearanceAccentColor();
     const {textColorFields, handleResetTextColorsClick} = useAppearanceTextColors();
 
     return (
@@ -20,6 +22,22 @@ export function AppearanceSettingsSection() {
 
             <div className={styles.grid}>
                 <BackgroundImageField />
+
+                <TextColorField
+                    invalidMessage={t(locale, 'textColorHexInvalid')}
+                    label={accentColorField.label}
+                    value={accentColorField.value}
+                    pickerValue={accentColorField.pickerValue}
+                    placeholder={accentColorField.placeholder}
+                    swatches={accentColorField.swatches}
+                    onChange={accentColorField.onChange}
+                />
+
+                <div className={styles.field}>
+                    <button type="button" onClick={handleResetAccentColorClick}>
+                        {t(locale, 'resetAccentColor')}
+                    </button>
+                </div>
 
                 {textColorFields.map(field => (
                     <TextColorField

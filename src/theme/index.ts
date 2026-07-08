@@ -1,4 +1,11 @@
 export {
+    applyCustomAccentColor,
+    getAccentColorSwatches,
+    resolveAccentColor,
+    THEME_ACCENT_COLORS,
+} from './accentColor';
+
+export {
     applyCustomTextColors,
     getTextColorSwatches,
     normalizeHexColor,

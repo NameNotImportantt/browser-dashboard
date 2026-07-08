@@ -25,6 +25,7 @@ export interface CustomTextColors {
 export interface AppSettings {
   key: 'app';
   theme: ThemeMode;
+  accentColor: string | null;
   activeSearchEngineId: string;
   customSearchEngines: CustomSearchEngine[];
   searchOpenInNewTab: boolean;

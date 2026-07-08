@@ -8,6 +8,7 @@ export function useSettings() {
     const actions = useDashboardStore(
         useShallow(dashboardStore => ({
             setTheme: dashboardStore.setTheme,
+            setAccentColor: dashboardStore.setAccentColor,
             setActiveSearchEngineId: dashboardStore.setActiveSearchEngineId,
             setSearchOpenInNewTab: dashboardStore.setSearchOpenInNewTab,
             setOnlineSearchSuggestionsEnabled: dashboardStore.setOnlineSearchSuggestionsEnabled,

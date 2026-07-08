@@ -15,6 +15,7 @@ function normalizeBackupReminderIntervalDays(value: number) {
 export const DEFAULT_SETTINGS: AppSettings = {
     key: 'app',
     theme: 'dark',
+    accentColor: null,
     activeSearchEngineId: 'duckduckgo',
     customSearchEngines: [],
     searchOpenInNewTab: true,
@@ -47,6 +48,7 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
     return {
         ...DEFAULT_SETTINGS,
         ...raw,
+        accentColor: raw.accentColor ?? DEFAULT_SETTINGS.accentColor,
         activeSearchEngineId: raw.activeSearchEngineId ?? legacySearchEngine ?? DEFAULT_SETTINGS.activeSearchEngineId,
         customSearchEngines: raw.customSearchEngines ?? DEFAULT_SETTINGS.customSearchEngines,
         searchOpenInNewTab: raw.searchOpenInNewTab ?? DEFAULT_SETTINGS.searchOpenInNewTab,

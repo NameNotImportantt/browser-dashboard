@@ -2,6 +2,7 @@ import type {AppLocale, DateFormatPreset, TextColorKey, ThemeMode, TimeFormat} f
 
 export interface SettingsSlice {
   setTheme: (theme: ThemeMode) => Promise<void>;
+  setAccentColor: (accentColor: string | null) => Promise<void>;
   setActiveSearchEngineId: (activeSearchEngineId: string) => Promise<void>;
   setSearchOpenInNewTab: (searchOpenInNewTab: boolean) => Promise<void>;
   setOnlineSearchSuggestionsEnabled: (onlineSearchSuggestionsEnabled: boolean) => Promise<void>;
