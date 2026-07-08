@@ -51,12 +51,14 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
     const abortRef = useRef<AbortController | null>(null);
     const listboxId = useId();
 
-    const engineOptions = getSearchEngineOptions(settings.customSearchEngines);
+    const engineOptions = getSearchEngineOptions(settings.customSearchEngines, settings.hiddenBuiltinSearchEngineIds);
 
     const engineSelectOptions = useMemo(
         () => engineOptions.map(option => ({value: option.id, label: option.name})),
         [engineOptions],
     );
+
+    const searchEngineIsAvailable = settings.activeSearchEngineId.trim().length > 0;
 
     const closeSuggestions = useCallback(() => {
         setIsOpen(false);
@@ -80,6 +82,10 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
                 return;
             }
 
+            if (!searchEngineIsAvailable) {
+                return;
+            }
+
             const url = buildSearchUrl(settings.activeSearchEngineId, trimmed, settings.customSearchEngines);
 
             if (settings.searchOpenInNewTab) {
@@ -100,6 +106,7 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
             settings.activeSearchEngineId,
             settings.customSearchEngines,
             settings.searchOpenInNewTab,
+            searchEngineIsAvailable,
         ],
     );
 
@@ -305,6 +312,8 @@ export function SearchCore({focusRequestId = 0, dismissRequestId = 0}: SearchCor
                     dismissRequestId={dismissRequestId}
                     value={settings.activeSearchEngineId}
                     options={engineSelectOptions}
+                    placeholderLabel={t(locale, 'noSearchEngines')}
+                    disabled={engineSelectOptions.length === 0}
                     onChange={value => void setActiveSearchEngineId(value)}
                     ariaLabel={t(locale, 'searchEngineAriaLabel')}
                 />

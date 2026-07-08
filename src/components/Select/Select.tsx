@@ -1,12 +1,24 @@
-import {useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent} from 'react';
+import {
+    useCallback,
+    useEffect,
+    useId,
+    useLayoutEffect,
+    useRef,
+    useState,
+    type CSSProperties,
+    type KeyboardEvent,
+    type MouseEvent as ReactMouseEvent,
+} from 'react';
 import {createPortal} from 'react-dom';
 import clsx from 'clsx';
-import {ChevronDown} from 'lucide-react';
+import {ChevronDown, X} from 'lucide-react';
 import styles from './Select.module.scss';
 
 export interface SelectOption {
   value: string;
   label: string;
+  removable?: boolean;
+  removeAriaLabel?: string;
 }
 
 export interface SelectProps {
@@ -17,6 +29,9 @@ export interface SelectProps {
   dismissRequestId?: number;
   className?: string;
   triggerClassName?: string;
+  onRemoveOption?: (value: string) => void;
+  placeholderLabel?: string;
+  disabled?: boolean;
 }
 
 type ListboxPosition = {
@@ -33,6 +48,9 @@ export function Select({
     dismissRequestId = 0,
     className,
     triggerClassName,
+    onRemoveOption,
+    placeholderLabel,
+    disabled = false,
 }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
@@ -43,7 +61,7 @@ export function Select({
     const listboxId = useId();
 
     const selected = options.find(option => option.value === value);
-    const displayLabel = selected?.label ?? value;
+    const displayLabel = selected?.label ?? placeholderLabel ?? value;
 
     const close = useCallback(() => {
         setIsOpen(false);
@@ -93,7 +111,7 @@ export function Select({
     useEffect(() => {
         if (!isOpen) {return;}
 
-        const handlePointerDown = (event: MouseEvent) => {
+        const handlePointerDown = (event: globalThis.MouseEvent) => {
             const target = event.target as Node;
 
             if (containerRef.current?.contains(target)) {return;}
@@ -121,6 +139,10 @@ export function Select({
 
     const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         if (!isOpen) {
+            if (disabled) {
+                return;
+            }
+
             if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 setIsOpen(true);
@@ -185,6 +207,26 @@ export function Select({
                     [styles.optionActive]: index === activeIndex,
                 });
 
+                const optionContentClassName = clsx(styles.optionContent);
+
+                const handleOptionMouseEnter = () => {
+                    setActiveIndex(index);
+                };
+
+                const handleOptionClick = () => {
+                    selectAt(index);
+                };
+
+                const handleRemoveOptionClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
+                    event.stopPropagation();
+
+                    if (!onRemoveOption) {
+                        return;
+                    }
+
+                    onRemoveOption(option.value);
+                };
+
                 return (
                     <li
                         key={option.value}
@@ -192,10 +234,20 @@ export function Select({
                         role="option"
                         aria-selected={option.value === value}
                         className={optionClassName}
-                        onMouseEnter={() => setActiveIndex(index)}
-                        onClick={() => selectAt(index)}
+                        onMouseEnter={handleOptionMouseEnter}
+                        onClick={handleOptionClick}
                     >
-                        {option.label}
+                        <span className={optionContentClassName}>{option.label}</span>
+                        {option.removable && onRemoveOption ? (
+                            <button
+                                type="button"
+                                className={styles.optionRemoveButton}
+                                aria-label={option.removeAriaLabel}
+                                onClick={handleRemoveOptionClick}
+                            >
+                                <X size={14} strokeWidth={2.25} aria-hidden />
+                            </button>
+                        ) : null}
                     </li>
                 );
             })}
@@ -212,6 +264,7 @@ export function Select({
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-controls={listboxId}
+                disabled={disabled}
                 onClick={() => setIsOpen(open => !open)}
                 onKeyDown={handleKeyDown}
             >

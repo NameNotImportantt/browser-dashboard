@@ -3,6 +3,8 @@ export declare const chevronOpen: string;
 export declare const listbox: string;
 export declare const option: string;
 export declare const optionActive: string;
+export declare const optionContent: string;
+export declare const optionRemoveButton: string;
 export declare const optionSelected: string;
 export declare const select: string;
 export declare const trigger: string;

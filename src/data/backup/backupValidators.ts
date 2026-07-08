@@ -129,6 +129,10 @@ function isAppSettings(value: BackupInspectableValue): value is DashboardBackupS
         (value.theme === 'light' || value.theme === 'dark') &&
         (value.accentColor === undefined || isNullableString(value.accentColor)) &&
         isString(value.activeSearchEngineId) &&
+        (value.hiddenBuiltinSearchEngineIds === undefined || (
+            Array.isArray(value.hiddenBuiltinSearchEngineIds) &&
+            value.hiddenBuiltinSearchEngineIds.every(isString)
+        )) &&
         Array.isArray(value.customSearchEngines) &&
         value.customSearchEngines.every(isCustomSearchEngine) &&
         (value.searchOpenInNewTab === undefined || isBoolean(value.searchOpenInNewTab)) &&

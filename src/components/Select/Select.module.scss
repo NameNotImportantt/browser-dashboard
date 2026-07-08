@@ -70,6 +70,10 @@
 }
 
 .option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
   padding: 0.5rem 0.65rem;
   border-radius: var(--radius-sm);
   color: var(--text-soft);
@@ -80,6 +84,42 @@
   &.optionActive {
     color: var(--text);
     background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  }
+}
+
+.optionContent {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionRemoveButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.45rem;
+  height: 1.45rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+    border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: var(--danger);
+    border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--danger) 24%, transparent);
   }
 }
 

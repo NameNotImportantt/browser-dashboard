@@ -5,6 +5,8 @@ export const BUILTIN_SEARCH_ENGINES = [
     {id: 'duckduckgo', name: 'DuckDuckGo', urlTemplate: 'https://duckduckgo.com/?q={q}'},
 ] as const;
 
+export type BuiltinSearchEngineId = (typeof BUILTIN_SEARCH_ENGINES)[number]['id'];
+
 export const SEARCH_URL_HINT = 'https://example.com/search?q={q}';
 
 function isHttpUrl(value: string) {
@@ -40,9 +42,14 @@ export function buildSearchUrl(engineId: string, query: string, customEngines: C
     return fallbackSearchUrl(encoded);
 }
 
-export function getSearchEngineOptions(customEngines: CustomSearchEngine[]) {
+export function getSearchEngineOptions(
+    customEngines: CustomSearchEngine[],
+    hiddenBuiltinSearchEngineIds: BuiltinSearchEngineId[] = [],
+) {
     return [
-        ...BUILTIN_SEARCH_ENGINES.map(engine => ({id: engine.id, name: engine.name})),
+        ...BUILTIN_SEARCH_ENGINES
+            .filter(engine => !hiddenBuiltinSearchEngineIds.includes(engine.id))
+            .map(engine => ({id: engine.id, name: engine.name})),
         ...customEngines.map(engine => ({id: engine.id, name: engine.name})),
     ];
 }

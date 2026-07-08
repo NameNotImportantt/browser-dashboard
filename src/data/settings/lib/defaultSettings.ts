@@ -1,6 +1,7 @@
 import {normalizeWeatherLocation} from '@/data/weather/lib/weatherCache';
 import {normalizeWeatherProvider} from '@/data/weather/lib/weatherProvider';
 import {WeatherProvider, type AppSettings} from '@/db';
+import {BUILTIN_SEARCH_ENGINES, getSearchEngineOptions} from '@/search';
 
 export const DEFAULT_TAB_TITLE = 'Personal Dashboard';
 
@@ -19,6 +20,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     theme: 'dark',
     accentColor: null,
     activeSearchEngineId: 'duckduckgo',
+    hiddenBuiltinSearchEngineIds: [],
     customSearchEngines: [],
     searchOpenInNewTab: true,
     onlineSearchSuggestionsEnabled: true,
@@ -49,12 +51,27 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
 
     const legacySearchEngine = (raw as { searchEngine?: string }).searchEngine;
 
+    const hiddenBuiltinSearchEngineIds = Array.isArray(raw.hiddenBuiltinSearchEngineIds)
+        ? raw.hiddenBuiltinSearchEngineIds.filter(searchEngineId =>
+            BUILTIN_SEARCH_ENGINES.some(searchEngine => searchEngine.id === searchEngineId),
+        )
+        : DEFAULT_SETTINGS.hiddenBuiltinSearchEngineIds;
+
+    const customSearchEngines = raw.customSearchEngines ?? DEFAULT_SETTINGS.customSearchEngines;
+    const availableSearchEngines = getSearchEngineOptions(customSearchEngines, hiddenBuiltinSearchEngineIds);
+    const requestedActiveSearchEngineId = raw.activeSearchEngineId ?? legacySearchEngine ?? DEFAULT_SETTINGS.activeSearchEngineId;
+
+    const activeSearchEngineId = availableSearchEngines.some(searchEngine => searchEngine.id === requestedActiveSearchEngineId)
+        ? requestedActiveSearchEngineId
+        : (availableSearchEngines[0]?.id ?? '');
+
     return {
         ...DEFAULT_SETTINGS,
         ...raw,
         accentColor: raw.accentColor ?? DEFAULT_SETTINGS.accentColor,
-        activeSearchEngineId: raw.activeSearchEngineId ?? legacySearchEngine ?? DEFAULT_SETTINGS.activeSearchEngineId,
-        customSearchEngines: raw.customSearchEngines ?? DEFAULT_SETTINGS.customSearchEngines,
+        activeSearchEngineId,
+        hiddenBuiltinSearchEngineIds,
+        customSearchEngines,
         searchOpenInNewTab: raw.searchOpenInNewTab ?? DEFAULT_SETTINGS.searchOpenInNewTab,
         onlineSearchSuggestionsEnabled: raw.onlineSearchSuggestionsEnabled ?? DEFAULT_SETTINGS.onlineSearchSuggestionsEnabled,
         searchHistoryEnabled: raw.searchHistoryEnabled ?? DEFAULT_SETTINGS.searchHistoryEnabled,

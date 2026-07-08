@@ -1,5 +1,6 @@
 import type {WeatherLocation} from './weather';
 import type {WeatherProvider} from './weatherProvider';
+import type {BuiltinSearchEngineId} from '@/search';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -28,6 +29,7 @@ export interface AppSettings {
   theme: ThemeMode;
   accentColor: string | null;
   activeSearchEngineId: string;
+  hiddenBuiltinSearchEngineIds: BuiltinSearchEngineId[];
   customSearchEngines: CustomSearchEngine[];
   searchOpenInNewTab: boolean;
   onlineSearchSuggestionsEnabled: boolean;

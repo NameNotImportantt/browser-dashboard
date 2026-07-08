@@ -34,7 +34,7 @@ export function AddSearchEngineControls({
     const [engineUrl, setEngineUrl] = useState('');
     const engineNameValidation = useFieldValidation();
     const engineUrlValidation = useFieldValidation();
-    const searchOptions = getSearchEngineOptions(settings.customSearchEngines);
+    const searchOptions = getSearchEngineOptions(settings.customSearchEngines, settings.hiddenBuiltinSearchEngineIds);
     const searchTemplateHintId = useId();
     const onlineSuggestionsFieldClassName = clsx(settingsStyles.field, styles.checkboxField);
     const engineNameInputClassName = clsx(styles.formInput, engineNameValidation.isInvalid && fieldValidationStyles.fieldControlInvalid);
@@ -46,8 +46,13 @@ export function AddSearchEngineControls({
     );
 
     const searchEngineSelectOptions = useMemo(
-        () => searchOptions.map(option => ({value: option.id, label: option.name})),
-        [searchOptions],
+        () => searchOptions.map(option => ({
+            value: option.id,
+            label: option.name,
+            removable: true,
+            removeAriaLabel: `${t(locale, 'removeSearchEngine')} ${option.name}`,
+        })),
+        [locale, searchOptions],
     );
 
     const resetCustomEngineForm = () => {
@@ -63,6 +68,10 @@ export function AddSearchEngineControls({
 
     const handleActiveEngineChange = (value: string) => {
         void onSelectActiveEngine(value);
+    };
+
+    const handleRemoveSearchEngineOption = (engineId: string) => {
+        void onRemoveCustomEngine(engineId);
     };
 
     const handleOnlineSuggestionsChange = () => {
@@ -126,7 +135,10 @@ export function AddSearchEngineControls({
                     dismissRequestId={dismissRequestId}
                     value={settings.activeSearchEngineId}
                     options={searchEngineSelectOptions}
+                    placeholderLabel={t(locale, 'noSearchEngines')}
+                    disabled={searchEngineSelectOptions.length === 0}
                     onChange={handleActiveEngineChange}
+                    onRemoveOption={handleRemoveSearchEngineOption}
                     ariaLabel={t(locale, 'currentSearchEngines')}
                 />
             </div>

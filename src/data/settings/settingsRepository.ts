@@ -1,6 +1,6 @@
 import {db} from '@/db';
 import {createId} from '@/lib';
-import {isValidSearchUrlTemplate} from '@/search';
+import {BUILTIN_SEARCH_ENGINES, getSearchEngineOptions, isValidSearchUrlTemplate} from '@/search';
 import {prepareBackgroundImageDataUrl} from './lib/backgroundImage';
 import {DEFAULT_SETTINGS, mergeSettings} from './lib/defaultSettings';
 import type {
@@ -37,7 +37,17 @@ export async function setAccentColor(accentColor: string | null) {
 }
 
 export async function setActiveSearchEngineId(activeSearchEngineId: string) {
-    return patchSettings({activeSearchEngineId});
+    const currentSettings = mergeSettings(await db.settings.get('app'));
+
+    const availableSearchEngines = getSearchEngineOptions(
+        currentSettings.customSearchEngines,
+        currentSettings.hiddenBuiltinSearchEngineIds,
+    );
+    const nextActiveSearchEngineId = availableSearchEngines.some(searchEngine => searchEngine.id === activeSearchEngineId)
+        ? activeSearchEngineId
+        : (availableSearchEngines[0]?.id ?? '');
+
+    return patchSettings({activeSearchEngineId: nextActiveSearchEngineId});
 }
 
 export async function setSearchOpenInNewTab(searchOpenInNewTab: boolean) {
@@ -163,11 +173,25 @@ export async function addCustomSearchEngine(payload: { name: string; urlTemplate
 }
 
 export async function removeCustomSearchEngine(engineId: string) {
+    return removeSearchEngine(engineId);
+}
+
+export async function removeSearchEngine(engineId: string) {
     const currentSettings = mergeSettings(await db.settings.get('app'));
-    const customSearchEngines = currentSettings.customSearchEngines.filter(engine => engine.id !== engineId);
+    const builtinSearchEngine = BUILTIN_SEARCH_ENGINES.find(searchEngine => searchEngine.id === engineId);
 
-    const activeSearchEngineId =
-    currentSettings.activeSearchEngineId === engineId ? 'duckduckgo' : currentSettings.activeSearchEngineId;
+    const customSearchEngines = builtinSearchEngine
+        ? currentSettings.customSearchEngines
+        : currentSettings.customSearchEngines.filter(engine => engine.id !== engineId);
+    const hiddenBuiltinSearchEngineIds = builtinSearchEngine
+        ? [...new Set([...currentSettings.hiddenBuiltinSearchEngineIds, builtinSearchEngine.id])]
+        : currentSettings.hiddenBuiltinSearchEngineIds;
 
-    return patchSettings({customSearchEngines, activeSearchEngineId});
+    const availableSearchEngines = getSearchEngineOptions(customSearchEngines, hiddenBuiltinSearchEngineIds);
+
+    const activeSearchEngineId = currentSettings.activeSearchEngineId === engineId
+        ? (availableSearchEngines[0]?.id ?? '')
+        : currentSettings.activeSearchEngineId;
+
+    return patchSettings({customSearchEngines, hiddenBuiltinSearchEngineIds, activeSearchEngineId});
 }
