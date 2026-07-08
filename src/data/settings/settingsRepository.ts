@@ -90,6 +90,21 @@ export async function setTabTitle(tabTitle: string) {
     return patchSettings({tabTitle: tabTitle.trim() || DEFAULT_SETTINGS.tabTitle});
 }
 
+export async function setWeatherProvider(weatherProvider: AppSettings['weatherProvider']) {
+    const settings = await patchSettings({weatherProvider});
+
+    await db.weatherCache.delete('current');
+    return settings;
+}
+
+export async function setWeatherApiKey(weatherApiKey: string | null) {
+    const normalizedWeatherApiKey = weatherApiKey?.trim() ? weatherApiKey.trim() : null;
+    const settings = await patchSettings({weatherApiKey: normalizedWeatherApiKey});
+
+    await db.weatherCache.delete('current');
+    return settings;
+}
+
 export async function setBackgroundImageFromFile(file: File) {
     const customBackgroundImage = await prepareBackgroundImageDataUrl(file);
 

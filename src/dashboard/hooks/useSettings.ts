@@ -22,6 +22,8 @@ export function useSettings() {
             setLocale: dashboardStore.setLocale,
             setDateFormat: dashboardStore.setDateFormat,
             setTabTitle: dashboardStore.setTabTitle,
+            setWeatherProvider: dashboardStore.setWeatherProvider,
+            setWeatherApiKey: dashboardStore.setWeatherApiKey,
             setBackgroundImageFromFile: dashboardStore.setBackgroundImageFromFile,
             clearBackgroundImage: dashboardStore.clearBackgroundImage,
             setBackgroundScrimOpacity: dashboardStore.setBackgroundScrimOpacity,

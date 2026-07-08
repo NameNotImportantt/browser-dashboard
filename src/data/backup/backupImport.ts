@@ -1,5 +1,6 @@
 import {normalizeSearchHistoryQuery} from '@/data/searchHistory';
 import {mergeSettings} from '@/data/settings';
+import {isWeatherCacheCompatible, normalizeWeatherCache} from '@/data/weather';
 import {db, type Note, type SearchHistoryEntry} from '@/db';
 import {
     BACKUP_SCHEMA_VERSION,
@@ -67,7 +68,11 @@ export function parseDashboardBackupJson(json: string): DashboardBackupEnvelope 
 }
 
 export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
-    const settings = mergeSettings(envelope.data.settings);
+    const {weatherApiKey: _weatherApiKey, ...importedSettings} = envelope.data.settings;
+
+    void _weatherApiKey;
+    const settings = mergeSettings(importedSettings);
+    const weatherCache = normalizeWeatherCache(envelope.data.weatherCache);
     const notes = normalizeImportedNotes(envelope.data.notes);
     const searchHistory = normalizeImportedSearchHistory(envelope.data.searchHistory);
 
@@ -124,8 +129,8 @@ export async function importDashboardBackup(envelope: DashboardBackupEnvelope) {
 
                 await db.settings.put(settings);
 
-                if (envelope.data.weatherCache) {
-                    await db.weatherCache.put(envelope.data.weatherCache);
+                if (weatherCache && isWeatherCacheCompatible(weatherCache, settings)) {
+                    await db.weatherCache.put(weatherCache);
                 }
 
                 if (searchHistory.length > 0) {

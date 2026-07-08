@@ -1,11 +1,12 @@
 import {type ChangeEvent, type FocusEvent} from 'react';
 import clsx from 'clsx';
 import {SlidersHorizontal} from 'lucide-react';
-import {ActionStatus, FieldValidationMessage, fieldValidationStyles} from '@/components';
+import {FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
 import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {WeatherSettingsFields} from './components/WeatherSettingsFields/WeatherSettingsFields';
 import {useGeneralSettingsController} from './hooks/useGeneralSettingsController';
 
 interface GeneralSettingsSectionProps {
@@ -14,24 +15,15 @@ interface GeneralSettingsSectionProps {
 
 export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSectionProps) {
     const {
-        clearWeatherCity,
         handleLocaleChange,
         handleTabTitleBlur,
         handleTabTitleChange,
         handleTabTitleSave,
-        handleWeatherCityBlur,
-        handleWeatherCityChange,
         locale,
         localeOptions,
-        lookupWeatherCity,
         settings,
         tabTitle,
         tabTitleValidation,
-        weatherCity,
-        weatherCityValidation,
-        weatherInputAriaProps,
-        weatherLocationHintId,
-        weatherStatus,
     } = useGeneralSettingsController({dismissRequestId});
 
     const sectionClassName = clsx(styles.section, styles.sectionFirst);
@@ -40,21 +32,9 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         styles.fieldLabel,
         tabTitleValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
     );
-    const weatherFieldLabelClassName = clsx(
-        styles.fieldLabel,
-        weatherCityValidation.isInvalid && fieldValidationStyles.fieldLabelInvalid,
-    );
     const tabTitleInputClassName = clsx(
         styles.inlineRowInput,
         tabTitleValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
-    );
-    const weatherInputClassName = clsx(
-        styles.inlineRowInput,
-        weatherCityValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
-    );
-    const weatherLocationHintClassName = clsx(
-        styles.hint,
-        weatherCityValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
     );
 
     const handleSaveTabTitleClick = () => {
@@ -67,22 +47,6 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
 
     const handleTabTitleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
         handleTabTitleBlur(event.target.value);
-    };
-
-    const handleLookupWeatherCityClick = () => {
-        void lookupWeatherCity();
-    };
-
-    const handleClearWeatherCityClick = () => {
-        void clearWeatherCity();
-    };
-
-    const handleWeatherCityInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        handleWeatherCityChange(event.target.value);
-    };
-
-    const handleWeatherCityInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-        handleWeatherCityBlur(event.target.value);
     };
 
     return (
@@ -122,52 +86,11 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                         message={tabTitleValidation.showError ? tabTitleValidation.validation.error : null}
                     />
                 </label>
-
-                <div className={styles.field}>
-                    <span className={weatherFieldLabelClassName}>{t(locale, 'weatherCity')}</span>
-                    <div className={styles.inlineRow}>
-                        <input
-                            className={weatherInputClassName}
-                            value={weatherCity}
-                            onChange={handleWeatherCityInputChange}
-                            onBlur={handleWeatherCityInputBlur}
-                            placeholder={t(locale, 'weatherCityPlaceholder')}
-                            aria-label={t(locale, 'weatherCity')}
-                            {...weatherInputAriaProps}
-                        />
-                        <button type="button" onClick={handleLookupWeatherCityClick} disabled={weatherStatus.isPending}>
-                            {t(locale, 'lookupCity')}
-                        </button>
-                        {settings.weatherLocation ? (
-                            <button
-                                type="button"
-                                className={styles.dangerButton}
-                                onClick={handleClearWeatherCityClick}
-                                disabled={weatherStatus.isPending}
-                            >
-                                {t(locale, 'remove')}
-                            </button>
-                        ) : null}
-                    </div>
-                    {settings.weatherLocation ? (
-                        <small className={weatherLocationHintClassName} id={weatherLocationHintId}>
-                            {settings.weatherLocation.label}
-                        </small>
-                    ) : null}
-
-                    <FieldValidationMessage
-                        className={styles.error}
-                        id={weatherCityValidation.messageId}
-                        message={weatherCityValidation.showError ? weatherCityValidation.validation.error : null}
-                    />
-
-                    <ActionStatus
-                        status={weatherStatus.status}
-                        message={weatherStatus.message}
-                        pendingLabel={t(locale, 'weatherLookupPending')}
-                    />
-                </div>
             </div>
+
+            <div className={styles.rowDivider} role="separator" aria-hidden />
+
+            <WeatherSettingsFields dismissRequestId={dismissRequestId} />
         </section>
     );
 }

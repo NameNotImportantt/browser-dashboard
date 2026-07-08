@@ -94,6 +94,20 @@ export const createSettingsSlice: SliceCreator<SettingsSlice> = (set, get) => ({
         replaceSnapshotField(set, 'settings', settings);
         await persistHomeBootstrapCache(get);
     },
+    setWeatherProvider: async weatherProvider => {
+        const settings = await repository.setWeatherProvider(weatherProvider);
+
+        replaceSnapshotField(set, 'settings', settings);
+        replaceSnapshotField(set, 'weatherCache', null);
+        await persistHomeBootstrapCache(get);
+    },
+    setWeatherApiKey: async weatherApiKey => {
+        const settings = await repository.setWeatherApiKey(weatherApiKey);
+
+        replaceSnapshotField(set, 'settings', settings);
+        replaceSnapshotField(set, 'weatherCache', null);
+        await persistHomeBootstrapCache(get);
+    },
     setBackgroundImageFromFile: async file => {
         const settings = await repository.setBackgroundImageFromFile(file);
 

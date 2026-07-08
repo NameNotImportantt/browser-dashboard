@@ -1,4 +1,4 @@
-import type {AppLocale, DateFormatPreset, TextColorKey, ThemeMode, TimeFormat} from '@/db';
+import type {AppLocale, DateFormatPreset, TextColorKey, ThemeMode, TimeFormat, WeatherProvider} from '@/db';
 
 export interface SettingsSlice {
   setTheme: (theme: ThemeMode) => Promise<void>;
@@ -16,6 +16,8 @@ export interface SettingsSlice {
   setLocale: (locale: AppLocale) => Promise<void>;
   setDateFormat: (dateFormat: DateFormatPreset) => Promise<void>;
   setTabTitle: (tabTitle: string) => Promise<void>;
+  setWeatherProvider: (weatherProvider: WeatherProvider) => Promise<void>;
+  setWeatherApiKey: (weatherApiKey: string | null) => Promise<void>;
   setBackgroundImageFromFile: (file: File) => Promise<void>;
   clearBackgroundImage: () => Promise<void>;
   setBackgroundScrimOpacity: (backgroundScrimOpacity: number) => Promise<void>;

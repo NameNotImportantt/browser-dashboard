@@ -1,16 +1,61 @@
 import {mergeSettings} from '@/data/settings';
-import {db} from '@/db';
+import {WeatherProvider, db, type AppSettings, type WeatherCache, type WeatherLocation} from '@/db';
 import {patchSettings} from '../settings/settingsRepository';
-import {WEATHER_CACHE_TTL_MS, WEATHER_FETCH_TIMEOUT_MS} from './constants';
-import {geocodeCity} from './lib/geocodeCity';
-import type {AppSettings, WeatherCache} from '@/db';
+import {WEATHER_CACHE_TTL_MS} from './constants';
+import {isWeatherCacheCompatible, normalizeWeatherCache} from './lib/weatherCache';
+import {lookupOpenMeteoCity, fetchOpenMeteoCurrentWeather} from './providers/openMeteo';
+import {lookupWeatherApiCity, fetchWeatherApiCurrentWeather} from './providers/weatherApi';
+
+function getWeatherApiKeyOrThrow(settings: AppSettings) {
+    const weatherApiKey = settings.weatherApiKey?.trim();
+
+    if (!weatherApiKey) {
+        throw new Error('Введите API key для WeatherAPI.com');
+    }
+
+    return weatherApiKey;
+}
+
+async function lookupWeatherLocation(city: string, settings: AppSettings): Promise<WeatherLocation> {
+    if (settings.weatherProvider === WeatherProvider.WeatherApi) {
+        const weatherApiKey = getWeatherApiKeyOrThrow(settings);
+        const location = await lookupWeatherApiCity(city, weatherApiKey);
+
+        return {
+            ...location,
+            provider: WeatherProvider.WeatherApi,
+        };
+    }
+
+    const location = await lookupOpenMeteoCity(city);
+
+    return {
+        ...location,
+        provider: WeatherProvider.OpenMeteo,
+    };
+}
+
+async function fetchCurrentWeather(settings: AppSettings, location: WeatherLocation) {
+    if (settings.weatherProvider === WeatherProvider.WeatherApi) {
+        const weatherApiKey = getWeatherApiKeyOrThrow(settings);
+
+        return fetchWeatherApiCurrentWeather(location, weatherApiKey);
+    }
+
+    return fetchOpenMeteoCurrentWeather(location);
+}
 
 export async function refreshWeather(force = false): Promise<WeatherCache | null> {
     const currentSettings = mergeSettings(await db.settings.get('app'));
-    const cache = await db.weatherCache.get('current');
+    const cache = normalizeWeatherCache(await db.weatherCache.get('current'));
     const cacheIsFresh = cache ? Date.now() - cache.fetchedAt < WEATHER_CACHE_TTL_MS : false;
 
-    if (!force && cacheIsFresh) {
+    if (!currentSettings.weatherLocation || currentSettings.weatherLocation.provider !== currentSettings.weatherProvider) {
+        await db.weatherCache.delete('current');
+        return null;
+    }
+
+    if (!force && cacheIsFresh && isWeatherCacheCompatible(cache, currentSettings)) {
         return cache ?? null;
     }
 
@@ -21,43 +66,16 @@ export async function refreshWeather(force = false): Promise<WeatherCache | null
         return null;
     }
 
-    const query = new URLSearchParams({
-        latitude: String(location.lat),
-        longitude: String(location.lon),
-        current: 'temperature_2m,weather_code',
-    });
-
-    const abortController = new AbortController();
-    const timeoutId = window.setTimeout(() => abortController.abort(), WEATHER_FETCH_TIMEOUT_MS);
-
     try {
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?${query.toString()}`, {
-            signal: abortController.signal,
-        });
-
-        if (!response.ok) {
-            throw new Error('Не удалось получить данные погоды');
-        }
-
-        const data = (await response.json()) as {
-            current?: {
-                temperature_2m?: number;
-                weather_code?: number;
-            };
-        };
-
-        const temperatureC = data.current?.temperature_2m;
-        const weatherCode = data.current?.weather_code;
-
-        if (typeof temperatureC !== 'number' || typeof weatherCode !== 'number') {
-            throw new Error('Сервис погоды вернул неполные данные');
-        }
+        const currentWeather = await fetchCurrentWeather(currentSettings, location);
 
         const latestSettings = mergeSettings(await db.settings.get('app'));
         const latestLocation = latestSettings.weatherLocation;
 
         if (
             !latestLocation ||
+            latestSettings.weatherProvider !== currentSettings.weatherProvider ||
+            latestLocation.provider !== currentSettings.weatherProvider ||
             latestLocation.lat !== location.lat ||
             latestLocation.lon !== location.lon ||
             latestLocation.label !== location.label
@@ -65,11 +83,19 @@ export async function refreshWeather(force = false): Promise<WeatherCache | null
             return null;
         }
 
+        if (
+            latestSettings.weatherProvider === WeatherProvider.WeatherApi &&
+            latestSettings.weatherApiKey?.trim() !== currentSettings.weatherApiKey?.trim()
+        ) {
+            return null;
+        }
+
         const nextWeatherCache: WeatherCache = {
             id: 'current',
+            provider: currentSettings.weatherProvider,
             locationLabel: location.label,
-            temperatureC,
-            weatherCode,
+            temperatureC: currentWeather.temperatureC,
+            weatherCode: currentWeather.weatherCode,
             fetchedAt: Date.now(),
         };
 
@@ -77,18 +103,16 @@ export async function refreshWeather(force = false): Promise<WeatherCache | null
 
         return nextWeatherCache;
     } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
-            throw new Error('Сервис погоды не ответил вовремя');
+        if (currentSettings.weatherProvider === WeatherProvider.WeatherApi && !currentSettings.weatherApiKey?.trim()) {
+            await db.weatherCache.delete('current');
         }
 
         throw error;
-    } finally {
-        window.clearTimeout(timeoutId);
     }
 }
 
 export async function getWeatherCache() {
-    return (await db.weatherCache.get('current')) ?? null;
+    return normalizeWeatherCache(await db.weatherCache.get('current'));
 }
 
 export async function setWeatherCity(city: string): Promise<AppSettings> {
@@ -101,7 +125,10 @@ export async function setWeatherCity(city: string): Promise<AppSettings> {
         return settings;
     }
 
-    const location = await geocodeCity(trimmed);
+    const currentSettings = mergeSettings(await db.settings.get('app'));
+    const location = await lookupWeatherLocation(trimmed, currentSettings);
+
+    await db.weatherCache.delete('current');
 
     return patchSettings({weatherLocation: location});
 }

@@ -4,8 +4,11 @@ import {
     BACKUP_APP_NAME,
     BACKUP_MIME_TYPE,
     BACKUP_SCHEMA_VERSION,
-    type DashboardBackupDownloadPayload,
-    type DashboardBackupEnvelope,
+} from './backupSchema';
+import type {
+    DashboardBackupDownloadPayload,
+    DashboardBackupEnvelope,
+    DashboardBackupSettings,
 } from './backupSchema';
 
 function padNumber(value: number) {
@@ -26,12 +29,20 @@ function buildBackupFileName(exportedAt: number) {
 
 export async function createDashboardBackupEnvelope(): Promise<DashboardBackupEnvelope> {
     const exportedAt = Date.now();
+    const snapshot = await loadSnapshot();
+    const {weatherApiKey, ...settings} = snapshot.settings;
+
+    void weatherApiKey;
+    const sanitizedSettings: DashboardBackupSettings = settings;
 
     return {
         schemaVersion: BACKUP_SCHEMA_VERSION,
         exportedAt,
         appName: BACKUP_APP_NAME,
-        data: await loadSnapshot(),
+        data: {
+            ...snapshot,
+            settings: sanitizedSettings,
+        },
     };
 }
 

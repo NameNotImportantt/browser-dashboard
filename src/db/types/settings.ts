@@ -1,4 +1,5 @@
 import type {WeatherLocation} from './weather';
+import type {WeatherProvider} from './weatherProvider';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -41,6 +42,8 @@ export interface AppSettings {
   dateFormat: DateFormatPreset;
   tabTitle: string;
   lastWorkspaceId: string | null;
+  weatherProvider: WeatherProvider;
+  weatherApiKey: string | null;
   weatherLocation: WeatherLocation | null;
   customBackgroundImage: string | null;
   backgroundScrimOpacity: number;

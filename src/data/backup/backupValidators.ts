@@ -1,6 +1,12 @@
 import type {BackupJsonObject, BackupJsonValue} from './backupJsonValue';
-import type {DashboardBackupData, DashboardBackupEnvelope, DashboardBackupNote} from './backupSchema';
-import type {AppSettings, Bookmark, BookmarkCategory, Habit, SearchHistoryEntry, TodoItem, WeatherCache, Workspace} from '@/db';
+import type {
+    DashboardBackupData,
+    DashboardBackupEnvelope,
+    DashboardBackupNote,
+    DashboardBackupSettings,
+    DashboardBackupWeatherCache,
+} from './backupSchema';
+import type {AppSettings, Bookmark, BookmarkCategory, Habit, SearchHistoryEntry, TodoItem, Workspace} from '@/db';
 
 type BackupInspectableValue = BackupJsonValue | object | undefined;
 
@@ -99,7 +105,8 @@ function isWeatherLocation(value: BackupInspectableValue): value is NonNullable<
     return isRecord(value) &&
         isNumber(value.lat) &&
         isNumber(value.lon) &&
-        isString(value.label);
+        isString(value.label) &&
+        (value.provider === undefined || isString(value.provider));
 }
 
 function isCustomSearchEngine(value: BackupInspectableValue): value is AppSettings['customSearchEngines'][number] {
@@ -116,7 +123,7 @@ function isCustomTextColors(value: BackupInspectableValue): value is NonNullable
         isNullableString(value.textMuted);
 }
 
-function isAppSettings(value: BackupInspectableValue): value is AppSettings {
+function isAppSettings(value: BackupInspectableValue): value is DashboardBackupSettings {
     return isRecord(value) &&
         value.key === 'app' &&
         (value.theme === 'light' || value.theme === 'dark') &&
@@ -137,6 +144,8 @@ function isAppSettings(value: BackupInspectableValue): value is AppSettings {
         (value.dateFormat === 'dd.MM.yyyy' || value.dateFormat === 'MM/dd/yyyy' || value.dateFormat === 'yyyy-MM-dd') &&
         isString(value.tabTitle) &&
         (value.lastWorkspaceId === null || isString(value.lastWorkspaceId)) &&
+        (value.weatherProvider === undefined || isString(value.weatherProvider)) &&
+        (value.weatherApiKey === undefined || isNullableString(value.weatherApiKey)) &&
         (value.weatherLocation === null || isWeatherLocation(value.weatherLocation)) &&
         (value.customBackgroundImage === null || isString(value.customBackgroundImage)) &&
         isNumber(value.backgroundScrimOpacity) &&
@@ -144,9 +153,10 @@ function isAppSettings(value: BackupInspectableValue): value is AppSettings {
         isNumber(value.updatedAt);
 }
 
-function isWeatherCache(value: BackupInspectableValue): value is WeatherCache {
+function isWeatherCache(value: BackupInspectableValue): value is DashboardBackupWeatherCache {
     return isRecord(value) &&
         value.id === 'current' &&
+        (value.provider === undefined || isString(value.provider)) &&
         isString(value.locationLabel) &&
         isNumber(value.temperatureC) &&
         isNumber(value.weatherCode) &&

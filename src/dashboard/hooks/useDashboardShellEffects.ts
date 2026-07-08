@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 import {DEFAULT_TAB_TITLE} from '@/data/settings';
-import {WEATHER_CACHE_TTL_MS} from '@/data/weather';
+import {WEATHER_CACHE_TTL_MS, isWeatherCacheCompatible} from '@/data/weather';
 import {applyCustomAccentColor, applyCustomTextColors} from '@/theme';
 import {useDashboardCore} from './useDashboardCore';
 import {useSettings} from './useSettings';
@@ -49,10 +49,11 @@ export function useDashboardShellEffects() {
     useEffect(() => {
         if (!hasRenderableSnapshot) {return;}
 
-        const cacheIsFresh = weather ? Date.now() - weather.fetchedAt < WEATHER_CACHE_TTL_MS : false;
+        const cacheIsCompatible = isWeatherCacheCompatible(weather, settings);
+        const cacheIsFresh = cacheIsCompatible && weather !== null && Date.now() - weather.fetchedAt < WEATHER_CACHE_TTL_MS;
 
         if (cacheIsFresh) {return;}
 
         void refreshWeather(false).catch(() => undefined);
-    }, [hasRenderableSnapshot, refreshWeather, weather]);
+    }, [hasRenderableSnapshot, refreshWeather, settings, weather]);
 }

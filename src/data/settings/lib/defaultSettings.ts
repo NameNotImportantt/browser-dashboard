@@ -1,4 +1,6 @@
-import type {AppSettings} from '@/db';
+import {normalizeWeatherLocation} from '@/data/weather/lib/weatherCache';
+import {normalizeWeatherProvider} from '@/data/weather/lib/weatherProvider';
+import {WeatherProvider, type AppSettings} from '@/db';
 
 export const DEFAULT_TAB_TITLE = 'Personal Dashboard';
 
@@ -31,6 +33,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
     dateFormat: 'dd.MM.yyyy',
     tabTitle: DEFAULT_TAB_TITLE,
     lastWorkspaceId: null,
+    weatherProvider: WeatherProvider.OpenMeteo,
+    weatherApiKey: null,
     weatherLocation: null,
     customBackgroundImage: null,
     backgroundScrimOpacity: DEFAULT_BACKGROUND_SCRIM_OPACITY,
@@ -65,6 +69,12 @@ export function mergeSettings(raw?: Partial<AppSettings> | null): AppSettings {
         locale: raw.locale ?? DEFAULT_SETTINGS.locale,
         dateFormat: raw.dateFormat ?? DEFAULT_SETTINGS.dateFormat,
         tabTitle: raw.tabTitle?.trim() || DEFAULT_TAB_TITLE,
+        weatherProvider: normalizeWeatherProvider(raw.weatherProvider),
+        weatherApiKey: raw.weatherApiKey?.trim() ? raw.weatherApiKey.trim() : null,
+        weatherLocation: normalizeWeatherLocation(
+            raw.weatherLocation,
+            normalizeWeatherProvider(raw.weatherProvider),
+        ),
         customBackgroundImage: raw.customBackgroundImage ?? DEFAULT_SETTINGS.customBackgroundImage,
         backgroundScrimOpacity: clampBackgroundScrimOpacity(
             raw.backgroundScrimOpacity ?? DEFAULT_SETTINGS.backgroundScrimOpacity,

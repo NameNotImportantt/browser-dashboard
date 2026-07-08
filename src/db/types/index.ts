@@ -25,4 +25,6 @@ export type {CreateTodoPayload, TodoItem, TodoPriority} from './todo';
 
 export type {WeatherCache, WeatherLocation} from './weather';
 
+export {WeatherProvider} from './weatherProvider';
+
 export type {Workspace} from './workspace';

@@ -10,6 +10,15 @@ import type {
     Workspace,
 } from '@/db';
 
+export interface DashboardBackupSettings extends Omit<AppSettings, 'weatherProvider' | 'weatherApiKey'> {
+  weatherProvider?: AppSettings['weatherProvider'];
+  weatherApiKey?: string | null;
+}
+
+export interface DashboardBackupWeatherCache extends Omit<WeatherCache, 'provider'> {
+  provider?: WeatherCache['provider'];
+}
+
 export interface DashboardBackupNote extends Omit<Note, 'title' | 'createdAt' | 'position'> {
   title?: string;
   createdAt?: number;
@@ -29,8 +38,8 @@ export interface DashboardBackupData {
   bookmarks: Bookmark[];
   bookmarkCategories: BookmarkCategory[];
   notes: DashboardBackupNote[];
-  settings: AppSettings;
-  weatherCache: WeatherCache | null;
+  settings: DashboardBackupSettings;
+  weatherCache: DashboardBackupWeatherCache | null;
   searchHistory: SearchHistoryEntry[];
 }
 

@@ -25,15 +25,11 @@ export const createWeatherSlice: SliceCreator<WeatherSlice> = (set, get) => {
                 return;
             }
 
-            await persistHomeBootstrapCache(get);
+            const weatherCache = await repository.refreshWeather(true);
 
-            void repository.refreshWeather(true)
-                .then(async weatherCache => {
-                    replaceSnapshotField(set, 'weatherCache', weatherCache);
-                    await reloadWeatherCache();
-                    await persistHomeBootstrapCache(get);
-                })
-                .catch(() => undefined);
+            replaceSnapshotField(set, 'weatherCache', weatherCache);
+            await persistHomeBootstrapCache(get);
+            await reloadWeatherCache();
         },
     };
 };

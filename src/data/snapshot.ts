@@ -1,6 +1,7 @@
 import {trackFullSnapshotReload} from '@/app/bootstrap/devPerformance';
 import {loadPositionedTableRows} from '@/data/lib/loadPositionedTableRows';
 import {DEFAULT_SETTINGS, mergeSettings} from '@/data/settings';
+import {normalizeWeatherCache} from '@/data/weather';
 import {db} from '@/db';
 import {createId} from '@/lib';
 import type {
@@ -67,7 +68,7 @@ function normalizeHomeBootstrapCacheRecord(record: HomeBootstrapCacheRecord) {
         snapshot: {
             ...record.snapshot,
             settings: mergeSettings(record.snapshot.settings),
-            weatherCache: record.snapshot.weatherCache ?? null,
+            weatherCache: normalizeWeatherCache(record.snapshot.weatherCache),
         },
     };
 }
@@ -167,7 +168,7 @@ export async function loadSnapshot(mode = SnapshotLoadMode.Full): Promise<Snapsh
         bookmarkCategories,
         notes,
         settings: mergeSettings(settings),
-        weatherCache: weatherCache ?? null,
+        weatherCache: normalizeWeatherCache(weatherCache),
         searchHistory,
     };
 }
