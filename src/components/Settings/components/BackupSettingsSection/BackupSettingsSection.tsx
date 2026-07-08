@@ -1,6 +1,6 @@
 import {useEffect, useState, type ChangeEvent} from 'react';
 import clsx from 'clsx';
-import {ActionStatus, FieldValidationMessage, fieldValidationStyles, Loader, Modal} from '@/components';
+import {ActionStatus, FieldValidationMessage, fieldValidationStyles, HintTooltip, Loader, Modal} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useBackupActions, useDashboardCore, useSettings} from '@/dashboard';
 import {DashboardBackupError} from '@/data';
@@ -53,7 +53,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         draft: intervalDaysDraft,
         handleBlur: handleIntervalDaysBlur,
         handleChange: handleIntervalDaysChange,
-        hintId: intervalDaysHintId,
         inputAriaProps: intervalDaysInputAriaProps,
         validation: intervalDaysValidation,
     } = useBackupReminderIntervalField({
@@ -69,11 +68,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         styles.intervalInput,
         intervalDaysValidation.isInvalid && fieldValidationStyles.fieldControlInvalid,
     );
-    const intervalHintClassName = clsx(
-        panelStyles.hint,
-        intervalDaysValidation.isInvalid && fieldValidationStyles.fieldHintInvalid,
-    );
-
     const formatDateTime = (value: number) => new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ru-RU', {
         dateStyle: 'medium',
         timeStyle: 'short',
@@ -202,7 +196,11 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </div>
                 ) : null}
 
-                <h5 className={intervalTitleClassName}>{t(locale, 'backupReminderIntervalDays')}</h5>
+                <HintTooltip
+                    locale={locale}
+                    label={<h5 className={intervalTitleClassName}>{t(locale, 'backupReminderIntervalDays')}</h5>}
+                    hint={t(locale, 'backupReminderIntervalHint')}
+                />
                 <label className={panelStyles.field}>
                     <div className={styles.inlineRow}>
                         <input
@@ -218,9 +216,6 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                         />
                         <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
                     </div>
-                    <small className={intervalHintClassName} id={intervalDaysHintId}>
-                        {t(locale, 'backupReminderIntervalHint')}
-                    </small>
                     <FieldValidationMessage
                         className={panelStyles.error}
                         id={intervalDaysValidation.messageId}
@@ -240,10 +235,11 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     </small>
                 </div>
 
-                <h5 className={styles.minorTitle}>{t(locale, 'backupExport')}</h5>
-                <div className={panelStyles.field}>
-                    <small className={panelStyles.hint}>{t(locale, 'backupExportHint')}</small>
-                </div>
+                <HintTooltip
+                    locale={locale}
+                    label={<h5 className={styles.minorTitle}>{t(locale, 'backupExport')}</h5>}
+                    hint={t(locale, 'backupExportHint')}
+                />
 
                 <div className={styles.actionRow}>
                     <button type="button" onClick={handleActionExportClick} disabled={isExporting || isImporting}>
@@ -257,10 +253,11 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
                     pendingLabel={t(locale, 'backupExporting')}
                 />
 
-                <h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>
-                <div className={panelStyles.field}>
-                    <small className={panelStyles.hint}>{t(locale, 'backupImportHint')}</small>
-                </div>
+                <HintTooltip
+                    locale={locale}
+                    label={<h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>}
+                    hint={t(locale, 'backupImportHint')}
+                />
 
                 <div className={styles.actionRow}>
                     <label className={styles.fileButton}>

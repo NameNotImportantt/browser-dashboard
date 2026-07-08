@@ -1,5 +1,5 @@
 import {useRef, type ChangeEvent} from 'react';
-import {ActionStatus} from '@/components';
+import {ActionStatus, HintTooltip} from '@/components';
 import {useSettings} from '@/dashboard';
 import {BackgroundImageError} from '@/data/settings';
 import {useActionStatus} from '@/hooks/useActionStatus';
@@ -79,7 +79,11 @@ export function BackgroundImageField() {
 
     return (
         <div className={panelStyles.field}>
-            <span className={panelStyles.fieldLabel}>{t(locale, 'backgroundImage')}</span>
+            <HintTooltip
+                locale={locale}
+                label={<span className={panelStyles.fieldLabel}>{t(locale, 'backgroundImage')}</span>}
+                hint={t(locale, 'backgroundImageHint')}
+            />
 
             <input
                 ref={backgroundInputRef}
@@ -101,8 +105,6 @@ export function BackgroundImageField() {
                 ) : null}
             </div>
 
-            <small className={panelStyles.hint}>{t(locale, 'backgroundImageHint')}</small>
-
             {settings.customBackgroundImage ? (
                 <div className={styles.backgroundPreview} role="img" aria-label={t(locale, 'backgroundImage')}>
                     <img src={settings.customBackgroundImage} alt="" />
@@ -112,9 +114,16 @@ export function BackgroundImageField() {
             {settings.customBackgroundImage ? (
                 <div className={panelStyles.field}>
                     <label className={styles.scrimField} htmlFor="background-scrim">
-                        <span className={styles.scrimLabel}>
-                            {t(locale, 'backgroundScrim')}: {settings.backgroundScrimOpacity}%
-                        </span>
+                        <HintTooltip
+                            inline
+                            locale={locale}
+                            label={(
+                                <span className={styles.scrimLabel}>
+                                    {t(locale, 'backgroundScrim')}: {settings.backgroundScrimOpacity}%
+                                </span>
+                            )}
+                            hint={t(locale, 'backgroundScrimHint')}
+                        />
 
                         <input
                             id="background-scrim"
@@ -131,7 +140,6 @@ export function BackgroundImageField() {
                         />
                     </label>
 
-                    <small className={panelStyles.hint}>{t(locale, 'backgroundScrimHint')}</small>
                 </div>
             ) : null}
 

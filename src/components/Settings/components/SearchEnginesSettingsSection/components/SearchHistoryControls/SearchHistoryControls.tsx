@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import clsx from 'clsx';
+import {HintTooltip} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {Modal} from '@/components/Modal';
 import {t} from '@/i18n';
@@ -96,9 +97,15 @@ export function SearchHistoryControls({
                 <Checkbox
                     checked={searchHistoryEnabled}
                     onChange={() => void onToggleSearchHistoryEnabled(!searchHistoryEnabled)}
-                    label={t(locale, 'searchHistoryEnabled')}
+                    label={(
+                        <HintTooltip
+                            inline
+                            locale={locale}
+                            label={<span>{t(locale, 'searchHistoryEnabled')}</span>}
+                            hint={t(locale, 'searchHistoryDisabledHint')}
+                        />
+                    )}
                 />
-                <small className={settingsStyles.hint}>{t(locale, 'searchHistoryDisabledHint')}</small>
             </div>
 
             {isHistoryOpen ? (

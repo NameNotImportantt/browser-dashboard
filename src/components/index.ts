@@ -38,3 +38,5 @@ export {NotesWidget} from './Notes';
 export {Loader} from './Loader/Loader';
 
 export {IconButton} from './IconButton/IconButton';
+
+export {HintTooltip} from './HintTooltip/HintTooltip';

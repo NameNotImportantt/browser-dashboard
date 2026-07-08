@@ -1,4 +1,5 @@
 import {Layers3} from 'lucide-react';
+import {HintTooltip} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
@@ -22,9 +23,15 @@ export function OthersSettingsSection({dismissRequestId = 0}: OthersSettingsSect
                     <Checkbox
                         checked={settings.bookmarkFaviconsEnabled}
                         onChange={() => void setBookmarkFaviconsEnabled(!settings.bookmarkFaviconsEnabled)}
-                        label={t(locale, 'bookmarkFaviconsEnabled')}
+                        label={(
+                            <HintTooltip
+                                inline
+                                locale={locale}
+                                label={<span>{t(locale, 'bookmarkFaviconsEnabled')}</span>}
+                                hint={t(locale, 'bookmarkFaviconsHint')}
+                            />
+                        )}
                     />
-                    <small className={styles.hint}>{t(locale, 'bookmarkFaviconsHint')}</small>
                 </div>
             </div>
             <div className={styles.rowDivider} role="separator" aria-hidden />

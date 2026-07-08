@@ -1,6 +1,6 @@
 import {useEffect, useId, useMemo, useState, type ChangeEvent, type FormEvent} from 'react';
 import clsx from 'clsx';
-import {FieldValidationMessage, fieldValidationStyles, useFieldValidation} from '@/components';
+import {FieldValidationMessage, fieldValidationStyles, HintTooltip, useFieldValidation} from '@/components';
 import {Checkbox} from '@/components/Checkbox';
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
@@ -191,18 +191,30 @@ export function AddSearchEngineControls({
                 <Checkbox
                     checked={settings.searchOpenInNewTab}
                     onChange={handleSearchOpenInNewTabChange}
-                    label={t(locale, 'searchOpenInNewTab')}
+                    label={(
+                        <HintTooltip
+                            inline
+                            locale={locale}
+                            label={<span>{t(locale, 'searchOpenInNewTab')}</span>}
+                            hint={t(locale, 'searchOpenInNewTabHint')}
+                        />
+                    )}
                 />
-                <small className={settingsStyles.hint}>{t(locale, 'searchOpenInNewTabHint')}</small>
             </div>
 
             <div className={onlineSuggestionsFieldClassName}>
                 <Checkbox
                     checked={settings.onlineSearchSuggestionsEnabled}
                     onChange={handleOnlineSuggestionsChange}
-                    label={t(locale, 'onlineSearchSuggestionsEnabled')}
+                    label={(
+                        <HintTooltip
+                            inline
+                            locale={locale}
+                            label={<span>{t(locale, 'onlineSearchSuggestionsEnabled')}</span>}
+                            hint={t(locale, 'onlineSearchSuggestionsHint')}
+                        />
+                    )}
                 />
-                <small className={settingsStyles.hint}>{t(locale, 'onlineSearchSuggestionsHint')}</small>
             </div>
 
             {settings.customSearchEngines.length > 0 ? (

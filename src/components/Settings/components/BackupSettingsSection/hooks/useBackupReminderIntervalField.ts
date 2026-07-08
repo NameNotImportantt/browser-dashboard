@@ -16,7 +16,6 @@ export function useBackupReminderIntervalField({
 }: UseBackupReminderIntervalFieldOptions) {
     const [draft, setDraft] = useState(() => String(value));
     const validation = useFieldValidation();
-    const hintId = 'backup-reminder-interval-days-hint';
 
     useEffect(() => {
         setDraft(String(value));
@@ -71,8 +70,7 @@ export function useBackupReminderIntervalField({
         draft,
         handleBlur,
         handleChange,
-        hintId,
-        inputAriaProps: validation.getAriaProps(hintId),
+        inputAriaProps: validation.getAriaProps(),
         validation,
     };
 }
