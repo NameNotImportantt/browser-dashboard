@@ -60,6 +60,8 @@ This output keeps normal JS/CSS/assets files and is intended for local static ho
 
 PWA support belongs only to standard multi-file build. It is expected to work on `https://` or `http://localhost`, not on the single-file `file://` release.
 
+The standard build includes a web app manifest and service worker registration via `vite-plugin-pwa`. The single-file release keeps PWA disabled intentionally.
+
 ## Docker
 
 Docker image targets standard multi-file build, not single-file release artifact.
@@ -85,14 +87,16 @@ docker stop browser-dashboard-app
 
 ```
 src/
-├── app/           # App shell, i18n, search utils, theme helpers
+├── app/           # App shell, bootstrap helpers, keyboard shortcuts
 ├── components/    # UI widgets (SearchCore, TodoWidget, SettingsPanel, …)
 ├── dashboard/     # Domain hooks used by UI components
-├── data/          # Snapshot, repositories, and Dexie-backed services
+├── data/          # Snapshot loading, repositories, backup, and Dexie-backed services
 ├── db/            # Dexie schema and domain types
-├── hooks/         # Shared hooks and dashboard hook re-exports
+├── hooks/         # Shared UI hooks and hotkey helpers
+├── i18n/          # Localized UI strings
 ├── pages/         # HomePage layout
 ├── store/         # Zustand store, slices, and store types
+├── theme/         # Theme and text color helpers
 └── frontend.tsx   # Entry point
 ```
 
@@ -117,13 +121,21 @@ src/
 
 ## Architecture Notes
 
-- **State**: one Zustand store holds `snapshot`, `activeWorkspaceId`, `loading`, and `error`. Domain slices call repositories and then update the snapshot through `refresh()`.
-- **UI access**: widgets no longer receive CRUD callbacks through `HomePage`; they use domain hooks (`useTodos`, `useSettings`, `useBookmarks`, etc.).
+- **Bootstrap**: startup uses a critical-first flow. `init()` can render from cached home bootstrap data, then loads a critical snapshot, then hydrates deferred domains in the background.
+- **Critical vs deferred data**: workspaces, settings, todos, bookmarks, bookmark categories, and weather cache are available first; habits, notes, and search history complete in deferred hydration.
+- **State**: one Zustand store owns `snapshot`, `activeWorkspaceId`, boot/deferred flags, and error state.
+- **Store sync**: interactive actions patch the relevant snapshot field directly. Full `refresh()` is now a recovery/import path, not the normal CRUD sync mechanism.
+- **UI access**: widgets do not receive CRUD callbacks through `HomePage`; they use domain hooks (`useTodos`, `useSettings`, `useBookmarks`, etc.).
 - **Workspaces**: Most entities are scoped by `workspaceId`. Settings are global (`settings` table, key `app`).
 - **Lazy loading**: `HabitsWidget` and `NotesWidget` are code-split with `React.lazy`.
+- **Deferred UX**: `HabitsWidget`, `NotesWidget`, and the home-side habit panel show local loading states while deferred data hydrates.
+- **Tasks UI**: the main tasks screen already supports filters by date, priority, and status.
+- **Loading states**: cold boot uses a fullscreen loader, lazy screens use card fallbacks, and deferred sections render local loading placeholders instead of blocking the whole shell.
 - **Weather**: Open-Meteo geocoding + forecast; cache TTL is 30 minutes (`WEATHER_CACHE_TTL_MS`).
 - **Search suggestions**: local history first, then Google Suggest via JSONP (`suggestqueries.google.com`).
-- **i18n**: lightweight helper in `src/app/i18n.ts`; locales `ru` and `en`.
+- **Backups**: full local JSON export/import lives in `src/data/backup/*` and is surfaced through settings/reminder UI.
+- **Undo**: destructive actions use a dedicated undo slice and global `UndoSnackbar`.
+- **i18n**: lightweight helper in `src/i18n/index.ts`; locales `ru` and `en`.
 
 ## Quality Checks
 
@@ -148,6 +160,23 @@ UI follows a dark, atmospheric aesthetic inspired by the novels *The Beginning A
 - Do not commit or create branches unless explicitly asked by maintainers
 
 See [Contributing](../CONTRIBUTING.md) for the full contribution workflow.
+
+## Planning Files In Repo Root
+
+The repository root contains living planning and handoff documents. They are not all equally authoritative, but they explain why some architecture and UX decisions exist:
+
+- `performance-optimization-plan.ru.md` — high-level performance refactor plan
+- `performance-baseline.ru.md` — baseline metrics and helper abstractions for the performance work
+- `performance-dev-notes.ru.md` — implementation notes for the current startup/store optimization direction
+- `habit-calendar-plan.ru.md` — rollout plan for habit calendar and analytics
+- `vnext-point-17-plan.ru.md` — home-screen tasks/habits UI improvements
+- `vnext-point-18-plan.ru.md` — unified field-level validation plan
+- `vnext-point-22-plan.ru.md` — step plan for backup/settings validation and related UX
+- `vnext-unfinished-plan.ru.md` — backlog of broader pending vNext ideas
+- `a_lot_of_ui_features.ru.md` — accumulated UI/feature backlog notes
+- `codex-chat-context-2026-07-04.md` — handoff context from a prior agent session, useful as historical context only
+
+When README docs and plan files disagree, prefer current code plus the README/Developer Guide after verifying implementation.
 
 ## License
 

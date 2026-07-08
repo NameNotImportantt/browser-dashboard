@@ -26,11 +26,17 @@
 
 - 🔍 Multi-engine search
 - 📁 Bookmark categories
+- 🗃 Search history management
 - ✅ Todo manager
 - 🔥 Habit tracking
-- 📝 Notes
+- 🗓 Habit calendar and stats
+- 📝 Multi-note workspace
 - 🌤 Weather
 - 🗂 Workspaces
+- 📲 PWA mode for hosted build
+- 💾 Backup export and import
+- ↩️ Undo for destructive actions
+- ⌨️ Keyboard shortcuts
 - 💾 Offline-first storage
 - 🚫 No account required
 
@@ -43,6 +49,8 @@
 - [Features and How They Work](#features-and-how-they-work)
 - [Installation](#installation)
 - [Set as Browser Start Page](#set-as-browser-start-page)
+- [Backup and Restore](#backup-and-restore)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Limitations](#limitations)
 - [Screenshots](#screenshots)
 - [Roadmap](#roadmap)
@@ -76,16 +84,20 @@ Browser Dashboard offers a middle ground:
 
 | Area | What you get | How it works |
 | --- | --- | --- |
-| **Workspaces** | Separate contexts (e.g. *Work*, *Personal*) | Each workspace has its own todos, habits, bookmarks, and note. Switch via the bar at the bottom; the active workspace is remembered. |
+| **Workspaces** | Separate contexts (e.g. *Work*, *Personal*) | Each workspace has its own todos, habits, bookmarks, and notes. Switch via the bar at the bottom; the active workspace is remembered. |
 | **Search** | Central search bar with engine picker | Built-in Google and DuckDuckGo, plus custom engines via `{q}` URL templates. Queries open in a new tab. Recent queries are stored locally; online suggestions come from Google Suggest (JSONP) when available. |
-| **Quick Links** | Bookmark grid with categories | Save URLs with titles, group them into categories, filter by category on the home screen. |
-| **Tasks** | Full todo list with priorities and due dates | Add, complete, reorder, and delete tasks. The home sidebar shows up to five active tasks for today. |
-| **Habits** | Daily habit tracker with streaks | Mark habits done for today; streak length is calculated from completion history. |
-| **Notes** | One persistent note per workspace | Auto-saved text note, loaded lazily when you open the Notes screen. |
+| **Quick Links** | Bookmark grid with categories | Save URLs with titles, group them into categories, filter by category on the home screen, and optionally load favicons for saved links. |
+| **Tasks** | Full todo list with priorities, due dates, and filters | Add, complete, reorder, and delete tasks. Filter by date, priority, and status. The home sidebar shows up to five active tasks for today. |
+| **Habits** | Daily habit tracker with streaks, stats, and calendar | Mark habits done for today, inspect current and best streaks, see a 30-day completion rate, and review the current month calendar. |
+| **Notes** | Multiple persistent notes per workspace | Create, rename, auto-save, and delete notes. The Notes screen is loaded lazily when you open it. |
 | **Clock & Date** | Top bar time and date | Respects 12h/24h format, timezone (auto or manual), and locale-aware date formatting. |
 | **Weather** | Current temperature in the top bar | City is geocoded via Open-Meteo; forecast data is fetched on demand and cached for 30 minutes. Requires internet. |
-| **Settings** | Theme, locale, appearance, search, weather | Light/dark theme, Russian/English UI, custom background image, text color overrides, tab title, and search engine management. |
+| **Home overview** | Compact day snapshot | The home sidebar shows today's tasks and habits with quick completion toggles. |
+| **Settings** | Theme, locale, appearance, search, weather, and backups | Light/dark theme, Russian/English UI, custom background image, text color overrides, tab title, search engine management, search history controls, favicon toggle, backup import/export, and backup reminders. |
+| **Safety** | Local backup and short-lived undo | Export a full JSON snapshot, import it later, and undo supported destructive actions such as deleting tasks, links, categories, workspaces, or search history entries. |
+| **PWA build** | Installable hosted variant | `bun run build:multi` produces the standard Vite/PWA build with manifest and service worker for `https://` or `http://localhost`. |
 | **State** | Dashboard data flow | Zustand store and domain hooks power todos, habits, bookmarks, notes, settings, weather, and search history. |
+| **Loading UX** | Fast first paint with staged loading | The app shows a fullscreen loader for cold boot, card fallbacks for lazy screens, and local loading placeholders while deferred domains hydrate. |
 | **Storage** | Offline persistence | All core data lives in IndexedDB through Dexie (`browser-home-page-db`). No account, no cloud sync. |
 
 ### Installation
@@ -149,14 +161,41 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 > [!TIP]
 > Keep the file in a stable folder. If you move or rename it, update the browser setting to the new path.
 
+### Backup and Restore
+
+Open **Settings → Others** to manage local backups.
+
+- **Export** downloads a JSON snapshot with workspaces, tasks, habits, notes, bookmarks, search history, settings, and cached weather data.
+- **Import** restores a previously exported snapshot and **fully replaces** the current local dataset.
+- **Backup reminders** can warn you when the last exported snapshot is older than the configured interval.
+
+Use backups before major local cleanup or when moving your setup to another browser profile.
+
+### Keyboard Shortcuts
+
+The home screen includes a keyboard help panel, and the same list is available from **Settings → About**.
+
+| Shortcut | Action |
+| --- | --- |
+| `/` | Go to Home and focus search |
+| `T` | Open Tasks |
+| `H` | Open Habits |
+| `N` | Open Notes |
+| `S` | Open Settings |
+| `?` | Open keyboard help |
+| `Esc` | Close transient UI and blur focus |
+
 ### Limitations
 
-- **Local data only** — todos, habits, bookmarks, notes, and settings are stored in IndexedDB for the current browser profile. Clearing site data removes everything. There is no built-in export, import, or cross-device sync.
+- **Local data only** — todos, habits, bookmarks, notes, search history, and settings are stored in IndexedDB for the current browser profile. Clearing site data removes everything. Backup export/import exists, but there is still no built-in cloud sync or account system.
 - **One browser profile = one dataset** — data is not shared between Blink and Gecko browsers, or between different profiles on the same browser.
 - **Weather needs the network** — geocoding and forecast use Open-Meteo APIs. Without internet, only the last cached value (up to 30 minutes old) is shown.
 - **Search suggestions need the network** — online suggestions call Google Suggest over JSONP. Ad blockers, strict privacy settings, or offline mode may disable them; local search history still works.
+- **Bookmark favicons need the network** — when favicon loading is enabled, the app requests link icons from Google's favicon service. If blocked or offline, links still work and fall back to a generic icon.
 - **Background images are stored locally** — uploaded images are compressed and saved inside IndexedDB (max 8 MB source file, longest edge resized to 1920 px). Very large libraries of custom backgrounds are not supported.
-- **Single note per workspace** — the Notes screen holds one text field per workspace, not a full notes app with multiple pages.
+- **Backup import is destructive** — importing a backup replaces the current local data snapshot. Export first if you may want to return to the current state.
+- **Undo is intentionally narrow** — undo covers supported destructive actions, but not every possible edit and not as a full version history system.
+- **Notes are lightweight** — you can keep multiple notes per workspace, but this is still not a full knowledge base with folders, attachments, or rich text.
 - **`file://` constraints** — some browser policies treat local files differently. If a feature that requires `fetch()` fails, check browser security settings or try serving the file through a local static server during development. PWA installability and service worker support require `https://` or `http://localhost`, so they do not apply to the single-file `file://` release.
 - **Alpha status** — the project is under active development; UI and behavior may change between releases.
 
@@ -178,41 +217,41 @@ Browsers on Blink do not allow replacing the new-tab page with a local file out 
 - [x] Workspaces — separate contexts for tasks, habits, bookmarks, and notes
 - [x] Tasks — priorities, due dates, drag-and-drop reorder
 - [x] Habits — daily tracking with streaks
-- [x] Notes — one persistent note per workspace
+- [x] Notes — multiple persistent notes per workspace
 - [x] Bookmark categories — group and filter quick links
 - [x] Multi-engine search — built-in and custom `{q}` templates
 - [x] Search history and online suggestions
 - [x] Weather — Open-Meteo with local cache
 - [x] Clock and date — timezone and format settings
 - [x] Theme and appearance — light/dark, custom background, text colors
-- [ ] Data import and export
-- [ ] Local backup
-- [ ] PWA mode — installable, offline shell
-- [ ] Workspace delete confirmation
-- [ ] Search history management — view and clear
-- [ ] Opt-out for online search suggestions
+- [x] Data import and export
+- [x] Local backup
+- [x] PWA mode — installable, offline shell for the multi-file hosted build
+- [x] Workspace delete confirmation
+- [x] Search history management — view and clear
+- [x] Opt-out for online search suggestions
 - [ ] New widgets
-- [ ] Task filters and grouping
-- [ ] Habit calendar and statistics
+- [x] Task filters
+- [ ] Task grouping
+- [x] Habit calendar and statistics
 - [ ] Bookmark drag-and-drop reorder
-- [ ] Bookmark favicons
-- [ ] Debounced note autosave
-- [ ] Keyboard shortcuts
-- [ ] Undo for destructive actions
+- [x] Bookmark favicons
+- [x] Debounced note autosave
+- [x] Keyboard shortcuts
+- [x] Undo for destructive actions
 - [ ] Scheduled theme — dark/light by time of day
 
 #### Engineering
 
 - [ ] Content Security Policy
 - [x] Refactor data layer — split dashboard data into `data/`, Zustand store, and domain hooks
-- [ ] Tests and CI
+- [ ] Automated tests
 - [ ] React error boundary
-- [ ] SCSS modules only — remove global `styles.css`
-- [ ] Loading skeletons
+- [x] Loading placeholders for boot, lazy screens, and deferred widgets
 
 ### For Developers
 
-See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, and GitHub workflow details. Current build split: `bun run build` creates the single-file release artifact, while `bun run build:multi` creates the standard multi-file Vite output with PWA support for `https://` and `http://localhost`. GitHub Actions now validates both build modes on every push and pull request, while tagged releases keep publishing the single-file `dist/index.html` asset and upload the standard `dist-vite/` output as a separate artifact. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
+See the [Developer Guide](./docs/DEVELOPERS.en.md) for build instructions, project structure, current bootstrap/store architecture, and the map of planning documents in the repository root. Current build split: `bun run build` creates the single-file release artifact, while `bun run build:multi` creates the standard multi-file Vite output with PWA support for `https://` and `http://localhost`. GitHub Actions validate both build modes on every push and pull request, while tagged releases publish the single-file `dist/index.html` asset and upload the standard `dist-vite/` output as a separate artifact. See [Contributing](./CONTRIBUTING.md) if you want to send a pull request.
 
 ### License
 

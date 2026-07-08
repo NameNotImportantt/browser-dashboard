@@ -53,6 +53,8 @@ dist-vite/
 
 PWA-поддержка относится только к обычной multi-file сборке. Она рассчитана на `https://` или `http://localhost`, но не на single-file `file://` релиз.
 
+В обычной сборке подключаются web app manifest и регистрация service worker через `vite-plugin-pwa`. В single-file release PWA намеренно отключён.
+
 ## Docker
 
 Docker-образ собирается для обычного multi-file build, а не для single-file release-артефакта.
@@ -78,14 +80,16 @@ docker stop browser-dashboard-app
 
 ```
 src/
-├── app/           # App shell, i18n, утилиты поиска, тема
+├── app/           # App shell, bootstrap-хелперы, keyboard shortcuts
 ├── components/    # UI-виджеты (SearchCore, TodoWidget, SettingsPanel, …)
 ├── dashboard/     # Доменные хуки для доступа UI к данным и actions
-├── data/          # Snapshot, repositories и сервисы поверх Dexie
+├── data/          # Snapshot loading, repositories, backup и сервисы поверх Dexie
 ├── db/            # Схема Dexie и доменные типы
-├── hooks/         # Общие хуки и реэкспорт dashboard-хуков
+├── hooks/         # Общие UI-хуки и hotkey-хелперы
+├── i18n/          # Локализованные UI-строки
 ├── pages/         # Разметка HomePage
 ├── store/         # Zustand store, slices и типы store
+├── theme/         # Тема и хелперы текстовых цветов
 └── frontend.tsx   # Точка входа
 ```
 
@@ -110,13 +114,21 @@ src/
 
 ## Архитектурные заметки
 
-- **Состояние**: единый Zustand store хранит `snapshot`, `activeWorkspaceId`, `loading` и `error`. Domain slices вызывают repositories и затем обновляют snapshot через `refresh()`.
+- **Bootstrap**: startup работает по схеме `critical first`. `init()` может сначала отрендерить сохранённый home bootstrap cache, затем загружает critical snapshot и после этого догружает deferred-данные в фоне.
+- **Critical vs deferred data**: сначала доступны workspaces, settings, todos, bookmarks, bookmarkCategories и weather cache; habits, notes и searchHistory завершают deferred hydration.
+- **Состояние**: единый Zustand store хранит `snapshot`, `activeWorkspaceId`, boot/deferred flags и `error`.
+- **Синхронизация store**: обычные интерактивные actions патчат нужное поле snapshot точечно. Полный `refresh()` оставлен как recovery/import путь, а не как стандартный sync после CRUD.
 - **UI-доступ**: виджеты не получают CRUD callbacks через `HomePage`; они используют доменные хуки (`useTodos`, `useSettings`, `useBookmarks` и т.д.).
 - **Workspaces**: большинство сущностей привязаны к `workspaceId`. Настройки глобальные (таблица `settings`, ключ `app`).
 - **Lazy loading**: `HabitsWidget` и `NotesWidget` подгружаются через `React.lazy`.
+- **Deferred UX**: `HabitsWidget`, `NotesWidget` и блок привычек на главной имеют локальные loading-state, пока deferred-данные догружаются.
+- **Tasks UI**: основной экран задач уже поддерживает фильтры по дате, приоритету и статусу.
+- **Loading states**: при cold boot используется fullscreen loader, для lazy-экранов есть card fallback, а deferred-секции отрисовывают локальные loading-placeholder состояния вместо блокировки всей оболочки.
 - **Погода**: геокодинг и прогноз Open-Meteo; TTL кэша — 30 минут (`WEATHER_CACHE_TTL_MS`).
 - **Подсказки поиска**: сначала локальная история, затем Google Suggest через JSONP (`suggestqueries.google.com`).
-- **i18n**: лёгкий helper в `src/app/i18n.ts`; локали `ru` и `en`.
+- **Backup**: полный локальный JSON export/import находится в `src/data/backup/*` и проброшен в UI настроек/напоминаний.
+- **Undo**: для деструктивных действий есть отдельный undo-slice и глобальный `UndoSnackbar`.
+- **i18n**: лёгкий helper в `src/i18n/index.ts`; локали `ru` и `en`.
 
 ## Дизайн-направление
 
@@ -131,6 +143,23 @@ UI опирается на тёмную атмосферу новелл «Нач
 - Не коммитить и не создавать ветки без явной просьбы мейнтейнеров
 
 Подробнее — в [руководстве для контрибьюторов](../CONTRIBUTING.md) (на английском).
+
+## Plan-файлы в корне
+
+В корне репозитория лежат рабочие plan/handoff документы. Они не все одинаково каноничны, но полезны для понимания причин текущих решений:
+
+- `performance-optimization-plan.ru.md` — верхнеуровневый план performance-рефакторинга
+- `performance-baseline.ru.md` — baseline-метрики и заготовки helper-абстракций для performance-работ
+- `performance-dev-notes.ru.md` — заметки по текущему направлению оптимизации startup/store
+- `habit-calendar-plan.ru.md` — план внедрения календаря и аналитики привычек
+- `vnext-point-17-plan.ru.md` — доработка UI задач и привычек на главной
+- `vnext-point-18-plan.ru.md` — план по единому field-level validation pattern
+- `vnext-point-22-plan.ru.md` — пошаговый план по backup/settings validation и связанному UX
+- `vnext-unfinished-plan.ru.md` — backlog более широких pending vNext-идей
+- `a_lot_of_ui_features.ru.md` — накопленные заметки по UI и feature backlog
+- `codex-chat-context-2026-07-04.md` — handoff-контекст предыдущей сессии агента, использовать только как исторический контекст
+
+Если README и plan-файлы расходятся, приоритет у текущего кода и актуальных README/Developer Guide после проверки реализации.
 
 ## Лицензия
 
