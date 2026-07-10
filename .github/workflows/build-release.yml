@@ -41,8 +41,24 @@ jobs:
       - name: Typecheck
         run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 5.0
 
+  lint:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Run ESLint
+        run: bun run lint
+
   build-single:
-    needs: [install-dependencies, typecheck]
+    needs: [install-dependencies, typecheck, lint]
     runs-on: ubuntu-latest
 
     steps:
@@ -66,7 +82,7 @@ jobs:
           if-no-files-found: error
 
   build-pwa:
-    needs: [install-dependencies, typecheck]
+    needs: [install-dependencies, typecheck, lint]
     runs-on: ubuntu-latest
 
     steps:
@@ -93,7 +109,7 @@ jobs:
           if-no-files-found: error
 
   build-extension:
-    needs: [install-dependencies, typecheck]
+    needs: [install-dependencies, typecheck, lint]
     runs-on: ubuntu-latest
 
     steps:
@@ -128,9 +144,26 @@ jobs:
           path: browser-dashboard-extension.zip
           if-no-files-found: error
 
+  build-docker-image:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: browser-dashboard:${{ github.sha }}
+
   publish-release:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-single, build-pwa, build-extension]
+    needs: [build-single, build-pwa, build-extension, build-docker-image]
     runs-on: ubuntu-latest
 
     steps:
