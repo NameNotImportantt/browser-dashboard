@@ -11,11 +11,18 @@ export interface ScreenMenuProps {
   activeScreen: ScreenId;
   locale: AppLocale;
   onSelect: (screen: ScreenId) => void;
+  onPrefetch?: (screenId: ScreenId) => void;
 }
 
-export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
+function createPrefetchHandler(screenId: ScreenId, onPrefetch?: (screenId: ScreenId) => void) {
+    return () => onPrefetch?.(screenId);
+}
+
+export function ScreenMenu({activeScreen, locale, onSelect, onPrefetch}: ScreenMenuProps) {
     const isSettingsActive = activeScreen === 'settings';
     const settingsButtonClassName = clsx(styles.menuButton, styles.iconButton, {[styles.isActive]: isSettingsActive});
+    const handleSettingsClick = () => onSelect('settings');
+    const handleSettingsPrefetch = createPrefetchHandler('settings', onPrefetch);
 
     return (
         <nav className={styles.screenMenu} aria-label={t(locale, 'screenNavAriaLabel')}>
@@ -28,6 +35,12 @@ export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
                     [styles.isActive]: isActive,
                 });
 
+                const handleScreenClick = () => onSelect(screen.id);
+
+                const handleScreenPrefetch = screen.id === 'home'
+                    ? undefined
+                    : createPrefetchHandler(screen.id, onPrefetch);
+
                 return (
                     <button
                         key={screen.id}
@@ -35,7 +48,9 @@ export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
                         className={screenButtonClassName}
                         aria-current={isActive ? 'page' : undefined}
                         aria-label={Icon ? t(locale, screen.labelKey) : undefined}
-                        onClick={() => onSelect(screen.id)}
+                        onClick={handleScreenClick}
+                        onPointerEnter={handleScreenPrefetch}
+                        onFocus={handleScreenPrefetch}
                     >
                         {Icon ? <Icon size={16} strokeWidth={2.25} /> : t(locale, screen.labelKey)}
                     </button>
@@ -47,7 +62,9 @@ export function ScreenMenu({activeScreen, locale, onSelect}: ScreenMenuProps) {
                 className={settingsButtonClassName}
                 aria-current={isSettingsActive ? 'page' : undefined}
                 aria-label={t(locale, 'settings')}
-                onClick={() => onSelect('settings')}
+                onClick={handleSettingsClick}
+                onPointerEnter={handleSettingsPrefetch}
+                onFocus={handleSettingsPrefetch}
             >
                 <Settings size={16} strokeWidth={2.25} />
             </button>
