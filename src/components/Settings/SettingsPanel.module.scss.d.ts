@@ -1,3 +1,4 @@
+export declare const columnDivider: string;
 export declare const dangerButton: string;
 export declare const error: string;
 export declare const field: string;
@@ -10,7 +11,5 @@ export declare const inlineRow: string;
 export declare const inlineRowInput: string;
 export declare const rowDivider: string;
 export declare const rows: string;
-export declare const section: string;
-export declare const sectionFirst: string;
 export declare const settingsPanel: string;
 export declare const settingsScreen: string;

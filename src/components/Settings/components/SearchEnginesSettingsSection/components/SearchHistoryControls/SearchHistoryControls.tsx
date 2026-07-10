@@ -69,9 +69,6 @@ export function SearchHistoryControls({
     return (
         <>
             <div className={settingsStyles.field}>
-                <div className={styles.titleRow}>
-                    <span className={styles.titleLabel}>{t(locale, 'searchHistory')}</span>
-                </div>
                 <div className={styles.historyActionsRow}>
                     <button
                         type="button"

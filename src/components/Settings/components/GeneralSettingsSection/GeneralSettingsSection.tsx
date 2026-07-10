@@ -5,7 +5,8 @@ import {FieldValidationMessage, fieldValidationStyles} from '@/components';
 import {Select} from '@/components/Select';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {SettingsColumn} from '../SettingsColumn/SettingsColumn';
+import {SettingsSubsection} from '../SettingsSubsection/SettingsSubsection';
 import {WeatherSettingsFields} from './components/WeatherSettingsFields/WeatherSettingsFields';
 import {useGeneralSettingsController} from './hooks/useGeneralSettingsController';
 
@@ -25,8 +26,6 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
         tabTitle,
         tabTitleValidation,
     } = useGeneralSettingsController({dismissRequestId});
-
-    const sectionClassName = clsx(styles.section, styles.sectionFirst);
 
     const tabTitleFieldLabelClassName = clsx(
         styles.fieldLabel,
@@ -50,8 +49,7 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
     };
 
     return (
-        <section className={sectionClassName}>
-            <SettingsSectionHeader title={t(locale, 'settingsGeneral')} icon={SlidersHorizontal} />
+        <SettingsColumn title={t(locale, 'settingsGeneral')} icon={SlidersHorizontal}>
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'locale')}</span>
@@ -88,9 +86,9 @@ export function GeneralSettingsSection({dismissRequestId = 0}: GeneralSettingsSe
                 </label>
             </div>
 
-            <div className={styles.rowDivider} role="separator" aria-hidden />
-
-            <WeatherSettingsFields dismissRequestId={dismissRequestId} />
-        </section>
+            <SettingsSubsection title={t(locale, 'weatherSettingsTitle')} showDivider>
+                <WeatherSettingsFields dismissRequestId={dismissRequestId} />
+            </SettingsSubsection>
+        </SettingsColumn>
     );
 }

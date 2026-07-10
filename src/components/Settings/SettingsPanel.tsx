@@ -28,13 +28,17 @@ export function SettingsPanel({dismissRequestId = 0}: SettingsPanelProps) {
 
                 <div className={styles.rows}>
                     <GeneralSettingsSection dismissRequestId={dismissRequestId} />
+                    <div className={styles.columnDivider} role="separator" aria-hidden />
                     <DateTimeSettingsSection dismissRequestId={dismissRequestId} />
+                    <div className={styles.columnDivider} role="separator" aria-hidden />
                     <SearchEnginesSettingsSection dismissRequestId={dismissRequestId} />
 
                     <div className={styles.rowDivider} role="separator" aria-hidden />
 
                     <AppearanceSettingsSection />
+                    <div className={styles.columnDivider} role="separator" aria-hidden />
                     <OthersSettingsSection dismissRequestId={dismissRequestId} />
+                    <div className={styles.columnDivider} role="separator" aria-hidden />
                     <AboutSettingsSection dismissRequestId={dismissRequestId} />
                 </div>
             </section>

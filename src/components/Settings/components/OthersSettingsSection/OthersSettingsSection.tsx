@@ -5,7 +5,8 @@ import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
 import {BackupSettingsSection} from '../BackupSettingsSection';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {SettingsColumn} from '../SettingsColumn/SettingsColumn';
+import {SettingsSubsection} from '../SettingsSubsection/SettingsSubsection';
 
 interface OthersSettingsSectionProps {
     dismissRequestId?: number;
@@ -16,8 +17,7 @@ export function OthersSettingsSection({dismissRequestId = 0}: OthersSettingsSect
     const locale = settings.locale;
 
     return (
-        <section className={styles.section}>
-            <SettingsSectionHeader title={t(locale, 'settingsOthers')} icon={Layers3} />
+        <SettingsColumn title={t(locale, 'settingsOthers')} icon={Layers3}>
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <Checkbox
@@ -34,9 +34,9 @@ export function OthersSettingsSection({dismissRequestId = 0}: OthersSettingsSect
                     />
                 </div>
             </div>
-            <div className={styles.rowDivider} role="separator" aria-hidden />
-
-            <BackupSettingsSection dismissRequestId={dismissRequestId} embedded />
-        </section>
+            <SettingsSubsection title={t(locale, 'settingsBackup')} showDivider>
+                <BackupSettingsSection dismissRequestId={dismissRequestId} />
+            </SettingsSubsection>
+        </SettingsColumn>
     );
 }

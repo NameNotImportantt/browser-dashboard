@@ -6,7 +6,6 @@ import {WeatherProvider} from '@/db';
 import {t} from '@/i18n';
 import panelStyles from '../../../../SettingsPanel.module.scss';
 import {useWeatherSettingsController} from './hooks/useWeatherSettingsController';
-import styles from './WeatherSettingsFields.module.scss';
 
 interface WeatherSettingsFieldsProps {
     dismissRequestId: number;
@@ -87,8 +86,6 @@ export function WeatherSettingsFields({dismissRequestId}: WeatherSettingsFieldsP
 
     return (
         <div className={panelStyles.grid}>
-            <h5 className={styles.minorTitle}>{t(locale, 'weatherSettingsTitle')}</h5>
-
             <div className={panelStyles.field}>
                 <span className={panelStyles.fieldLabel}>{t(locale, 'weatherProvider')}</span>
                 <Select

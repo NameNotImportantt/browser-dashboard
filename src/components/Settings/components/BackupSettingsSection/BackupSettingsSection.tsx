@@ -8,13 +8,11 @@ import {isBackupReminderOverdue} from '@/data/settings';
 import {useActionStatus} from '@/hooks/useActionStatus';
 import {t} from '@/i18n';
 import panelStyles from '../../SettingsPanel.module.scss';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
 import styles from './BackupSettingsSection.module.scss';
 import {useBackupReminderIntervalField} from './hooks/useBackupReminderIntervalField';
 
 interface BackupSettingsSectionProps {
     dismissRequestId?: number;
-    embedded?: boolean;
 }
 
 function getBackupImportErrorMessageKey(code: DashboardBackupError['code']) {
@@ -31,7 +29,7 @@ function getBackupImportErrorMessageKey(code: DashboardBackupError['code']) {
     }
 }
 
-export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: BackupSettingsSectionProps) {
+export function BackupSettingsSection({dismissRequestId = 0}: BackupSettingsSectionProps) {
     const {
         settings,
         setBackupReminderEnabled,
@@ -153,157 +151,144 @@ export function BackupSettingsSection({dismissRequestId = 0, embedded = false}: 
         importStatus.reset();
     }, [dismissRequestId]);
 
-    const sectionCardClassName = clsx(
-        styles.sectionCard,
-        embedded ? styles.sectionCardEmbedded : null,
-    );
-
     const isBusy = isExporting || isImporting;
 
     const content = (
-        <>
-            {embedded ? <SettingsSectionHeader title={t(locale, 'settingsBackup')} compact /> : null}
-            <div className={sectionCardClassName}>
-                <div className={panelStyles.field}>
-                    <Checkbox
-                        checked={settings.backupReminderEnabled}
-                        onChange={handleBackupReminderEnabledChange}
-                        label={t(locale, 'backupReminderEnabled')}
-                    />
-                </div>
+        <div className={styles.content}>
+            <div className={panelStyles.field}>
+                <Checkbox
+                    checked={settings.backupReminderEnabled}
+                    onChange={handleBackupReminderEnabledChange}
+                    label={t(locale, 'backupReminderEnabled')}
+                />
+            </div>
 
-                {backupReminderOverdue ? (
-                    <div className={styles.reminderBanner} role="status" aria-live="polite">
-                        <div className={styles.reminderCopy}>
-                            <h5 className={styles.reminderTitle}>{t(locale, 'backupReminderSettingsTitle')}</h5>
-                            <p className={styles.reminderBody}>{t(locale, 'backupReminderSettingsBody')}</p>
-                        </div>
-                        <button
-                            type="button"
-                            className={styles.reminderAction}
-                            onClick={handleBannerExportClick}
-                            disabled={isExporting || isImporting}
-                        >
-                            {t(locale, 'backupExport')}
-                        </button>
-                        {isExporting ? (
-                            <Loader
-                                className={styles.bannerLoader}
-                                label={t(locale, 'backupExporting')}
-                                tone="inline"
-                            />
-                        ) : null}
+            {backupReminderOverdue ? (
+                <div className={styles.reminderBanner} role="status" aria-live="polite">
+                    <div className={styles.reminderCopy}>
+                        <h5 className={styles.reminderTitle}>{t(locale, 'backupReminderSettingsTitle')}</h5>
+                        <p className={styles.reminderBody}>{t(locale, 'backupReminderSettingsBody')}</p>
                     </div>
-                ) : null}
-
-                <HintTooltip
-                    locale={locale}
-                    label={<h5 className={intervalTitleClassName}>{t(locale, 'backupReminderIntervalDays')}</h5>}
-                    hint={t(locale, 'backupReminderIntervalHint')}
-                />
-                <label className={panelStyles.field}>
-                    <div className={styles.inlineRow}>
-                        <input
-                            className={intervalInputClassName}
-                            type="number"
-                            min={1}
-                            max={365}
-                            step={1}
-                            value={intervalDaysDraft}
-                            onChange={handleIntervalDaysChange}
-                            onBlur={handleIntervalDaysBlur}
-                            {...intervalDaysInputAriaProps}
-                        />
-                        <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
-                    </div>
-                    <FieldValidationMessage
-                        className={panelStyles.error}
-                        id={intervalDaysValidation.messageId}
-                        message={intervalDaysValidation.showError ? intervalDaysValidation.validation.error : null}
-                    />
-                </label>
-
-                <div className={panelStyles.field}>
-                    <span className={panelStyles.fieldLabel}>{t(locale, 'backupLastExportedAt')}</span>
-                    <small className={styles.statusText}>
-                        {settings.lastBackupExportedAt === null
-                            ? t(locale, 'backupLastExportedNever')
-                            : formatDateTime(settings.lastBackupExportedAt)}
-                    </small>
-                    <small className={backupReminderOverdue ? panelStyles.error : panelStyles.hint}>
-                        {backupReminderOverdue ? t(locale, 'backupReminderOverdue') : t(locale, 'backupReminderCurrent')}
-                    </small>
-                </div>
-
-                <HintTooltip
-                    locale={locale}
-                    label={<h5 className={styles.minorTitle}>{t(locale, 'backupExport')}</h5>}
-                    hint={t(locale, 'backupExportHint')}
-                />
-
-                <div className={styles.actionRow}>
-                    <button type="button" onClick={handleActionExportClick} disabled={isExporting || isImporting}>
-                        {t(locale, 'backupExport')}
-                    </button>
-                </div>
-                <ActionStatus
-                    className={styles.actionStatus}
-                    status={exportStatus.status}
-                    message={exportStatus.message}
-                    pendingLabel={t(locale, 'backupExporting')}
-                />
-
-                <HintTooltip
-                    locale={locale}
-                    label={<h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>}
-                    hint={t(locale, 'backupImportHint')}
-                />
-
-                <div className={styles.actionRow}>
-                    <label className={styles.fileButton}>
-                        <input
-                            type="file"
-                            accept="application/json,.json"
-                            className={panelStyles.hiddenInput}
-                            onChange={handleFileChange}
-                        />
-                        <span>{t(locale, 'chooseBackupFile')}</span>
-                    </label>
-
                     <button
                         type="button"
-                        className={dangerButtonClassName}
-                        onClick={handleConfirmOpenClick}
-                        disabled={!selectedFile || isImporting}
+                        className={styles.reminderAction}
+                        onClick={handleBannerExportClick}
+                        disabled={isExporting || isImporting}
                     >
-                        {t(locale, 'confirmImport')}
+                        {t(locale, 'backupExport')}
                     </button>
+                    {isExporting ? (
+                        <Loader
+                            className={styles.bannerLoader}
+                            label={t(locale, 'backupExporting')}
+                            tone="inline"
+                        />
+                    ) : null}
                 </div>
-                <ActionStatus
-                    className={styles.actionStatus}
-                    status={importStatus.status}
-                    message={importStatus.message}
-                    pendingLabel={t(locale, 'backupImporting')}
-                />
+            ) : null}
 
-                {selectedFile ? (
-                    <div className={styles.fileSummary}>
-                        <small className={panelStyles.hint}>{t(locale, 'backupFileSelected')}</small>
-                        <small className={styles.fileName}>{selectedFile.name}</small>
-                    </div>
-                ) : null}
+            <HintTooltip
+                locale={locale}
+                label={<h5 className={intervalTitleClassName}>{t(locale, 'backupReminderIntervalDays')}</h5>}
+                hint={t(locale, 'backupReminderIntervalHint')}
+            />
+            <label className={panelStyles.field}>
+                <div className={styles.inlineRow}>
+                    <input
+                        className={intervalInputClassName}
+                        type="number"
+                        min={1}
+                        max={365}
+                        step={1}
+                        value={intervalDaysDraft}
+                        onChange={handleIntervalDaysChange}
+                        onBlur={handleIntervalDaysBlur}
+                        {...intervalDaysInputAriaProps}
+                    />
+                    <span className={styles.inputSuffix}>{t(locale, 'days')}</span>
+                </div>
+                <FieldValidationMessage
+                    className={panelStyles.error}
+                    id={intervalDaysValidation.messageId}
+                    message={intervalDaysValidation.showError ? intervalDaysValidation.validation.error : null}
+                />
+            </label>
+
+            <div className={panelStyles.field}>
+                <span className={panelStyles.fieldLabel}>{t(locale, 'backupLastExportedAt')}</span>
+                <small className={styles.statusText}>
+                    {settings.lastBackupExportedAt === null
+                        ? t(locale, 'backupLastExportedNever')
+                        : formatDateTime(settings.lastBackupExportedAt)}
+                </small>
+                <small className={backupReminderOverdue ? panelStyles.error : panelStyles.hint}>
+                    {backupReminderOverdue ? t(locale, 'backupReminderOverdue') : t(locale, 'backupReminderCurrent')}
+                </small>
             </div>
-        </>
+
+            <HintTooltip
+                locale={locale}
+                label={<h5 className={styles.minorTitle}>{t(locale, 'backupExport')}</h5>}
+                hint={t(locale, 'backupExportHint')}
+            />
+
+            <div className={styles.actionRow}>
+                <button type="button" onClick={handleActionExportClick} disabled={isExporting || isImporting}>
+                    {t(locale, 'backupExport')}
+                </button>
+            </div>
+            <ActionStatus
+                className={styles.actionStatus}
+                status={exportStatus.status}
+                message={exportStatus.message}
+                pendingLabel={t(locale, 'backupExporting')}
+            />
+
+            <HintTooltip
+                locale={locale}
+                label={<h5 className={styles.minorTitle}>{t(locale, 'backupImport')}</h5>}
+                hint={t(locale, 'backupImportHint')}
+            />
+
+            <div className={styles.actionRow}>
+                <label className={styles.fileButton}>
+                    <input
+                        type="file"
+                        accept="application/json,.json"
+                        className={panelStyles.hiddenInput}
+                        onChange={handleFileChange}
+                    />
+                    <span>{t(locale, 'chooseBackupFile')}</span>
+                </label>
+
+                <button
+                    type="button"
+                    className={dangerButtonClassName}
+                    onClick={handleConfirmOpenClick}
+                    disabled={!selectedFile || isImporting}
+                >
+                    {t(locale, 'confirmImport')}
+                </button>
+            </div>
+            <ActionStatus
+                className={styles.actionStatus}
+                status={importStatus.status}
+                message={importStatus.message}
+                pendingLabel={t(locale, 'backupImporting')}
+            />
+
+            {selectedFile ? (
+                <div className={styles.fileSummary}>
+                    <small className={panelStyles.hint}>{t(locale, 'backupFileSelected')}</small>
+                    <small className={styles.fileName}>{selectedFile.name}</small>
+                </div>
+            ) : null}
+        </div>
     );
 
     return (
         <>
-            {!embedded ? (
-                <section className={panelStyles.section}>
-                    <SettingsSectionHeader title={t(locale, 'settingsBackup')} />
-                    {content}
-                </section>
-            ) : content}
+            {content}
             {isConfirmOpen ? (
                 <Modal
                     open={isConfirmOpen}

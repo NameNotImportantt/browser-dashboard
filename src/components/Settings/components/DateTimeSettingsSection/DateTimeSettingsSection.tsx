@@ -5,7 +5,7 @@ import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import {TIMEZONE_OPTIONS} from '../../constants';
 import styles from '../../SettingsPanel.module.scss';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {SettingsColumn} from '../SettingsColumn/SettingsColumn';
 
 interface DateTimeSettingsSectionProps {
   dismissRequestId?: number;
@@ -42,8 +42,7 @@ export function DateTimeSettingsSection({dismissRequestId = 0}: DateTimeSettings
     );
 
     return (
-        <section className={styles.section}>
-            <SettingsSectionHeader title={t(locale, 'settingsDateTime')} icon={CalendarClock} />
+        <SettingsColumn title={t(locale, 'settingsDateTime')} icon={CalendarClock}>
             <div className={styles.grid}>
                 <div className={styles.field}>
                     <span className={styles.fieldLabel}>{t(locale, 'timeFormat')}</span>
@@ -78,6 +77,6 @@ export function DateTimeSettingsSection({dismissRequestId = 0}: DateTimeSettings
                     />
                 </div>
             </div>
-        </section>
+        </SettingsColumn>
     );
 }

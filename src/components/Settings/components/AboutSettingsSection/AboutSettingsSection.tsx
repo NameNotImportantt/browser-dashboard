@@ -1,12 +1,10 @@
 import {useEffect, useState} from 'react';
-import clsx from 'clsx';
 import {BookOpenText, CircleHelp, ExternalLink} from 'lucide-react';
 import {KEYBOARD_SHORTCUTS} from '@/app';
 import appIconUrl from '@/assets/favicon-32x32.png';
 import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
-import panelStyles from '../../SettingsPanel.module.scss';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {SettingsColumn} from '../SettingsColumn/SettingsColumn';
 import styles from './AboutSettingsSection.module.scss';
 import {
     ABOUT_AUTHOR_NAME,
@@ -22,15 +20,13 @@ export function AboutSettingsSection({dismissRequestId = 0}: AboutSettingsSectio
     const {settings} = useSettings();
     const locale = settings.locale;
     const [isHelpOpen, setIsHelpOpen] = useState(false);
-    const sectionClassName = clsx(panelStyles.section);
 
     useEffect(() => {
         setIsHelpOpen(false);
     }, [dismissRequestId]);
 
     return (
-        <section className={sectionClassName}>
-            <SettingsSectionHeader title={t(locale, 'settingsAbout')} icon={CircleHelp} />
+        <SettingsColumn title={t(locale, 'settingsAbout')} icon={CircleHelp}>
             <div className={styles.sectionCard}>
                 <div className={styles.identityRow}>
                     <img className={styles.appIcon} src={appIconUrl} alt="" aria-hidden />
@@ -113,6 +109,6 @@ export function AboutSettingsSection({dismissRequestId = 0}: AboutSettingsSectio
                     </div>
                 ) : null}
             </div>
-        </section>
+        </SettingsColumn>
     );
 }

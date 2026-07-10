@@ -1,9 +1,8 @@
-import clsx from 'clsx';
 import {Palette} from 'lucide-react';
 import {useSettings} from '@/dashboard';
 import {t} from '@/i18n';
 import styles from '../../SettingsPanel.module.scss';
-import {SettingsSectionHeader} from '../SettingsSectionHeader';
+import {SettingsColumn} from '../SettingsColumn/SettingsColumn';
 import {TextColorField} from '../TextColorField';
 import {BackgroundImageField} from './components';
 import {useAppearanceAccentColor} from './hooks/useAppearanceAccentColor';
@@ -12,13 +11,11 @@ import {useAppearanceTextColors} from './hooks/useAppearanceTextColors';
 export function AppearanceSettingsSection() {
     const {settings} = useSettings();
     const locale = settings.locale;
-    const sectionClassName = clsx(styles.section, styles.sectionFirst);
     const {accentColorField, handleResetAccentColorClick} = useAppearanceAccentColor();
     const {textColorFields, handleResetTextColorsClick} = useAppearanceTextColors();
 
     return (
-        <section className={sectionClassName}>
-            <SettingsSectionHeader title={t(locale, 'settingsAppearance')} icon={Palette} />
+        <SettingsColumn title={t(locale, 'settingsAppearance')} icon={Palette}>
 
             <div className={styles.grid}>
                 <BackgroundImageField />
@@ -58,6 +55,6 @@ export function AppearanceSettingsSection() {
                     </button>
                 </div>
             </div>
-        </section>
+        </SettingsColumn>
     );
 }
