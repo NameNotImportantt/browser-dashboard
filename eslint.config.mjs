@@ -308,6 +308,7 @@ const eslintConfig = defineConfig([
         '.next/**',
         'out/**',
         'build/**',
+        'dist-extension/**',
         'dist-vite/**',
         'public-multi/**',
         'next-env.d.ts',

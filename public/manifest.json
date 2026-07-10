@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Dashboard",
+  "version": "0.1.0",
+  "description": "Personal offline-first browser dashboard",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "host_permissions": [
+    "https://suggestqueries.google.com/*",
+    "https://api.open-meteo.com/*",
+    "https://geocoding-api.open-meteo.com/*",
+    "https://api.weatherapi.com/*"
+  ]
+}

@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  validate:
+  install-dependencies:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,37 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+  typecheck:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Typecheck
         run: bunx tsc -p tsconfig.json --noEmit --ignoreDeprecations 5.0
+
+  build-single:
+    needs: [install-dependencies, typecheck]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
       - name: Build single-file release
         run: bun run build
@@ -29,7 +58,30 @@ jobs:
       - name: Verify single-file output
         run: test -f dist/index.html
 
-      - name: Build standard multi-file output
+      - name: Upload single-file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-dashboard-singlefile
+          path: dist/index.html
+          if-no-files-found: error
+
+  build-pwa:
+    needs: [install-dependencies, typecheck]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build standard multi-file PWA
         run: bun run build:multi
 
       - name: Verify PWA build output
@@ -37,3 +89,41 @@ jobs:
           test -f dist-vite/index.html
           test -f dist-vite/manifest.webmanifest
           test -f dist-vite/sw.js
+
+      - name: Upload standard build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-dashboard-standard-build
+          path: dist-vite
+          if-no-files-found: error
+
+  build-extension:
+    needs: [install-dependencies, typecheck]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Chrome extension
+        run: bun run build:extension
+
+      - name: Verify Chrome extension output
+        run: |
+          test -f dist-extension/index.html
+          test -f dist-extension/manifest.json
+
+      - name: Upload Chrome extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-dashboard-extension
+          path: dist-extension
+          if-no-files-found: error

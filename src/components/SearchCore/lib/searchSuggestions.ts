@@ -10,7 +10,6 @@ export interface SearchSuggestion {
 }
 
 const MAX_SUGGESTIONS = 8;
-const JSONP_TIMEOUT_MS = 5000;
 
 type SearchSuggestionsJsonPrimitive = string | number | boolean | null;
 
@@ -73,60 +72,31 @@ export function getLocalSearchSuggestions(query: string, history: SearchHistoryE
     return result;
 }
 
-export function fetchGoogleSuggestionsJsonp(query: string, signal: AbortSignal): Promise<string[]> {
+export async function fetchGoogleSuggestions(query: string, signal: AbortSignal): Promise<string[]> {
     const trimmed = query.trim();
 
     if (!trimmed) {
-        return Promise.resolve([]);
+        return [];
     }
 
-    return new Promise((resolve, reject) => {
-        const callbackName = `googleAc_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-        const script = document.createElement('script');
-        let timeoutId: number | null = null;
-
-        const cleanup = () => {
-            Reflect.deleteProperty(window, callbackName);
-            script.remove();
-            signal.removeEventListener('abort', onAbort);
-
-            if (timeoutId !== null) {
-                window.clearTimeout(timeoutId);
-            }
-        };
-
-        function onAbort() {
-            cleanup();
-            reject(new DOMException('Aborted', 'AbortError'));
-        }
-
-        timeoutId = window.setTimeout(() => {
-            cleanup();
-            resolve([]);
-        }, JSONP_TIMEOUT_MS);
-
-        Reflect.set(window, callbackName, (data: SearchSuggestionsJsonValue | undefined) => {
-            cleanup();
-
-            if (!Array.isArray(data) || !Array.isArray(data[1])) {
-                resolve([]);
-                return;
-            }
-
-            resolve(data[1].filter((item): item is string => typeof item === 'string'));
-        });
-
-        script.async = true;
-
-        script.onerror = () => {
-            cleanup();
-            resolve([]);
-        };
-
-        signal.addEventListener('abort', onAbort);
-        script.src = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(trimmed)}&callback=${callbackName}`;
-        document.head.appendChild(script);
+    const params = new URLSearchParams({
+        client: 'firefox',
+        q: trimmed,
     });
+
+    const response = await fetch(`https://suggestqueries.google.com/complete/search?${params.toString()}`, {signal});
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json() as SearchSuggestionsJsonValue;
+
+    if (!Array.isArray(data) || !Array.isArray(data[1])) {
+        return [];
+    }
+
+    return data[1].filter((item): item is string => typeof item === 'string');
 }
 
 export async function loadSearchSuggestions(
@@ -145,7 +115,7 @@ export async function loadSearchSuggestions(
     const result = [...local];
 
     try {
-        const online = await fetchGoogleSuggestionsJsonp(trimmed, signal);
+        const online = await fetchGoogleSuggestions(trimmed, signal);
 
         for (const label of online) {
             const key = suggestionKey(label);

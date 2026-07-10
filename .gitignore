@@ -5,6 +5,7 @@ node_modules
 out
 dist
 dist-vite
+dist-extension
 *.tgz
 
 # code coverage
